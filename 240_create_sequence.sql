@@ -16,59 +16,55 @@
 
 
 -- -----------------------------------------------------------------------------
---       INDEX DE LA TABLE PERSONNE
--- -----------------------------------------------------------------------------
-
-CREATE SEQUENCE SEQ_PERSONNE
-INCREMENT BY 1 START WITH 1;
-
-	 
--- -----------------------------------------------------------------------------
---       INDEX DE LA TABLE TERRAIN
+--       TABLE : PERSONNE
 -- -----------------------------------------------------------------------------
 
 CREATE SEQUENCE SEQ_PERSONNE
 INCREMENT BY 1 START WITH 1;
 
 -- -----------------------------------------------------------------------------
---       INDEX DE LA TABLE ENTRAINEMENT
+--       TABLE : FACTURE
 -- -----------------------------------------------------------------------------
 
-CREATE SEQUENCE SEQ_PERSONNE
+CREATE SEQUENCE SEQ_FACTURE
 INCREMENT BY 1 START WITH 1;
 
 -- -----------------------------------------------------------------------------
---       INDEX DE LA TABLE MENSUALITE
+--       TABLE : CRENEAU
 -- -----------------------------------------------------------------------------
 
-CREATE SEQUENCE SEQ_PERSONNE
+CREATE SEQUENCE SEQ_CRENEAU
 INCREMENT BY 1 START WITH 1;
 
+
 -- -----------------------------------------------------------------------------
---       INDEX DE LA TABLE OCCUPATION
+--       TABLE : TERRAIN
 -- -----------------------------------------------------------------------------
 
-CREATE SEQUENCE SEQ_PERSONNE
+CREATE SEQUENCE SEQ_TERRAIN
 INCREMENT BY 1 START WITH 1;
 
+
 -- -----------------------------------------------------------------------------
---       INDEX DE LA TABLE ABONNEMENT
+--       TABLE : ENTRAINEMENT
 -- -----------------------------------------------------------------------------
 
-CREATE SEQUENCE SEQ_PERSONNE
+CREATE SEQUENCE SEQ_ENTRAINEMENT
 INCREMENT BY 1 START WITH 1;
 
+
 -- -----------------------------------------------------------------------------
---       INDEX DE LA TABLE AVOIR_LIEU
+--       TABLE : OCCUPATION
 -- -----------------------------------------------------------------------------
 
-CREATE SEQUENCE SEQ_PERSONNE
+CREATE SEQUENCE SEQ_OCCUPATION
 INCREMENT BY 1 START WITH 1;
 
+
 -- -----------------------------------------------------------------------------
---       INDEX DE LA TABLE OCCUPER
+--       TABLE : ABONNEMENT
 -- -----------------------------------------------------------------------------
 
-CREATE SEQUENCE SEQ_PERSONNE
+CREATE SEQUENCE SEQ_ABONNEMENT
 INCREMENT BY 1 START WITH 1;
 
