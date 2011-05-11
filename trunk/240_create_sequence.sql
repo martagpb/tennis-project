@@ -29,12 +29,6 @@ INCREMENT BY 1 START WITH 1;
 CREATE SEQUENCE SEQ_FACTURE
 INCREMENT BY 1 START WITH 1;
 
--- -----------------------------------------------------------------------------
---       TABLE : CRENEAU
--- -----------------------------------------------------------------------------
-
-CREATE SEQUENCE SEQ_CRENEAU
-INCREMENT BY 1 START WITH 1;
 
 
 -- -----------------------------------------------------------------------------

@@ -12,11 +12,13 @@
  
 
 
+
+
+
 -- ------------------------------------------------------------------------------- 
 --   Table : PERSONNE
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TD_PERSONNE;
 
 -- Trigger de suppression ----------------------------------------------
 create trigger TD_PERSONNE
@@ -37,22 +39,57 @@ begin
           'Impossible de supprimer "PERSONNE". Des occurrences de "ABONNEMENT" existent.');
      end if;
      -- Interdire la suppression d'une occurrence de PERSONNE s'il existe des
-     -- occurrences correspondantes de la table ABONNEMENT.
+     -- occurrences correspondantes de la table S_INSCRIRE.
 
      select count(*) into numrows
-     from ABONNEMENT
+     from S_INSCRIRE
      where
-          ABONNEMENT.NUM_PERSONNE = :old.NUM_PERSONNE;
+          S_INSCRIRE.NUM_PERSONNE = :old.NUM_PERSONNE;
      if (numrows > 0) then
           raise_application_error(
           -20001,
-          'Impossible de supprimer "PERSONNE". Des occurrences de "ABONNEMENT" existent.');
+          'Impossible de supprimer "PERSONNE". Des occurrences de "S_INSCRIRE" existent.');
+     end if;
+     -- Interdire la suppression d'une occurrence de PERSONNE s'il existe des
+     -- occurrences correspondantes de la table ENTRAINEMENT.
+
+     select count(*) into numrows
+     from ENTRAINEMENT
+     where
+          ENTRAINEMENT.NUM_EMPLOYE = :old.NUM_PERSONNE;
+     if (numrows > 0) then
+          raise_application_error(
+          -20001,
+          'Impossible de supprimer "PERSONNE". Des occurrences de "ENTRAINEMENT" existent.');
+     end if;
+     -- Interdire la suppression d'une occurrence de PERSONNE s'il existe des
+     -- occurrences correspondantes de la table ETRE_ASSOCIE.
+
+     select count(*) into numrows
+     from ETRE_ASSOCIE
+     where
+          ETRE_ASSOCIE.NUM_PERSONNE = :old.NUM_PERSONNE;
+     if (numrows > 0) then
+          raise_application_error(
+          -20001,
+          'Impossible de supprimer "PERSONNE". Des occurrences de "ETRE_ASSOCIE" existent.');
+     end if;
+     -- Interdire la suppression d'une occurrence de PERSONNE s'il existe des
+     -- occurrences correspondantes de la table OCCUPATION.
+
+     select count(*) into numrows
+     from OCCUPATION
+     where
+          OCCUPATION.NUM_PERSONNE = :old.NUM_PERSONNE;
+     if (numrows > 0) then
+          raise_application_error(
+          -20001,
+          'Impossible de supprimer "PERSONNE". Des occurrences de "OCCUPATION" existent.');
      end if;
 
 end;
 /
 
-drop trigger TU_PERSONNE;
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_PERSONNE
@@ -60,6 +97,50 @@ after update on PERSONNE for each row
 declare numrows INTEGER;
 begin
 
+     -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
+     -- table PERSONNE s'il n'existe pas d'occurrence correspondante de la 
+     -- table CODIFICATION.
+
+     if
+          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
+     then
+          select count(*) into numrows
+          from CODIFICATION
+          where
+               :new.CODE_STATUT_EMPLOYE = CODIFICATION.CODE and
+               :new.NATURE_STATUT_EMPLOYE = CODIFICATION.NATURE;
+          if 
+               (
+               numrows = 0 
+               )
+          then
+               raise_application_error(
+               -20007,
+               'Impossible de mettre à jour "PERSONNE" car "CODIFICATION" n''existe pas.');
+          end if;
+     end if;
+     -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
+     -- table PERSONNE s'il n'existe pas d'occurrence correspondante de la 
+     -- table CODIFICATION.
+
+     if
+          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
+     then
+          select count(*) into numrows
+          from CODIFICATION
+          where
+               :new.CODE_NIVEAU = CODIFICATION.CODE and
+               :new.NATURE_NIVEAU = CODIFICATION.NATURE;
+          if 
+               (
+               numrows = 0 
+               )
+          then
+               raise_application_error(
+               -20007,
+               'Impossible de mettre à jour "PERSONNE" car "CODIFICATION" n''existe pas.');
+          end if;
+     end if;
      -- Répercuter la modification de la clé primaire de PERSONNE sur les 
      -- occurrences correspondantes de la table ABONNEMENT.
 
@@ -73,21 +154,131 @@ begin
                ABONNEMENT.NUM_PERSONNE = :old.NUM_PERSONNE;
      end if;
      -- Ne pas modifier la clé primaire de la table PERSONNE s'il existe des 
-     -- occurrences correspondantes dans la table ABONNEMENT.
+     -- occurrences correspondantes dans la table S_INSCRIRE.
 
      if
           :old.NUM_PERSONNE <> :new.NUM_PERSONNE
      then
           select count(*) into numrows
-          from ABONNEMENT
+          from S_INSCRIRE
           where
-               ABONNEMENT.NUM_PERSONNE = :old.NUM_PERSONNE;
+               S_INSCRIRE.NUM_PERSONNE = :old.NUM_PERSONNE;
           if (numrows > 0)
           then 
                raise_application_error(
                     -20005,
-                    'Impossible de modifier "PERSONNE" car "ABONNEMENT" existe.');
+                    'Impossible de modifier "PERSONNE" car "S_INSCRIRE" existe.');
           end if;
+     end if;
+     -- Ne pas modifier la clé primaire de la table PERSONNE s'il existe des 
+     -- occurrences correspondantes dans la table ENTRAINEMENT.
+
+     if
+          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
+     then
+          select count(*) into numrows
+          from ENTRAINEMENT
+          where
+               ENTRAINEMENT.NUM_EMPLOYE = :old.NUM_PERSONNE;
+          if (numrows > 0)
+          then 
+               raise_application_error(
+                    -20005,
+                    'Impossible de modifier "PERSONNE" car "ENTRAINEMENT" existe.');
+          end if;
+     end if;
+     -- Ne pas modifier la clé primaire de la table PERSONNE s'il existe des 
+     -- occurrences correspondantes dans la table ETRE_ASSOCIE.
+
+     if
+          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
+     then
+          select count(*) into numrows
+          from ETRE_ASSOCIE
+          where
+               ETRE_ASSOCIE.NUM_PERSONNE = :old.NUM_PERSONNE;
+          if (numrows > 0)
+          then 
+               raise_application_error(
+                    -20005,
+                    'Impossible de modifier "PERSONNE" car "ETRE_ASSOCIE" existe.');
+          end if;
+     end if;
+     -- Ne pas modifier la clé primaire de la table PERSONNE s'il existe des 
+     -- occurrences correspondantes dans la table OCCUPATION.
+
+     if
+          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
+     then
+          select count(*) into numrows
+          from OCCUPATION
+          where
+               OCCUPATION.NUM_PERSONNE = :old.NUM_PERSONNE;
+          if (numrows > 0)
+          then 
+               raise_application_error(
+                    -20005,
+                    'Impossible de modifier "PERSONNE" car "OCCUPATION" existe.');
+          end if;
+     end if;
+
+end;
+/
+
+-- Trigger d'insertion BEFORE----------------------------------------------
+CREATE OR REPLACE TRIGGER TI_PERSONNE_BEFORE
+	BEFORE INSERT ON PERSONNE
+	REFERENCING OLD as OLD NEW as NEW
+	FOR EACH ROW BEGIN
+	IF inserting then 
+		SELECT SEQ_PERSONNE.NEXTVAL
+		INTO :NEW.NUM_PERSONNE
+		FROM DUAL;
+	END IF;
+END;
+/
+
+
+
+-- Trigger d'insertion AFTER----------------------------------------------
+create trigger TI_PERSONNE_AFTER
+after insert on PERSONNE for each row
+declare numrows INTEGER;
+begin
+
+     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de PERSONNE 
+     -- s'il n'existe pas d'occurrence correspondante dans la table CODIFICATION.
+
+     select count(*) into numrows
+     from CODIFICATION
+     where
+          :new.CODE_STATUT_EMPLOYE = CODIFICATION.CODE and
+          :new.NATURE_STATUT_EMPLOYE = CODIFICATION.NATURE;
+     if 
+          (
+          numrows = 0 
+          )
+     then
+          raise_application_error(
+               -20002,
+               'Impossible d''ajouter "PERSONNE" car "CODIFICATION" n''existe pas.');
+     end if;
+     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de PERSONNE 
+     -- s'il n'existe pas d'occurrence correspondante dans la table CODIFICATION.
+
+     select count(*) into numrows
+     from CODIFICATION
+     where
+          :new.CODE_NIVEAU = CODIFICATION.CODE and
+          :new.NATURE_NIVEAU = CODIFICATION.NATURE;
+     if 
+          (
+          numrows = 0 
+          )
+     then
+          raise_application_error(
+               -20002,
+               'Impossible d''ajouter "PERSONNE" car "CODIFICATION" n''existe pas.');
      end if;
 
 end;
@@ -95,11 +286,11 @@ end;
 
 
 
+
 -- ------------------------------------------------------------------------------- 
 --   Table : FACTURE
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TD_FACTURE;
 
 -- Trigger de suppression ----------------------------------------------
 create trigger TD_FACTURE
@@ -123,7 +314,6 @@ begin
 end;
 /
 
-drop trigger TU_FACTURE;
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_FACTURE
@@ -152,13 +342,25 @@ begin
 end;
 /
 
+-- Trigger d'insertion BEFORE----------------------------------------------
+CREATE OR REPLACE TRIGGER TI_FACTURE_BEFORE
+	BEFORE INSERT ON FACTURE
+	REFERENCING OLD as OLD NEW as NEW
+	FOR EACH ROW BEGIN
+	IF inserting then 
+		SELECT SEQ_FACTURE.NEXTVAL
+		INTO :NEW.NUM_FACTURE
+		FROM DUAL;
+	END IF;
+END;
+/
+
 
 
 -- ------------------------------------------------------------------------------- 
 --   Table : CRENEAU
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TD_CRENEAU;
 
 -- Trigger de suppression ----------------------------------------------
 create trigger TD_CRENEAU
@@ -192,7 +394,6 @@ begin
 end;
 /
 
-drop trigger TU_CRENEAU;
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_CRENEAU
@@ -247,11 +448,14 @@ end;
 
 
 
+
+
+
 -- ------------------------------------------------------------------------------- 
 --   Table : TERRAIN
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TD_TERRAIN;
+
 
 -- Trigger de suppression ----------------------------------------------
 create trigger TD_TERRAIN
@@ -278,7 +482,7 @@ begin
 end;
 /
 
-drop trigger TU_TERRAIN;
+
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_TERRAIN
@@ -348,10 +552,10 @@ begin
 end;
 /
 
-drop trigger TI_TERRAIN;
 
--- Trigger d'insertion ----------------------------------------------
-create trigger TI_TERRAIN
+
+-- Trigger d'insertion AFTER----------------------------------------------
+create trigger TI_TERRAIN_AFTER
 after insert on TERRAIN for each row
 declare numrows INTEGER;
 begin
@@ -379,11 +583,14 @@ end;
 
 
 
+
+
+
+
 -- ------------------------------------------------------------------------------- 
 --   Table : ENTRAINEMENT
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TD_ENTRAINEMENT;
 
 -- Trigger de suppression ----------------------------------------------
 create trigger TD_ENTRAINEMENT
@@ -422,7 +629,7 @@ begin
 end;
 /
 
-drop trigger TU_ENTRAINEMENT;
+
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_ENTRAINEMENT
@@ -454,15 +661,15 @@ begin
      end if;
      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
      -- table ENTRAINEMENT s'il n'existe pas d'occurrence correspondante de la 
-     -- table PERSONNE1.
+     -- table PERSONNE.
 
      if
           :old.NUM_ENTRAINEMENT <> :new.NUM_ENTRAINEMENT
      then
           select count(*) into numrows
-          from PERSONNE1
+          from PERSONNE
           where
-               :new.NUM_EMPLOYE = PERSONNE1.NUM_PERSONNE;
+               :new.NUM_EMPLOYE = PERSONNE.NUM_PERSONNE;
           if 
                (
                numrows = 0 
@@ -470,7 +677,7 @@ begin
           then
                raise_application_error(
                -20007,
-               'Impossible de mettre à jour "ENTRAINEMENT" car "PERSONNE1" n''existe pas.');
+               'Impossible de mettre à jour "ENTRAINEMENT" car "PERSONNE" n''existe pas.');
           end if;
      end if;
      -- Répercuter la modification de la clé primaire de ENTRAINEMENT sur les 
@@ -530,10 +737,10 @@ begin
 end;
 /
 
-drop trigger TI_ENTRAINEMENT;
 
--- Trigger d'insertion ----------------------------------------------
-create trigger TI_ENTRAINEMENT
+
+-- Trigger d'insertion AFTER----------------------------------------------
+create trigger TI_ENTRAINEMENT_AFTER
 after insert on ENTRAINEMENT for each row
 declare numrows INTEGER;
 begin
@@ -556,12 +763,12 @@ begin
                'Impossible d''ajouter "ENTRAINEMENT" car "CODIFICATION" n''existe pas.');
      end if;
      -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ENTRAINEMENT 
-     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE1.
+     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE.
 
      select count(*) into numrows
-     from PERSONNE1
+     from PERSONNE
      where
-          :new.NUM_EMPLOYE = PERSONNE1.NUM_PERSONNE;
+          :new.NUM_EMPLOYE = PERSONNE.NUM_PERSONNE;
      if 
           (
           numrows = 0 
@@ -569,10 +776,24 @@ begin
      then
           raise_application_error(
                -20002,
-               'Impossible d''ajouter "ENTRAINEMENT" car "PERSONNE1" n''existe pas.');
+               'Impossible d''ajouter "ENTRAINEMENT" car "PERSONNE" n''existe pas.');
      end if;
 
 end;
+/
+
+
+-- Trigger d'insertion BEFORE----------------------------------------------
+CREATE OR REPLACE TRIGGER TI_ENTRAINEMENT_BEFORE
+	BEFORE INSERT ON ENTRAINEMENT
+	REFERENCING OLD as OLD NEW as NEW
+	FOR EACH ROW BEGIN
+	IF inserting then 
+		SELECT SEQ_ENTRAINEMENT.NEXTVAL
+		INTO :NEW.NUM_ENTRAINEMENT
+		FROM DUAL;
+	END IF;
+END;
 /
 
 
@@ -581,7 +802,7 @@ end;
 --   Table : MENSUALITE
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TU_MENSUALITE;
+
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_MENSUALITE
@@ -604,10 +825,10 @@ begin
 end;
 /
 
-drop trigger TI_MENSUALITE;
 
--- Trigger d'insertion ----------------------------------------------
-create trigger TI_MENSUALITE
+
+-- Trigger d'insertion AFTER----------------------------------------------
+create trigger TI_MENSUALITE_AFTER
 after insert on MENSUALITE for each row
 declare numrows INTEGER;
 begin
@@ -638,7 +859,7 @@ end;
 --   Table : OCCUPATION
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TD_OCCUPATION;
+
 
 -- Trigger de suppression ----------------------------------------------
 create trigger TD_OCCUPATION
@@ -667,7 +888,7 @@ begin
 end;
 /
 
-drop trigger TU_OCCUPATION;
+
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_OCCUPATION
@@ -719,15 +940,15 @@ begin
      end if;
      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
      -- table OCCUPATION s'il n'existe pas d'occurrence correspondante de la 
-     -- table PERSONNE1.
+     -- table PERSONNE.
 
      if
           :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
      then
           select count(*) into numrows
-          from PERSONNE1
+          from PERSONNE
           where
-               :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+               :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
           if 
                (
                numrows = 0 
@@ -735,7 +956,7 @@ begin
           then
                raise_application_error(
                -20007,
-               'Impossible de mettre à jour "OCCUPATION" car "PERSONNE1" n''existe pas.');
+               'Impossible de mettre à jour "OCCUPATION" car "PERSONNE" n''existe pas.');
           end if;
      end if;
      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
@@ -792,10 +1013,10 @@ begin
 end;
 /
 
-drop trigger TI_OCCUPATION;
 
--- Trigger d'insertion ----------------------------------------------
-create trigger TI_OCCUPATION
+
+-- Trigger d'insertion AFTER----------------------------------------------
+create trigger TI_OCCUPATION_AFTER
 after insert on OCCUPATION for each row
 declare numrows INTEGER;
 begin
@@ -833,12 +1054,12 @@ begin
                'Impossible d''ajouter "OCCUPATION" car "CRENEAU" n''existe pas.');
      end if;
      -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de OCCUPATION 
-     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE1.
+     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE.
 
      select count(*) into numrows
-     from PERSONNE1
+     from PERSONNE
      where
-          :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+          :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
      if 
           (
           numrows = 0 
@@ -846,7 +1067,7 @@ begin
      then
           raise_application_error(
                -20002,
-               'Impossible d''ajouter "OCCUPATION" car "PERSONNE1" n''existe pas.');
+               'Impossible d''ajouter "OCCUPATION" car "PERSONNE" n''existe pas.');
      end if;
      -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de OCCUPATION 
      -- s'il n'existe pas d'occurrence correspondante dans la table ENTRAINEMENT.
@@ -869,12 +1090,26 @@ end;
 /
 
 
+-- Trigger d'insertion BEFORE----------------------------------------------
+CREATE OR REPLACE TRIGGER TI_OCCUPATION_BEFORE
+	BEFORE INSERT ON OCCUPATION
+	REFERENCING OLD as OLD NEW as NEW
+	FOR EACH ROW BEGIN
+	IF inserting then 
+		SELECT SEQ_OCCUPATION.NEXTVAL
+		INTO :NEW.NUM_OCCUPATION
+		FROM DUAL;
+	END IF;
+END;
+/
+
+
 
 -- ------------------------------------------------------------------------------- 
 --   Table : ABONNEMENT
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TD_ABONNEMENT;
+
 
 -- Trigger de suppression ----------------------------------------------
 create trigger TD_ABONNEMENT
@@ -898,7 +1133,7 @@ begin
 end;
 /
 
-drop trigger TU_ABONNEMENT;
+
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_ABONNEMENT
@@ -908,15 +1143,15 @@ begin
 
      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
      -- table ABONNEMENT s'il n'existe pas d'occurrence correspondante de la 
-     -- table PERSONNE1.
+     -- table PERSONNE.
 
      if
           :old.NUM_ABONNEMENT <> :new.NUM_ABONNEMENT
      then
           select count(*) into numrows
-          from PERSONNE1
+          from PERSONNE
           where
-               :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+               :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
           if 
                (
                numrows = 0 
@@ -924,20 +1159,20 @@ begin
           then
                raise_application_error(
                -20007,
-               'Impossible de mettre à jour "ABONNEMENT" car "PERSONNE1" n''existe pas.');
+               'Impossible de mettre à jour "ABONNEMENT" car "PERSONNE" n''existe pas.');
           end if;
      end if;
      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
      -- table ABONNEMENT s'il n'existe pas d'occurrence correspondante de la 
-     -- table PERSONNE1.
+     -- table PERSONNE.
 
      if
           :old.NUM_ABONNEMENT <> :new.NUM_ABONNEMENT
      then
           select count(*) into numrows
-          from PERSONNE1
+          from PERSONNE
           where
-               :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+               :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
           if 
                (
                numrows = 0 
@@ -945,7 +1180,7 @@ begin
           then
                raise_application_error(
                -20007,
-               'Impossible de mettre à jour "ABONNEMENT" car "PERSONNE1" n''existe pas.');
+               'Impossible de mettre à jour "ABONNEMENT" car "PERSONNE" n''existe pas.');
           end if;
      end if;
      -- Répercuter la modification de la clé primaire de ABONNEMENT sur les 
@@ -964,21 +1199,21 @@ begin
 end;
 /
 
-drop trigger TI_ABONNEMENT;
 
--- Trigger d'insertion ----------------------------------------------
-create trigger TI_ABONNEMENT
+
+-- Trigger d'insertion AFTER----------------------------------------------
+create trigger TI_ABONNEMENT_AFTER
 after insert on ABONNEMENT for each row
 declare numrows INTEGER;
 begin
 
      -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ABONNEMENT 
-     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE1.
+     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE.
 
      select count(*) into numrows
-     from PERSONNE1
+     from PERSONNE
      where
-          :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+          :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
      if 
           (
           numrows = 0 
@@ -986,15 +1221,15 @@ begin
      then
           raise_application_error(
                -20002,
-               'Impossible d''ajouter "ABONNEMENT" car "PERSONNE1" n''existe pas.');
+               'Impossible d''ajouter "ABONNEMENT" car "PERSONNE" n''existe pas.');
      end if;
      -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ABONNEMENT 
-     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE1.
+     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE.
 
      select count(*) into numrows
-     from PERSONNE1
+     from PERSONNE
      where
-          :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+          :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
      if 
           (
           numrows = 0 
@@ -1002,19 +1237,32 @@ begin
      then
           raise_application_error(
                -20002,
-               'Impossible d''ajouter "ABONNEMENT" car "PERSONNE1" n''existe pas.');
+               'Impossible d''ajouter "ABONNEMENT" car "PERSONNE" n''existe pas.');
      end if;
 
 end;
 /
 
 
+-- Trigger d'insertion BEFORE----------------------------------------------
+CREATE OR REPLACE TRIGGER TI_ABONNEMENT_BEFORE
+	BEFORE INSERT ON ABONNEMENT
+	REFERENCING OLD as OLD NEW as NEW
+	FOR EACH ROW BEGIN
+	IF inserting then 
+		SELECT SEQ_ABONNEMENT.NEXTVAL
+		INTO :NEW.NUM_ABONNEMENT
+		FROM DUAL;
+	END IF;
+END;
+/
+
 
 -- ------------------------------------------------------------------------------- 
 --   Table : ETRE_AFFECTE
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TU_ETRE_AFFECTE;
+
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_ETRE_AFFECTE
@@ -1048,7 +1296,7 @@ begin
 end;
 /
 
-drop trigger TI_ETRE_AFFECTE;
+
 
 -- Trigger d'insertion ----------------------------------------------
 create trigger TI_ETRE_AFFECTE
@@ -1098,7 +1346,6 @@ end;
 --   Table : ETRE_ASSOCIE
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TU_ETRE_ASSOCIE;
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_ETRE_ASSOCIE
@@ -1130,16 +1377,16 @@ begin
      end if;
      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
      -- table ETRE_ASSOCIE s'il n'existe pas d'occurrence correspondante de la 
-     -- table PERSONNE1.
+     -- table PERSONNE.
 
      if
           :old.NUM_PERSONNE <> :new.NUM_PERSONNE or 
           :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
      then
           select count(*) into numrows
-          from PERSONNE1
+          from PERSONNE
           where
-               :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+               :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
           if 
                (
                numrows = 0 
@@ -1147,14 +1394,14 @@ begin
           then
                raise_application_error(
                -20007,
-               'Impossible de mettre à jour "ETRE_ASSOCIE" car "PERSONNE1" n''existe pas.');
+               'Impossible de mettre à jour "ETRE_ASSOCIE" car "PERSONNE" n''existe pas.');
           end if;
      end if;
 
 end;
 /
 
-drop trigger TI_ETRE_ASSOCIE;
+
 
 -- Trigger d'insertion ----------------------------------------------
 create trigger TI_ETRE_ASSOCIE
@@ -1179,12 +1426,12 @@ begin
                'Impossible d''ajouter "ETRE_ASSOCIE" car "OCCUPATION" n''existe pas.');
      end if;
      -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ETRE_ASSOCIE 
-     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE1.
+     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE.
 
      select count(*) into numrows
-     from PERSONNE1
+     from PERSONNE
      where
-          :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+          :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
      if 
           (
           numrows = 0 
@@ -1192,7 +1439,7 @@ begin
      then
           raise_application_error(
                -20002,
-               'Impossible d''ajouter "ETRE_ASSOCIE" car "PERSONNE1" n''existe pas.');
+               'Impossible d''ajouter "ETRE_ASSOCIE" car "PERSONNE" n''existe pas.');
      end if;
 
 end;
@@ -1204,7 +1451,7 @@ end;
 --   Table : S_INSCRIRE
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TU_S_INSCRIRE;
+
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_S_INSCRIRE
@@ -1225,16 +1472,16 @@ begin
      end if;
      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
      -- table S_INSCRIRE s'il n'existe pas d'occurrence correspondante de la 
-     -- table PERSONNE1.
+     -- table PERSONNE.
 
      if
           :old.NUM_ENTRAINEMENT <> :new.NUM_ENTRAINEMENT or 
           :old.NUM_PERSONNE <> :new.NUM_PERSONNE
      then
           select count(*) into numrows
-          from PERSONNE1
+          from PERSONNE
           where
-               :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+               :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
           if 
                (
                numrows = 0 
@@ -1242,14 +1489,13 @@ begin
           then
                raise_application_error(
                -20007,
-               'Impossible de mettre à jour "S_INSCRIRE" car "PERSONNE1" n''existe pas.');
+               'Impossible de mettre à jour "S_INSCRIRE" car "PERSONNE" n''existe pas.');
           end if;
      end if;
 
 end;
 /
 
-drop trigger TI_S_INSCRIRE;
 
 -- Trigger d'insertion ----------------------------------------------
 create trigger TI_S_INSCRIRE
@@ -1274,12 +1520,12 @@ begin
                'Impossible d''ajouter "S_INSCRIRE" car "ENTRAINEMENT" n''existe pas.');
      end if;
      -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de S_INSCRIRE 
-     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE1.
+     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE.
 
      select count(*) into numrows
-     from PERSONNE1
+     from PERSONNE
      where
-          :new.NUM_PERSONNE = PERSONNE1.NUM_PERSONNE;
+          :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
      if 
           (
           numrows = 0 
@@ -1287,7 +1533,7 @@ begin
      then
           raise_application_error(
                -20002,
-               'Impossible d''ajouter "S_INSCRIRE" car "PERSONNE1" n''existe pas.');
+               'Impossible d''ajouter "S_INSCRIRE" car "PERSONNE" n''existe pas.');
      end if;
 
 end;
@@ -1299,7 +1545,6 @@ end;
 --   Table : AVOIR_LIEU
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TU_AVOIR_LIEU;
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_AVOIR_LIEU
@@ -1358,7 +1603,6 @@ begin
 end;
 /
 
-drop trigger TI_AVOIR_LIEU;
 
 -- Trigger d'insertion ----------------------------------------------
 create trigger TI_AVOIR_LIEU
@@ -1424,7 +1668,6 @@ end;
 --   Table : OCCUPER
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TU_OCCUPER;
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_OCCUPER
@@ -1483,7 +1726,6 @@ begin
 end;
 /
 
-drop trigger TI_OCCUPER;
 
 -- Trigger d'insertion ----------------------------------------------
 create trigger TI_OCCUPER
@@ -1543,273 +1785,10 @@ begin
 end;
 /
 
-
-
--- ------------------------------------------------------------------------------- 
---   Table : PERSONNE1
--- ------------------------------------------------------------------------------- 
-
-drop trigger TD_PERSONNE1;
-
--- Trigger de suppression ----------------------------------------------
-create trigger TD_PERSONNE1
-after delete on PERSONNE1 for each row
-declare numrows INTEGER;
-begin
-
-     -- Interdire la suppression d'une occurrence de PERSONNE1 s'il existe des
-     -- occurrences correspondantes de la table ABONNEMENT.
-
-     select count(*) into numrows
-     from ABONNEMENT
-     where
-          ABONNEMENT.NUM_PERSONNE = :old.NUM_PERSONNE;
-     if (numrows > 0) then
-          raise_application_error(
-          -20001,
-          'Impossible de supprimer "PERSONNE1". Des occurrences de "ABONNEMENT" existent.');
-     end if;
-     -- Interdire la suppression d'une occurrence de PERSONNE1 s'il existe des
-     -- occurrences correspondantes de la table S_INSCRIRE.
-
-     select count(*) into numrows
-     from S_INSCRIRE
-     where
-          S_INSCRIRE.NUM_PERSONNE = :old.NUM_PERSONNE;
-     if (numrows > 0) then
-          raise_application_error(
-          -20001,
-          'Impossible de supprimer "PERSONNE1". Des occurrences de "S_INSCRIRE" existent.');
-     end if;
-     -- Interdire la suppression d'une occurrence de PERSONNE1 s'il existe des
-     -- occurrences correspondantes de la table ENTRAINEMENT.
-
-     select count(*) into numrows
-     from ENTRAINEMENT
-     where
-          ENTRAINEMENT.NUM_EMPLOYE = :old.NUM_PERSONNE;
-     if (numrows > 0) then
-          raise_application_error(
-          -20001,
-          'Impossible de supprimer "PERSONNE1". Des occurrences de "ENTRAINEMENT" existent.');
-     end if;
-     -- Interdire la suppression d'une occurrence de PERSONNE1 s'il existe des
-     -- occurrences correspondantes de la table ETRE_ASSOCIE.
-
-     select count(*) into numrows
-     from ETRE_ASSOCIE
-     where
-          ETRE_ASSOCIE.NUM_PERSONNE = :old.NUM_PERSONNE;
-     if (numrows > 0) then
-          raise_application_error(
-          -20001,
-          'Impossible de supprimer "PERSONNE1". Des occurrences de "ETRE_ASSOCIE" existent.');
-     end if;
-     -- Interdire la suppression d'une occurrence de PERSONNE1 s'il existe des
-     -- occurrences correspondantes de la table OCCUPATION.
-
-     select count(*) into numrows
-     from OCCUPATION
-     where
-          OCCUPATION.NUM_PERSONNE = :old.NUM_PERSONNE;
-     if (numrows > 0) then
-          raise_application_error(
-          -20001,
-          'Impossible de supprimer "PERSONNE1". Des occurrences de "OCCUPATION" existent.');
-     end if;
-
-end;
-/
-
-drop trigger TU_PERSONNE1;
-
--- Trigger de modification ----------------------------------------------
-create trigger TU_PERSONNE1
-after update on PERSONNE1 for each row
-declare numrows INTEGER;
-begin
-
-     -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
-     -- table PERSONNE1 s'il n'existe pas d'occurrence correspondante de la 
-     -- table CODIFICATION.
-
-     if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
-     then
-          select count(*) into numrows
-          from CODIFICATION
-          where
-               :new.CODE_STATUT_EMPLOYE = CODIFICATION.CODE and
-               :new.NATURE_STATUT_EMPLOYE = CODIFICATION.NATURE;
-          if 
-               (
-               numrows = 0 
-               )
-          then
-               raise_application_error(
-               -20007,
-               'Impossible de mettre à jour "PERSONNE1" car "CODIFICATION" n''existe pas.');
-          end if;
-     end if;
-     -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
-     -- table PERSONNE1 s'il n'existe pas d'occurrence correspondante de la 
-     -- table CODIFICATION.
-
-     if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
-     then
-          select count(*) into numrows
-          from CODIFICATION
-          where
-               :new.CODE_NIVEAU = CODIFICATION.CODE and
-               :new.NATURE_NIVEAU = CODIFICATION.NATURE;
-          if 
-               (
-               numrows = 0 
-               )
-          then
-               raise_application_error(
-               -20007,
-               'Impossible de mettre à jour "PERSONNE1" car "CODIFICATION" n''existe pas.');
-          end if;
-     end if;
-     -- Répercuter la modification de la clé primaire de PERSONNE1 sur les 
-     -- occurrences correspondantes de la table ABONNEMENT.
-
-     if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
-     then
-          update ABONNEMENT
-          set
-               ABONNEMENT.NUM_PERSONNE = :new.NUM_PERSONNE
-          where
-               ABONNEMENT.NUM_PERSONNE = :old.NUM_PERSONNE;
-     end if;
-     -- Ne pas modifier la clé primaire de la table PERSONNE1 s'il existe des 
-     -- occurrences correspondantes dans la table S_INSCRIRE.
-
-     if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
-     then
-          select count(*) into numrows
-          from S_INSCRIRE
-          where
-               S_INSCRIRE.NUM_PERSONNE = :old.NUM_PERSONNE;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "PERSONNE1" car "S_INSCRIRE" existe.');
-          end if;
-     end if;
-     -- Ne pas modifier la clé primaire de la table PERSONNE1 s'il existe des 
-     -- occurrences correspondantes dans la table ENTRAINEMENT.
-
-     if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
-     then
-          select count(*) into numrows
-          from ENTRAINEMENT
-          where
-               ENTRAINEMENT.NUM_EMPLOYE = :old.NUM_PERSONNE;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "PERSONNE1" car "ENTRAINEMENT" existe.');
-          end if;
-     end if;
-     -- Ne pas modifier la clé primaire de la table PERSONNE1 s'il existe des 
-     -- occurrences correspondantes dans la table ETRE_ASSOCIE.
-
-     if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
-     then
-          select count(*) into numrows
-          from ETRE_ASSOCIE
-          where
-               ETRE_ASSOCIE.NUM_PERSONNE = :old.NUM_PERSONNE;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "PERSONNE1" car "ETRE_ASSOCIE" existe.');
-          end if;
-     end if;
-     -- Ne pas modifier la clé primaire de la table PERSONNE1 s'il existe des 
-     -- occurrences correspondantes dans la table OCCUPATION.
-
-     if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
-     then
-          select count(*) into numrows
-          from OCCUPATION
-          where
-               OCCUPATION.NUM_PERSONNE = :old.NUM_PERSONNE;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "PERSONNE1" car "OCCUPATION" existe.');
-          end if;
-     end if;
-
-end;
-/
-
-drop trigger TI_PERSONNE1;
-
--- Trigger d'insertion ----------------------------------------------
-create trigger TI_PERSONNE1
-after insert on PERSONNE1 for each row
-declare numrows INTEGER;
-begin
-
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de PERSONNE1 
-     -- s'il n'existe pas d'occurrence correspondante dans la table CODIFICATION.
-
-     select count(*) into numrows
-     from CODIFICATION
-     where
-          :new.CODE_STATUT_EMPLOYE = CODIFICATION.CODE and
-          :new.NATURE_STATUT_EMPLOYE = CODIFICATION.NATURE;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "PERSONNE1" car "CODIFICATION" n''existe pas.');
-     end if;
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de PERSONNE1 
-     -- s'il n'existe pas d'occurrence correspondante dans la table CODIFICATION.
-
-     select count(*) into numrows
-     from CODIFICATION
-     where
-          :new.CODE_NIVEAU = CODIFICATION.CODE and
-          :new.NATURE_NIVEAU = CODIFICATION.NATURE;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "PERSONNE1" car "CODIFICATION" n''existe pas.');
-     end if;
-
-end;
-/
-
-
-
 -- ------------------------------------------------------------------------------- 
 --   Table : CODIFICATION
 -- ------------------------------------------------------------------------------- 
 
-drop trigger TD_CODIFICATION;
 
 -- Trigger de suppression ----------------------------------------------
 create trigger TD_CODIFICATION
@@ -1831,30 +1810,30 @@ begin
           'Impossible de supprimer "CODIFICATION". Des occurrences de "TERRAIN" existent.');
      end if;
      -- Interdire la suppression d'une occurrence de CODIFICATION s'il existe des
-     -- occurrences correspondantes de la table PERSONNE1.
+     -- occurrences correspondantes de la table PERSONNE.
 
      select count(*) into numrows
-     from PERSONNE1
+     from PERSONNE
      where
-          PERSONNE1.CODE_STATUT_EMPLOYE = :old.CODE and
-          PERSONNE1.NATURE_STATUT_EMPLOYE = :old.NATURE;
+          PERSONNE.CODE_STATUT_EMPLOYE = :old.CODE and
+          PERSONNE.NATURE_STATUT_EMPLOYE = :old.NATURE;
      if (numrows > 0) then
           raise_application_error(
           -20001,
-          'Impossible de supprimer "CODIFICATION". Des occurrences de "PERSONNE1" existent.');
+          'Impossible de supprimer "CODIFICATION". Des occurrences de "PERSONNE" existent.');
      end if;
      -- Interdire la suppression d'une occurrence de CODIFICATION s'il existe des
-     -- occurrences correspondantes de la table PERSONNE1.
+     -- occurrences correspondantes de la table PERSONNE.
 
      select count(*) into numrows
-     from PERSONNE1
+     from PERSONNE
      where
-          PERSONNE1.CODE_NIVEAU = :old.CODE and
-          PERSONNE1.NATURE_NIVEAU = :old.NATURE;
+          PERSONNE.CODE_NIVEAU = :old.CODE and
+          PERSONNE.NATURE_NIVEAU = :old.NATURE;
      if (numrows > 0) then
           raise_application_error(
           -20001,
-          'Impossible de supprimer "CODIFICATION". Des occurrences de "PERSONNE1" existent.');
+          'Impossible de supprimer "CODIFICATION". Des occurrences de "PERSONNE" existent.');
      end if;
      -- Interdire la suppression d'une occurrence de CODIFICATION s'il existe des
      -- occurrences correspondantes de la table ENTRAINEMENT.
@@ -1873,7 +1852,6 @@ begin
 end;
 /
 
-drop trigger TU_CODIFICATION;
 
 -- Trigger de modification ----------------------------------------------
 create trigger TU_CODIFICATION
@@ -1901,41 +1879,41 @@ begin
           end if;
      end if;
      -- Ne pas modifier la clé primaire de la table CODIFICATION s'il existe des 
-     -- occurrences correspondantes dans la table PERSONNE1.
+     -- occurrences correspondantes dans la table PERSONNE.
 
      if
           :old.CODE <> :new.CODE or 
           :old.NATURE <> :new.NATURE
      then
           select count(*) into numrows
-          from PERSONNE1
+          from PERSONNE
           where
-               PERSONNE1.CODE_STATUT_EMPLOYE = :old.CODE and
-               PERSONNE1.NATURE_STATUT_EMPLOYE = :old.NATURE;
+               PERSONNE.CODE_STATUT_EMPLOYE = :old.CODE and
+               PERSONNE.NATURE_STATUT_EMPLOYE = :old.NATURE;
           if (numrows > 0)
           then 
                raise_application_error(
                     -20005,
-                    'Impossible de modifier "CODIFICATION" car "PERSONNE1" existe.');
+                    'Impossible de modifier "CODIFICATION" car "PERSONNE" existe.');
           end if;
      end if;
      -- Ne pas modifier la clé primaire de la table CODIFICATION s'il existe des 
-     -- occurrences correspondantes dans la table PERSONNE1.
+     -- occurrences correspondantes dans la table PERSONNE.
 
      if
           :old.CODE <> :new.CODE or 
           :old.NATURE <> :new.NATURE
      then
           select count(*) into numrows
-          from PERSONNE1
+          from PERSONNE
           where
-               PERSONNE1.CODE_NIVEAU = :old.CODE and
-               PERSONNE1.NATURE_NIVEAU = :old.NATURE;
+               PERSONNE.CODE_NIVEAU = :old.CODE and
+               PERSONNE.NATURE_NIVEAU = :old.NATURE;
           if (numrows > 0)
           then 
                raise_application_error(
                     -20005,
-                    'Impossible de modifier "CODIFICATION" car "PERSONNE1" existe.');
+                    'Impossible de modifier "CODIFICATION" car "PERSONNE" existe.');
           end if;
      end if;
      -- Ne pas modifier la clé primaire de la table CODIFICATION s'il existe des 
@@ -1961,5 +1939,20 @@ begin
 end;
 /
 
+
+
+
+-- Trigger d'insertion BEFOR----------------------------------------------
+CREATE TRIGGER TI_CODIFICATION_BEFORE BEFORE INSERT
+ ON CODIFICATION 
+ referencing OLD as OLD NEW as NEW
+ FOR EACH ROW
+ BEGIN
+	DECLARE IdIncremente int;
+	IF (:NEW.CODE IS NULL) THEN
+		SET IdIncremente = (SELECT MAX(CODE)+1 FROM CODIFICATION WHERE NATURE = :NEW.NATURE) ;
+		SET :NEW.CODE = IdIncremente ;
+	END IF;
+ END;
 
 
