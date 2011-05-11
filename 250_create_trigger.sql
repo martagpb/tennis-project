@@ -1942,17 +1942,3 @@ end;
 
 
 
--- Trigger d'insertion BEFOR----------------------------------------------
-CREATE OR REPLACE TRIGGER TI_CODIFICATION_BEFORE BEFORE INSERT
- ON CODIFICATION 
- referencing OLD as OLD NEW as NEW
- FOR EACH ROW
- BEGIN
-	DECLARE IdIncremente int;
-	IF (:NEW.CODE IS NULL) THEN
-		SET IdIncremente = (SELECT MAX(CODE)+1 FROM CODIFICATION WHERE NATURE = :NEW.NATURE) ;
-		SET :NEW.CODE = IdIncremente ;
-	END IF;
- END;
-
-
