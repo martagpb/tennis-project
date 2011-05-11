@@ -21,7 +21,7 @@
 
 
 -- Trigger de suppression ----------------------------------------------
-create trigger TD_PERSONNE
+CREATE OR REPLACE trigger TD_PERSONNE
 after delete on PERSONNE for each row
 declare numrows INTEGER;
 begin
@@ -92,7 +92,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_PERSONNE
+CREATE OR REPLACE trigger TU_PERSONNE
 after update on PERSONNE for each row
 declare numrows INTEGER;
 begin
@@ -241,7 +241,7 @@ END;
 
 
 -- Trigger d'insertion AFTER----------------------------------------------
-create trigger TI_PERSONNE_AFTER
+CREATE OR REPLACE trigger TI_PERSONNE_AFTER
 after insert on PERSONNE for each row
 declare numrows INTEGER;
 begin
@@ -293,7 +293,7 @@ end;
 
 
 -- Trigger de suppression ----------------------------------------------
-create trigger TD_FACTURE
+CREATE OR REPLACE trigger TD_FACTURE
 after delete on FACTURE for each row
 declare numrows INTEGER;
 begin
@@ -316,7 +316,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_FACTURE
+CREATE OR REPLACE trigger TU_FACTURE
 after update on FACTURE for each row
 declare numrows INTEGER;
 begin
@@ -363,7 +363,7 @@ END;
 
 
 -- Trigger de suppression ----------------------------------------------
-create trigger TD_CRENEAU
+CREATE OR REPLACE trigger TD_CRENEAU
 after delete on CRENEAU for each row
 declare numrows INTEGER;
 begin
@@ -396,7 +396,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_CRENEAU
+CREATE OR REPLACE trigger TU_CRENEAU
 after update on CRENEAU for each row
 declare numrows INTEGER;
 begin
@@ -458,7 +458,7 @@ end;
 
 
 -- Trigger de suppression ----------------------------------------------
-create trigger TD_TERRAIN
+CREATE OR REPLACE trigger TD_TERRAIN
 after delete on TERRAIN for each row
 declare numrows INTEGER;
 begin
@@ -485,7 +485,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_TERRAIN
+CREATE OR REPLACE trigger TU_TERRAIN
 after update on TERRAIN for each row
 declare numrows INTEGER;
 begin
@@ -555,7 +555,7 @@ end;
 
 
 -- Trigger d'insertion AFTER----------------------------------------------
-create trigger TI_TERRAIN_AFTER
+CREATE OR REPLACE trigger TI_TERRAIN_AFTER
 after insert on TERRAIN for each row
 declare numrows INTEGER;
 begin
@@ -593,7 +593,7 @@ end;
 
 
 -- Trigger de suppression ----------------------------------------------
-create trigger TD_ENTRAINEMENT
+CREATE OR REPLACE trigger TD_ENTRAINEMENT
 after delete on ENTRAINEMENT for each row
 declare numrows INTEGER;
 begin
@@ -632,7 +632,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_ENTRAINEMENT
+CREATE OR REPLACE trigger TU_ENTRAINEMENT
 after update on ENTRAINEMENT for each row
 declare numrows INTEGER;
 begin
@@ -740,7 +740,7 @@ end;
 
 
 -- Trigger d'insertion AFTER----------------------------------------------
-create trigger TI_ENTRAINEMENT_AFTER
+CREATE OR REPLACE trigger TI_ENTRAINEMENT_AFTER
 after insert on ENTRAINEMENT for each row
 declare numrows INTEGER;
 begin
@@ -805,7 +805,7 @@ END;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_MENSUALITE
+CREATE OR REPLACE trigger TU_MENSUALITE
 after update on MENSUALITE for each row
 declare numrows INTEGER;
 begin
@@ -828,7 +828,7 @@ end;
 
 
 -- Trigger d'insertion AFTER----------------------------------------------
-create trigger TI_MENSUALITE_AFTER
+CREATE OR REPLACE trigger TI_MENSUALITE_AFTER
 after insert on MENSUALITE for each row
 declare numrows INTEGER;
 begin
@@ -862,7 +862,7 @@ end;
 
 
 -- Trigger de suppression ----------------------------------------------
-create trigger TD_OCCUPATION
+CREATE OR REPLACE trigger TD_OCCUPATION
 after delete on OCCUPATION for each row
 declare numrows INTEGER;
 begin
@@ -891,7 +891,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_OCCUPATION
+CREATE OR REPLACE trigger TU_OCCUPATION
 after update on OCCUPATION for each row
 declare numrows INTEGER;
 begin
@@ -1016,7 +1016,7 @@ end;
 
 
 -- Trigger d'insertion AFTER----------------------------------------------
-create trigger TI_OCCUPATION_AFTER
+CREATE OR REPLACE trigger TI_OCCUPATION_AFTER
 after insert on OCCUPATION for each row
 declare numrows INTEGER;
 begin
@@ -1112,7 +1112,7 @@ END;
 
 
 -- Trigger de suppression ----------------------------------------------
-create trigger TD_ABONNEMENT
+CREATE OR REPLACE trigger TD_ABONNEMENT
 after delete on ABONNEMENT for each row
 declare numrows INTEGER;
 begin
@@ -1136,7 +1136,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_ABONNEMENT
+CREATE OR REPLACE trigger TU_ABONNEMENT
 after update on ABONNEMENT for each row
 declare numrows INTEGER;
 begin
@@ -1202,7 +1202,7 @@ end;
 
 
 -- Trigger d'insertion AFTER----------------------------------------------
-create trigger TI_ABONNEMENT_AFTER
+CREATE OR REPLACE trigger TI_ABONNEMENT_AFTER
 after insert on ABONNEMENT for each row
 declare numrows INTEGER;
 begin
@@ -1265,7 +1265,7 @@ END;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_ETRE_AFFECTE
+CREATE OR REPLACE trigger TU_ETRE_AFFECTE
 after update on ETRE_AFFECTE for each row
 declare numrows INTEGER;
 begin
@@ -1299,7 +1299,7 @@ end;
 
 
 -- Trigger d'insertion ----------------------------------------------
-create trigger TI_ETRE_AFFECTE
+CREATE OR REPLACE trigger TI_ETRE_AFFECTE
 after insert on ETRE_AFFECTE for each row
 declare numrows INTEGER;
 begin
@@ -1348,7 +1348,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_ETRE_ASSOCIE
+CREATE OR REPLACE trigger TU_ETRE_ASSOCIE
 after update on ETRE_ASSOCIE for each row
 declare numrows INTEGER;
 begin
@@ -1404,7 +1404,7 @@ end;
 
 
 -- Trigger d'insertion ----------------------------------------------
-create trigger TI_ETRE_ASSOCIE
+CREATE OR REPLACE trigger TI_ETRE_ASSOCIE
 after insert on ETRE_ASSOCIE for each row
 declare numrows INTEGER;
 begin
@@ -1454,7 +1454,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_S_INSCRIRE
+CREATE OR REPLACE trigger TU_S_INSCRIRE
 after update on S_INSCRIRE for each row
 declare numrows INTEGER;
 begin
@@ -1498,7 +1498,7 @@ end;
 
 
 -- Trigger d'insertion ----------------------------------------------
-create trigger TI_S_INSCRIRE
+CREATE OR REPLACE trigger TI_S_INSCRIRE
 after insert on S_INSCRIRE for each row
 declare numrows INTEGER;
 begin
@@ -1547,7 +1547,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_AVOIR_LIEU
+CREATE OR REPLACE trigger TU_AVOIR_LIEU
 after update on AVOIR_LIEU for each row
 declare numrows INTEGER;
 begin
@@ -1605,7 +1605,7 @@ end;
 
 
 -- Trigger d'insertion ----------------------------------------------
-create trigger TI_AVOIR_LIEU
+CREATE OR REPLACE trigger TI_AVOIR_LIEU
 after insert on AVOIR_LIEU for each row
 declare numrows INTEGER;
 begin
@@ -1670,7 +1670,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_OCCUPER
+CREATE OR REPLACE trigger TU_OCCUPER
 after update on OCCUPER for each row
 declare numrows INTEGER;
 begin
@@ -1728,7 +1728,7 @@ end;
 
 
 -- Trigger d'insertion ----------------------------------------------
-create trigger TI_OCCUPER
+CREATE OR REPLACE trigger TI_OCCUPER
 after insert on OCCUPER for each row
 declare numrows INTEGER;
 begin
@@ -1791,7 +1791,7 @@ end;
 
 
 -- Trigger de suppression ----------------------------------------------
-create trigger TD_CODIFICATION
+CREATE OR REPLACE trigger TD_CODIFICATION
 after delete on CODIFICATION for each row
 declare numrows INTEGER;
 begin
@@ -1854,7 +1854,7 @@ end;
 
 
 -- Trigger de modification ----------------------------------------------
-create trigger TU_CODIFICATION
+CREATE OR REPLACE trigger TU_CODIFICATION
 after update on CODIFICATION for each row
 declare numrows INTEGER;
 begin
@@ -1943,7 +1943,7 @@ end;
 
 
 -- Trigger d'insertion BEFOR----------------------------------------------
-CREATE TRIGGER TI_CODIFICATION_BEFORE BEFORE INSERT
+CREATE OR REPLACE TRIGGER TI_CODIFICATION_BEFORE BEFORE INSERT
  ON CODIFICATION 
  referencing OLD as OLD NEW as NEW
  FOR EACH ROW
