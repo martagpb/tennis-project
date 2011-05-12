@@ -1,4 +1,4 @@
-    -- -----------------------------------------------------------------------------
+x    -- -----------------------------------------------------------------------------
 --            Génération des tables de la base de données pour
 --                      Oracle Version 10g
 --                        (10/5/2011)
@@ -52,8 +52,9 @@ CREATE TABLE FACTURE
 
 CREATE TABLE CRENEAU
    (
-    HEURE_DEBUT_CRENEAU DATE  NOT NULL,
-    HEURE_FIN_CRENEAU DATE  NOT NULL
+    HEURE_DEBUT_CRENEAU CHAR(5)  NOT NULL,
+    HEURE_FIN_CRENEAU CHAR(5)  NOT NULL
+,   CONSTRAINT PK_CRENEAU PRIMARY KEY (HEURE_DEBUT_CRENEAU)  
    ) ;
 
 -- -----------------------------------------------------------------------------
@@ -113,7 +114,7 @@ CREATE TABLE OCCUPATION
     NUM_ENTRAINEMENT NUMBER(5)  NOT NULL,
     NUM_FACTURE NUMBER(5)  NOT NULL,
     NUM_PERSONNE NUMBER(5)  NOT NULL,
-    HEURE_DEBUT_CRENEAU DATE  NOT NULL,
+	HEURE_DEBUT_CRENEAU CHAR(5)  NOT NULL,
     NUM_SEANCE NUMBER(3)  NULL,
     DATE_RESERVATION_OCCUPATION DATE  NULL 
    ) ;
@@ -177,7 +178,7 @@ CREATE TABLE S_INSCRIRE
 
 CREATE TABLE AVOIR_LIEU
    (
-    HEURE_DEBUT_CRENEAU DATE  NOT NULL,
+    HEURE_DEBUT_CRENEAU CHAR(5)  NOT NULL,
     NUM_TERRAIN NUMBER(2)  NOT NULL,
     NUM_JOUR NUMBER(1)  NOT NULL,
     NUM_ENTRAINEMENT NUMBER(5)  NOT NULL
@@ -191,7 +192,7 @@ CREATE TABLE AVOIR_LIEU
 
 CREATE TABLE OCCUPER
    (
-    HEURE_DEBUT_CRENEAU DATE  NOT NULL,
+	HEURE_DEBUT_CRENEAU CHAR(5)  NOT NULL,
     NUM_TERRAIN NUMBER(2)  NOT NULL,
     DATE_OCCUPATION DATE  NOT NULL,
     NUM_OCCUPATION NUMBER(5)  NOT NULL
