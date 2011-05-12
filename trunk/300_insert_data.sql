@@ -16,47 +16,47 @@
 
 --Début des codifications des terrains de la table TERRAIN
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('DURRA','Rebound Ace','Rebound Ace est une surface dure et rapide.');
+VALUES('DURRA','Surface','Rebound Ace');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('DURDE','Decoturf','Decoturf est une surface dure et rapide.');
+VALUES('DURDE','Surface','Decoturf');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('DURBE','Béton','Le béton est une surface dure et rapide.');
+VALUES('DURBE','Surface','Béton');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('DURQU','Quick','Quick est une surface dure et rapide.');
+VALUES('DURQU','v','Quick');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('TERBA','Terre battue','La terre battue est une surface lente.');
+VALUES('TERBA','Surface','Terre battue');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('GAZON','Gazon','Le Gazon est une surface ultra-rapide.');
+VALUES('GAZON','Surface','Gazon');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('SYNMO','Moquette','Surface synthétique très rapide.');
+VALUES('SYNMO','Surface','Moquette');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('SYNGE','Gerflor','Surface synthétique très rapide.');
+VALUES('SYNGE','Surface','Gerflor');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('SYNTA','Taraflex','Surface synthétique très rapide.');
+VALUES('SYNTA','Surface','Taraflex');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('SYNGR','Greenset','Surface synthétique très rapide.');
+VALUES('SYNGR','Surface','Greenset');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('SYNPA','Parquet','Surface synthétique rarement utilisé.');
+VALUES('SYNPA','Surface','Parquet');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('GAZSY','Basic turf','Gazon synthétique plus rapide que la terre battue.');
+VALUES('GAZSY','Surface','Basic turf');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('GAZSY','Olympus','Gazon synthétique plus rapide que la terre battue.');
+VALUES('GAZSY','Surface','Olympus');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('GAZSY','Melcbourne','Gazon synthétique plus rapide que la terre battue.');
+VALUES('GAZSY','Surface','Melcbourne');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('TERBS','Terre battue synthé.','Surface lente et jeu similaire la terre battue.');
+VALUES('TERBS','Surface','Terre battue synthé.');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ACRYL','Acrylique','Résine pigmentée. Type de surface de l''US Open.');
+VALUES('ACRYL','Surface','Acrylique');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ASPHA','Asphalte','Type de surface de Roland Garros.');
+VALUES('ASPHA','Surface','Asphalte');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('GAZSY','Gazon synthétique','Surface synthétique à l''apparence du gazon.');
+VALUES('GAZSY','Surface','Gazon synthétique');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('AUTBO','bois','La surface en bois est très rarement utilisée.');
+VALUES('AUTBO','Surface','Bois');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('AUTTB','Toile sur bois','Surface en toile sur bois très rarement utilisée.');
+VALUES('AUTTB','Surface','Toile sur bois');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('AUTTM','Tuiles modulables','Surface très rarement utilisée.');
+VALUES('AUTTM','Surface','Tuiles modulables');
 --Fin des codifications des terrains de la table TERRAIN
 
 --Début des codifications des niveaux pour les tables PERSONNE et ENTRAINEMENT
@@ -116,21 +116,21 @@ VALUES('1erSe','Classement','Echelon de 1ère série. Capital de 840 points.');
 
 --Début des codifications des statuts pour la table PERSONNE
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ROLE','Utilisateur','Englobe la plupart des utilisateurs du système.');
+VALUES('U','ROLE','','Utilisateur','');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ROLE','Joueur','Personne physique inscrite au club.');
+VALUES('J','ROLE','Joueur');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ROLE','Visiteur','Paye à chaque réservation. Aucun abonnement.');
+VALUES('V','ROLE','Visiteur');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ROLE','Adhérent','Paye un abonnement. Réservations gratuites.');
+VALUES('AD','ROLE','Adhérent');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ROLE','Employé','Personne salariée du club.');
+VALUES('EMP','ROLE','Employé');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ROLE','Entraineur','Dispense des entrainements aux adhérents.');
+VALUES('ENT','ROLE','Entraineur');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ROLE','Agent d''accueil','Présent dans les bureaux du club.');
+VALUES('AG','ROLE','Agent d''accueil');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('ROLE','Administrateur','Dispose de tous les droits sur le système.');
+VALUES('ADMIN','ROLE','Administrateur');
 --Fin des codifications des statuts pour la table PERSONNE
 
 -- -----------------------------------------------------------------------------
@@ -174,7 +174,7 @@ VALUES(17,'ASPHA','Asphalte',0);
 INSERT INTO TERRAIN(NUM_TERRAIN,CODE_SURFACE,NATURE,ACTIF)
 VALUES(18,'GAZSY','Gazon synthétique',0);
 INSERT INTO TERRAIN(NUM_TERRAIN,CODE_SURFACE,NATURE,ACTIF)
-VALUES(19,'AUTBO','bois',0);
+VALUES(19,'AUTBO','Bois',0);
 INSERT INTO TERRAIN(NUM_TERRAIN,CODE_SURFACE,NATURE,ACTIF)
 VALUES(20,'AUTTB','Toile sur bois',0);
 INSERT INTO TERRAIN(NUM_TERRAIN,CODE_SURFACE,NATURE,ACTIF)
