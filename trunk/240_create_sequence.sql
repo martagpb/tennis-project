@@ -8,12 +8,6 @@
 --      Auteur : Gonzalves / Invernizzi / Joly / Leviste
 --      Date de dernière modification : 11/5/2011
 -- -----------------------------------------------------------------------------
- 
- 
- 
-
-
-
 
 -- -----------------------------------------------------------------------------
 --       TABLE : PERSONNE
@@ -44,14 +38,6 @@ INCREMENT BY 1 START WITH 1;
 -- -----------------------------------------------------------------------------
 
 CREATE SEQUENCE SEQ_ENTRAINEMENT
-INCREMENT BY 1 START WITH 1;
-
-
--- -----------------------------------------------------------------------------
---       TABLE : OCCUPATION
--- -----------------------------------------------------------------------------
-
-CREATE SEQUENCE SEQ_OCCUPATION
 INCREMENT BY 1 START WITH 1;
 
 

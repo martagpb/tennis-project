@@ -32,8 +32,7 @@ ADD CONSTRAINT PK_FACTURE PRIMARY KEY (NUM_FACTURE) ;
 
 ALTER TABLE CRENEAU
 ADD CONSTRAINT PK_CRENEAU PRIMARY KEY (HEURE_DEBUT_CRENEAU)  ;
-
-
+ 
 -- -----------------------------------------------------------------------------
 --       TABLE : TERRAIN
 -- -----------------------------------------------------------------------------
@@ -59,15 +58,7 @@ ALTER TABLE MENSUALITE
 ADD CONSTRAINT PK_MENSUALITE PRIMARY KEY (NUM_ABONNEMENT, ANNEE_MOIS_MENSUALITE) ; 
 
 
--- -----------------------------------------------------------------------------
---       TABLE : OCCUPATION
--- -----------------------------------------------------------------------------
-
-ALTER TABLE OCCUPATION
-ADD CONSTRAINT PK_OCCUPATION PRIMARY KEY (NUM_OCCUPATION) ;
-
-
--- -----------------------------------------------------------------------------
+--- -----------------------------------------------------------------------------
 --       TABLE : ABONNEMENT
 -- -----------------------------------------------------------------------------
 
@@ -89,8 +80,6 @@ ADD CONSTRAINT PK_AVOIR_LIEU PRIMARY KEY (NUM_JOUR, HEURE_DEBUT_CRENEAU, NUM_TER
 
 ALTER TABLE  OCCUPER
 ADD CONSTRAINT PK_OCCUPER PRIMARY KEY (HEURE_DEBUT_CRENEAU, NUM_TERRAIN, DATE_OCCUPATION);    
-
-
 
 -- -----------------------------------------------------------------------------
 --       TABLE : CODIFICATION
