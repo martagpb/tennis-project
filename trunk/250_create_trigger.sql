@@ -50,6 +50,7 @@ begin
           -20001,
           'Impossible de supprimer "PERSONNE". Des occurrences de "S_INSCRIRE" existent.');
      end if;
+	 
      -- Interdire la suppression d'une occurrence de PERSONNE s'il existe des
      -- occurrences correspondantes de la table ENTRAINEMENT.
 
@@ -74,17 +75,18 @@ begin
           -20001,
           'Impossible de supprimer "PERSONNE". Des occurrences de "ETRE_ASSOCIE" existent.');
      end if;
+	 
      -- Interdire la suppression d'une occurrence de PERSONNE s'il existe des
-     -- occurrences correspondantes de la table OCCUPATION.
+     -- occurrences correspondantes de la table OCCUPER.
 
      select count(*) into numrows
-     from OCCUPATION
+     from OCCUPER
      where
-          OCCUPATION.NUM_PERSONNE = :old.NUM_PERSONNE;
+          OCCUPER.NUM_JOUEUR = :old.NUM_PERSONNE;
      if (numrows > 0) then
           raise_application_error(
           -20001,
-          'Impossible de supprimer "PERSONNE". Des occurrences de "OCCUPATION" existent.');
+          'Impossible de supprimer "PERSONNE". Des occurrences de "OCCUPER" existent.');
      end if;
 
 end;
@@ -102,7 +104,8 @@ begin
      -- table CODIFICATION.
 
      if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
+		  :old.CODE_STATUT_EMPLOYE <> :new.CODE_STATUT_EMPLOYE and
+		  :old.NATURE_STATUT_EMPLOYE <> :new.NATURE_STATUT_EMPLOYE
      then
           select count(*) into numrows
           from CODIFICATION
@@ -124,7 +127,8 @@ begin
      -- table CODIFICATION.
 
      if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
+          :old.CODE_NIVEAU <> :new.CODE_NIVEAU and
+		  :old.NATURE_NIVEAU <> :new.NATURE_NIVEAU
      then
           select count(*) into numrows
           from CODIFICATION
@@ -141,6 +145,7 @@ begin
                'Impossible de mettre à jour "PERSONNE" car "CODIFICATION" n''existe pas.');
           end if;
      end if;
+	 
      -- Répercuter la modification de la clé primaire de PERSONNE sur les 
      -- occurrences correspondantes de la table ABONNEMENT.
 
@@ -153,75 +158,60 @@ begin
           where
                ABONNEMENT.NUM_JOUEUR = :old.NUM_PERSONNE;
      end if;
-     -- Ne pas modifier la clé primaire de la table PERSONNE s'il existe des 
-     -- occurrences correspondantes dans la table S_INSCRIRE.
+	 
+     -- Répercuter la modification de la clé primaire de PERSONNE sur les 
+     -- occurrences correspondantes de la table S_INSCRIRE.
 
      if
           :old.NUM_PERSONNE <> :new.NUM_PERSONNE
      then
-          select count(*) into numrows
-          from S_INSCRIRE
+		  update S_INSCRIRE
+          set
+               S_INSCRIRE.NUM_PERSONNE = :new.NUM_PERSONNE
           where
                S_INSCRIRE.NUM_PERSONNE = :old.NUM_PERSONNE;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "PERSONNE" car "S_INSCRIRE" existe.');
-          end if;
      end if;
-     -- Ne pas modifier la clé primaire de la table PERSONNE s'il existe des 
-     -- occurrences correspondantes dans la table ENTRAINEMENT.
+	 
+	 -- Répercuter la modification de la clé primaire de PERSONNE sur les 
+     -- occurrences correspondantes de la table ENTRAINEMENT.
 
      if
           :old.NUM_PERSONNE <> :new.NUM_PERSONNE
      then
-          select count(*) into numrows
-          from ENTRAINEMENT
+		  update ENTRAINEMENT
+          set
+               ENTRAINEMENT.NUM_ENTRAINEUR = :new.NUM_PERSONNE
           where
                ENTRAINEMENT.NUM_ENTRAINEUR = :old.NUM_PERSONNE;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "PERSONNE" car "ENTRAINEMENT" existe.');
-          end if;
      end if;
-     -- Ne pas modifier la clé primaire de la table PERSONNE s'il existe des 
-     -- occurrences correspondantes dans la table ETRE_ASSOCIE.
+	 
+
+	 -- Répercuter la modification de la clé primaire de PERSONNE sur les 
+     -- occurrences correspondantes de la table ETRE_ASSOCIE.
 
      if
           :old.NUM_PERSONNE <> :new.NUM_PERSONNE
      then
-          select count(*) into numrows
-          from ETRE_ASSOCIE
+		  update ETRE_ASSOCIE
+          set
+               ETRE_ASSOCIE.NUM_PERSONNE = :new.NUM_PERSONNE
           where
                ETRE_ASSOCIE.NUM_PERSONNE = :old.NUM_PERSONNE;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "PERSONNE" car "ETRE_ASSOCIE" existe.');
-          end if;
      end if;
-     -- Ne pas modifier la clé primaire de la table PERSONNE s'il existe des 
-     -- occurrences correspondantes dans la table OCCUPATION.
+
+	 -- Répercuter la modification de la clé primaire de PERSONNE sur les 
+     -- occurrences correspondantes de la table OCCUPER.
 
      if
           :old.NUM_PERSONNE <> :new.NUM_PERSONNE
      then
-          select count(*) into numrows
-          from OCCUPATION
+		  update OCCUPER
+          set
+               OCCUPER.NUM_JOUEUR = :new.NUM_PERSONNE
           where
-               OCCUPATION.NUM_PERSONNE = :old.NUM_PERSONNE;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "PERSONNE" car "OCCUPATION" existe.');
-          end if;
+               OCCUPER.NUM_JOUEUR = :old.NUM_PERSONNE;
      end if;
-
+	
 end;
 /
 
@@ -299,16 +289,16 @@ declare numrows INTEGER;
 begin
 
      -- Interdire la suppression d'une occurrence de FACTURE s'il existe des
-     -- occurrences correspondantes de la table OCCUPATION.
+     -- occurrences correspondantes de la table OCCUPER.
 
      select count(*) into numrows
-     from OCCUPATION
+     from OCCUPER
      where
-          OCCUPATION.NUM_FACTURE = :old.NUM_FACTURE;
+          OCCUPER.NUM_FACTURE = :old.NUM_FACTURE;
      if (numrows > 0) then
           raise_application_error(
           -20001,
-          'Impossible de supprimer "FACTURE". Des occurrences de "OCCUPATION" existent.');
+          'Impossible de supprimer "FACTURE". Des occurrences de "OCCUPER" existent.');
      end if;
 
 end;
@@ -322,20 +312,20 @@ declare numrows INTEGER;
 begin
 
      -- Ne pas modifier la clé primaire de la table FACTURE s'il existe des 
-     -- occurrences correspondantes dans la table OCCUPATION.
+     -- occurrences correspondantes dans la table OCCUPER.
 
      if
           :old.NUM_FACTURE <> :new.NUM_FACTURE
      then
           select count(*) into numrows
-          from OCCUPATION
+          from OCCUPER
           where
-               OCCUPATION.NUM_FACTURE = :old.NUM_FACTURE;
+               OCCUPER.NUM_FACTURE = :old.NUM_FACTURE;
           if (numrows > 0)
           then 
                raise_application_error(
                     -20005,
-                    'Impossible de modifier "FACTURE" car "OCCUPATION" existe.');
+                    'Impossible de modifier "FACTURE" car "OCCUPER" existe.');
           end if;
      end if;
 
@@ -367,7 +357,18 @@ CREATE OR REPLACE trigger TD_CRENEAU
 after delete on CRENEAU for each row
 declare numrows INTEGER;
 begin
-
+     -- Interdire la suppression d'une occurrence de CRENEAU s'il existe des
+     -- occurrences correspondantes de la table ETRE_ASSOCIE
+	 select count(*) into numrows
+     from ETRE_ASSOCIE
+     where
+          ETRE_ASSOCIE.HEURE_DEBUT_CRENEAU = :old.HEURE_DEBUT_CRENEAU;
+     if (numrows > 0) then
+          raise_application_error(
+          -20001,
+          'Impossible de supprimer "CRENEAU". Des occurrences de "ETRE_ASSOCIE" existent.');
+     end if;
+	 
      -- Supprimer les occurrences correspondantes de la table AVOIR_LIEU.
 
      delete from AVOIR_LIEU
@@ -378,19 +379,6 @@ begin
      delete from OCCUPER
      where
           OCCUPER.HEURE_DEBUT_CRENEAU = :old.HEURE_DEBUT_CRENEAU;
-     -- Interdire la suppression d'une occurrence de CRENEAU s'il existe des
-     -- occurrences correspondantes de la table OCCUPATION.
-
-     select count(*) into numrows
-     from OCCUPATION
-     where
-          OCCUPATION.HEURE_DEBUT_CRENEAU = :old.HEURE_DEBUT_CRENEAU;
-     if (numrows > 0) then
-          raise_application_error(
-          -20001,
-          'Impossible de supprimer "CRENEAU". Des occurrences de "OCCUPATION" existent.');
-     end if;
-
 end;
 /
 
@@ -400,7 +388,23 @@ CREATE OR REPLACE trigger TU_CRENEAU
 after update on CRENEAU for each row
 declare numrows INTEGER;
 begin
-
+     -- Ne pas modifier la clé primaire de la table CRENEAU s'il existe des 
+     -- occurrences correspondantes dans la table ETRE_ASSOCIE.
+	     if
+          :old.HEURE_DEBUT_CRENEAU <> :new.HEURE_DEBUT_CRENEAU
+     then
+          select count(*) into numrows
+          from ETRE_ASSOCIE
+          where
+               ETRE_ASSOCIE.HEURE_DEBUT_CRENEAU = :old.HEURE_DEBUT_CRENEAU;
+          if (numrows > 0)
+          then 
+               raise_application_error(
+                    -20005,
+                    'Impossible de modifier "CRENEAU" car "ETRE_ASSOCIE" existe.');
+          end if;
+     end if;
+	 
      -- Répercuter la modification de la clé primaire de CRENEAU sur les 
      -- occurrences correspondantes de la table AVOIR_LIEU.
 
@@ -413,6 +417,7 @@ begin
           where
                AVOIR_LIEU.HEURE_DEBUT_CRENEAU = :old.HEURE_DEBUT_CRENEAU;
      end if;
+	 
      -- Répercuter la modification de la clé primaire de CRENEAU sur les 
      -- occurrences correspondantes de la table OCCUPER.
 
@@ -425,29 +430,9 @@ begin
           where
                OCCUPER.HEURE_DEBUT_CRENEAU = :old.HEURE_DEBUT_CRENEAU;
      end if;
-     -- Ne pas modifier la clé primaire de la table CRENEAU s'il existe des 
-     -- occurrences correspondantes dans la table OCCUPATION.
-
-     if
-          :old.HEURE_DEBUT_CRENEAU <> :new.HEURE_DEBUT_CRENEAU
-     then
-          select count(*) into numrows
-          from OCCUPATION
-          where
-               OCCUPATION.HEURE_DEBUT_CRENEAU = :old.HEURE_DEBUT_CRENEAU;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "CRENEAU" car "OCCUPATION" existe.');
-          end if;
-     end if;
 
 end;
 /
-
-
-
 
 
 
@@ -462,7 +447,20 @@ CREATE OR REPLACE trigger TD_TERRAIN
 after delete on TERRAIN for each row
 declare numrows INTEGER;
 begin
-
+	 
+	 -- Ne pas supprimer un terrain s'il existe des 
+     -- occurrences correspondantes dans la table ETRE_ASSOCIE.
+        select count(*) into numrows
+        from ETRE_ASSOCIE
+        where
+             ETRE_ASSOCIE.NUM_TERRAIN = :old.NUM_TERRAIN;
+        if (numrows > 0)
+        then 
+             raise_application_error(
+                  -20001,
+                  'Impossible de supprimer "TERRAIN" car "ETRE_ASSOCIE" existe.');
+        end if;
+	 
      -- Supprimer les occurrences correspondantes de la table ETRE_AFFECTE.
 
      delete from ETRE_AFFECTE
@@ -548,6 +546,18 @@ begin
           where
                OCCUPER.NUM_TERRAIN = :old.NUM_TERRAIN;
      end if;
+	 
+	 -- Répercuter la modification de la clé primaire de TERRAIN sur les 
+     -- occurrences correspondantes de la table ETRE_ASSOCIE.
+	 if
+          :old.NUM_TERRAIN <> :new.NUM_TERRAIN
+     then
+          update ETRE_ASSOCIE
+          set
+               ETRE_ASSOCIE.NUM_TERRAIN = :new.NUM_TERRAIN
+          where
+               ETRE_ASSOCIE.NUM_TERRAIN = :old.NUM_TERRAIN;
+     end if;
 
 end;
 /
@@ -567,7 +577,7 @@ begin
      from CODIFICATION
      where
           :new.CODE_SURFACE = CODIFICATION.CODE and
-          :new.NATURE = CODIFICATION.NATURE;
+          :new.NATURE_SURFACE = CODIFICATION.NATURE;
      if 
           (
           numrows = 0 
@@ -614,16 +624,16 @@ begin
      where
           AVOIR_LIEU.NUM_ENTRAINEMENT = :old.NUM_ENTRAINEMENT;
      -- Interdire la suppression d'une occurrence de ENTRAINEMENT s'il existe des
-     -- occurrences correspondantes de la table OCCUPATION.
+     -- occurrences correspondantes de la table OCCUPER.
 
      select count(*) into numrows
-     from OCCUPATION
+     from OCCUPER
      where
-          OCCUPATION.NUM_ENTRAINEMENT = :old.NUM_ENTRAINEMENT;
+          OCCUPER.NUM_ENTRAINEMENT = :old.NUM_ENTRAINEMENT;
      if (numrows > 0) then
           raise_application_error(
           -20001,
-          'Impossible de supprimer "ENTRAINEMENT". Des occurrences de "OCCUPATION" existent.');
+          'Impossible de supprimer "ENTRAINEMENT". Des occurrences de "OCCUPER" existent.');
      end if;
 
 end;
@@ -669,7 +679,7 @@ begin
           select count(*) into numrows
           from PERSONNE
           where
-               :new.NUM_EMPLOYE = PERSONNE.NUM_PERSONNE;
+               :new.NUM_ENTRAINEUR = PERSONNE.NUM_PERSONNE;
           if 
                (
                numrows = 0 
@@ -717,20 +727,20 @@ begin
                AVOIR_LIEU.NUM_ENTRAINEMENT = :old.NUM_ENTRAINEMENT;
      end if;
      -- Ne pas modifier la clé primaire de la table ENTRAINEMENT s'il existe des 
-     -- occurrences correspondantes dans la table OCCUPATION.
+     -- occurrences correspondantes dans la table OCCUPER.
 
      if
           :old.NUM_ENTRAINEMENT <> :new.NUM_ENTRAINEMENT
      then
           select count(*) into numrows
-          from OCCUPATION
+          from OCCUPER
           where
-               OCCUPATION.NUM_ENTRAINEMENT = :old.NUM_ENTRAINEMENT;
+               OCCUPER.NUM_ENTRAINEMENT = :old.NUM_ENTRAINEMENT;
           if (numrows > 0)
           then 
                raise_application_error(
                     -20005,
-                    'Impossible de modifier "ENTRAINEMENT" car "OCCUPATION" existe.');
+                    'Impossible de modifier "ENTRAINEMENT" car "OCCUPER" existe.');
           end if;
      end if;
 
@@ -752,7 +762,7 @@ begin
      from CODIFICATION
      where
           :new.CODE_NIVEAU = CODIFICATION.CODE and
-          :new.NATURE = CODIFICATION.NATURE;
+          :new.NATURE_NIVEAU = CODIFICATION.NATURE;
      if 
           (
           numrows = 0 
@@ -768,7 +778,7 @@ begin
      select count(*) into numrows
      from PERSONNE
      where
-          :new.NUM_EMPLOYE = PERSONNE.NUM_PERSONNE;
+          :new.NUM_ENTRAINEUR = PERSONNE.NUM_PERSONNE;
      if 
           (
           numrows = 0 
@@ -856,256 +866,6 @@ end;
 
 
 -- ------------------------------------------------------------------------------- 
---   Table : OCCUPATION
--- ------------------------------------------------------------------------------- 
-
-
-
--- Trigger de suppression ----------------------------------------------
-CREATE OR REPLACE trigger TD_OCCUPATION
-after delete on OCCUPATION for each row
-declare numrows INTEGER;
-begin
-
-     -- Supprimer les occurrences correspondantes de la table OCCUPER.
-
-     delete from OCCUPER
-     where
-          OCCUPER.NUM_OCCUPATION = :old.NUM_OCCUPATION;
-     -- Interdire la suppression d'une occurrence de OCCUPATION s'il existe des
-     -- occurrences correspondantes de la table ETRE_ASSOCIE.
-
-     select count(*) into numrows
-     from ETRE_ASSOCIE
-     where
-          ETRE_ASSOCIE.NUM_OCCUPATION = :old.NUM_OCCUPATION;
-     if (numrows > 0) then
-          raise_application_error(
-          -20001,
-          'Impossible de supprimer "OCCUPATION". Des occurrences de "ETRE_ASSOCIE" existent.');
-     end if;
-
-end;
-/
-
-
-
--- Trigger de modification ----------------------------------------------
-CREATE OR REPLACE trigger TU_OCCUPATION
-after update on OCCUPATION for each row
-declare numrows INTEGER;
-begin
-
-     -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
-     -- table OCCUPATION s'il n'existe pas d'occurrence correspondante de la 
-     -- table FACTURE.
-
-     if
-          :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
-     then
-          select count(*) into numrows
-          from FACTURE
-          where
-               :new.NUM_FACTURE = FACTURE.NUM_FACTURE;
-          if 
-               (
-               numrows = 0 
-               )
-          then
-               raise_application_error(
-               -20007,
-               'Impossible de mettre à jour "OCCUPATION" car "FACTURE" n''existe pas.');
-          end if;
-     end if;
-     -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
-     -- table OCCUPATION s'il n'existe pas d'occurrence correspondante de la 
-     -- table CRENEAU.
-
-     if
-          :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
-     then
-          select count(*) into numrows
-          from CRENEAU
-          where
-               :new.HEURE_DEBUT_CRENEAU = CRENEAU.HEURE_DEBUT_CRENEAU;
-          if 
-               (
-               numrows = 0 
-               )
-          then
-               raise_application_error(
-               -20007,
-               'Impossible de mettre à jour "OCCUPATION" car "CRENEAU" n''existe pas.');
-          end if;
-     end if;
-     -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
-     -- table OCCUPATION s'il n'existe pas d'occurrence correspondante de la 
-     -- table PERSONNE.
-
-     if
-          :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
-     then
-          select count(*) into numrows
-          from PERSONNE
-          where
-               :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
-          if 
-               (
-               numrows = 0 
-               )
-          then
-               raise_application_error(
-               -20007,
-               'Impossible de mettre à jour "OCCUPATION" car "PERSONNE" n''existe pas.');
-          end if;
-     end if;
-     -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
-     -- table OCCUPATION s'il n'existe pas d'occurrence correspondante de la 
-     -- table ENTRAINEMENT.
-
-     if
-          :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
-     then
-          select count(*) into numrows
-          from ENTRAINEMENT
-          where
-               :new.NUM_ENTRAINEMENT = ENTRAINEMENT.NUM_ENTRAINEMENT;
-          if 
-               (
-               numrows = 0 
-               )
-          then
-               raise_application_error(
-               -20007,
-               'Impossible de mettre à jour "OCCUPATION" car "ENTRAINEMENT" n''existe pas.');
-          end if;
-     end if;
-     -- Répercuter la modification de la clé primaire de OCCUPATION sur les 
-     -- occurrences correspondantes de la table OCCUPER.
-
-     if
-          :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
-     then
-          update OCCUPER
-          set
-               OCCUPER.NUM_OCCUPATION = :new.NUM_OCCUPATION
-          where
-               OCCUPER.NUM_OCCUPATION = :old.NUM_OCCUPATION;
-     end if;
-     -- Ne pas modifier la clé primaire de la table OCCUPATION s'il existe des 
-     -- occurrences correspondantes dans la table ETRE_ASSOCIE.
-
-     if
-          :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
-     then
-          select count(*) into numrows
-          from ETRE_ASSOCIE
-          where
-               ETRE_ASSOCIE.NUM_OCCUPATION = :old.NUM_OCCUPATION;
-          if (numrows > 0)
-          then 
-               raise_application_error(
-                    -20005,
-                    'Impossible de modifier "OCCUPATION" car "ETRE_ASSOCIE" existe.');
-          end if;
-     end if;
-
-end;
-/
-
-
-
--- Trigger d'insertion AFTER----------------------------------------------
-CREATE OR REPLACE trigger TI_OCCUPATION_AFTER
-after insert on OCCUPATION for each row
-declare numrows INTEGER;
-begin
-
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de OCCUPATION 
-     -- s'il n'existe pas d'occurrence correspondante dans la table FACTURE.
-
-     select count(*) into numrows
-     from FACTURE
-     where
-          :new.NUM_FACTURE = FACTURE.NUM_FACTURE;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "OCCUPATION" car "FACTURE" n''existe pas.');
-     end if;
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de OCCUPATION 
-     -- s'il n'existe pas d'occurrence correspondante dans la table CRENEAU.
-
-     select count(*) into numrows
-     from CRENEAU
-     where
-          :new.HEURE_DEBUT_CRENEAU = CRENEAU.HEURE_DEBUT_CRENEAU;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "OCCUPATION" car "CRENEAU" n''existe pas.');
-     end if;
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de OCCUPATION 
-     -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE.
-
-     select count(*) into numrows
-     from PERSONNE
-     where
-          :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "OCCUPATION" car "PERSONNE" n''existe pas.');
-     end if;
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de OCCUPATION 
-     -- s'il n'existe pas d'occurrence correspondante dans la table ENTRAINEMENT.
-
-     select count(*) into numrows
-     from ENTRAINEMENT
-     where
-          :new.NUM_ENTRAINEMENT = ENTRAINEMENT.NUM_ENTRAINEMENT;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "OCCUPATION" car "ENTRAINEMENT" n''existe pas.');
-     end if;
-
-end;
-/
-
-
--- Trigger d'insertion BEFORE----------------------------------------------
-CREATE OR REPLACE TRIGGER TI_OCCUPATION_BEFORE
-	BEFORE INSERT ON OCCUPATION
-	REFERENCING OLD as OLD NEW as NEW
-	FOR EACH ROW BEGIN
-	IF inserting then 
-		SELECT SEQ_OCCUPATION.NEXTVAL
-		INTO :NEW.NUM_OCCUPATION
-		FROM DUAL;
-	END IF;
-END;
-/
-
-
-
--- ------------------------------------------------------------------------------- 
 --   Table : ABONNEMENT
 -- ------------------------------------------------------------------------------- 
 
@@ -1151,7 +911,7 @@ begin
           select count(*) into numrows
           from PERSONNE
           where
-               :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
+               :new.NUM_JOUEUR = PERSONNE.NUM_PERSONNE;
           if 
                (
                numrows = 0 
@@ -1172,7 +932,7 @@ begin
           select count(*) into numrows
           from PERSONNE
           where
-               :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
+               :new.NUM_JOUEUR = PERSONNE.NUM_PERSONNE;
           if 
                (
                numrows = 0 
@@ -1213,7 +973,7 @@ begin
      select count(*) into numrows
      from PERSONNE
      where
-          :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
+          :new.NUM_JOUEUR = PERSONNE.NUM_PERSONNE;
      if 
           (
           numrows = 0 
@@ -1229,7 +989,7 @@ begin
      select count(*) into numrows
      from PERSONNE
      where
-          :new.NUM_PERSONNE = PERSONNE.NUM_PERSONNE;
+          :new.NUM_JOUEUR = PERSONNE.NUM_PERSONNE;
      if 
           (
           numrows = 0 
@@ -1355,33 +1115,10 @@ begin
 
      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
      -- table ETRE_ASSOCIE s'il n'existe pas d'occurrence correspondante de la 
-     -- table OCCUPATION.
-
-     if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE or 
-          :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
-     then
-          select count(*) into numrows
-          from OCCUPATION
-          where
-               :new.NUM_OCCUPATION = OCCUPATION.NUM_OCCUPATION;
-          if 
-               (
-               numrows = 0 
-               )
-          then
-               raise_application_error(
-               -20007,
-               'Impossible de mettre à jour "ETRE_ASSOCIE" car "OCCUPATION" n''existe pas.');
-          end if;
-     end if;
-     -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
-     -- table ETRE_ASSOCIE s'il n'existe pas d'occurrence correspondante de la 
      -- table PERSONNE.
 
      if
-          :old.NUM_PERSONNE <> :new.NUM_PERSONNE or 
-          :old.NUM_OCCUPATION <> :new.NUM_OCCUPATION
+          :old.NUM_PERSONNE <> :new.NUM_PERSONNE
      then
           select count(*) into numrows
           from PERSONNE
@@ -1397,6 +1134,72 @@ begin
                'Impossible de mettre à jour "ETRE_ASSOCIE" car "PERSONNE" n''existe pas.');
           end if;
      end if;
+	 
+	 -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
+     -- table ETRE_ASSOCIE s'il n'existe pas d'occurrence correspondante de la 
+     -- table CRENEAU.
+
+     if
+          :old.HEURE_DEBUT_CRENEAU <> :new.HEURE_DEBUT_CRENEAU
+     then
+          select count(*) into numrows
+          from CRENEAU
+          where
+               :new.HEURE_DEBUT_CRENEAU = CRENEAU.HEURE_DEBUT_CRENEAU;
+          if 
+               (
+               numrows = 0 
+               )
+          then
+               raise_application_error(
+               -20007,
+               'Impossible de mettre à jour "ETRE_ASSOCIE" car "CRENEAU" n''existe pas.');
+          end if;
+     end if;
+	 
+	 -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
+     -- table ETRE_ASSOCIE s'il n'existe pas d'occurrence correspondante de la 
+     -- table TERRAIN.
+
+     if
+          :old.NUM_TERRAIN <> :new.NUM_TERRAIN
+     then
+          select count(*) into numrows
+          from TERRAIN
+          where
+               :new.NUM_TERRAIN = TERRAIN.NUM_TERRAIN;
+          if 
+               (
+               numrows = 0 
+               )
+          then
+               raise_application_error(
+               -20007,
+               'Impossible de mettre à jour "ETRE_ASSOCIE" car "TERRAIN" n''existe pas.');
+          end if;
+     end if;
+	 
+	 -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
+     -- table ETRE_ASSOCIE s'il n'existe pas d'occurrence correspondante de la 
+     -- table OCCUPER.
+
+     if
+          :old.DATE_OCCUPATION <> :new.DATE_OCCUPATION
+     then
+          select count(*) into numrows
+          from OCCUPER
+          where
+               :new.DATE_OCCUPATION = OCCUPER.DATE_OCCUPATION;
+          if 
+               (
+               numrows = 0 
+               )
+          then
+               raise_application_error(
+               -20007,
+               'Impossible de mettre à jour "ETRE_ASSOCIE" car "OCCUPER" n''existe pas.');
+          end if;
+     end if;
 
 end;
 /
@@ -1410,12 +1213,12 @@ declare numrows INTEGER;
 begin
 
      -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ETRE_ASSOCIE 
-     -- s'il n'existe pas d'occurrence correspondante dans la table OCCUPATION.
+     -- s'il n'existe pas d'occurrence correspondante dans la table OCCUPER.
 
      select count(*) into numrows
-     from OCCUPATION
+     from OCCUPER
      where
-          :new.NUM_OCCUPATION = OCCUPATION.NUM_OCCUPATION;
+          :new.DATE_OCCUPATION = OCCUPER.DATE_OCCUPATION;
      if 
           (
           numrows = 0 
@@ -1423,7 +1226,7 @@ begin
      then
           raise_application_error(
                -20002,
-               'Impossible d''ajouter "ETRE_ASSOCIE" car "OCCUPATION" n''existe pas.');
+               'Impossible d''ajouter "ETRE_ASSOCIE" car "OCCUPER" n''existe pas.');
      end if;
      -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ETRE_ASSOCIE 
      -- s'il n'existe pas d'occurrence correspondante dans la table PERSONNE.
@@ -1440,6 +1243,40 @@ begin
           raise_application_error(
                -20002,
                'Impossible d''ajouter "ETRE_ASSOCIE" car "PERSONNE" n''existe pas.');
+     end if;
+	 
+	 -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ETRE_ASSOCIE 
+     -- s'il n'existe pas d'occurrence correspondante dans la table CRENEAU.
+
+     select count(*) into numrows
+     from CRENEAU
+     where
+          :new.HEURE_DEBUT_CRENEAU = CRENEAU.HEURE_DEBUT_CRENEAU;
+     if 
+          (
+          numrows = 0 
+          )
+     then
+          raise_application_error(
+               -20002,
+               'Impossible d''ajouter "ETRE_ASSOCIE" car "CRENEAU" n''existe pas.');
+     end if;
+	 
+	 -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ETRE_ASSOCIE 
+     -- s'il n'existe pas d'occurrence correspondante dans la table TERRAIN.
+
+     select count(*) into numrows
+     from TERRAIN
+     where
+          :new.NUM_TERRAIN = TERRAIN.NUM_TERRAIN;
+     if 
+          (
+          numrows = 0 
+          )
+     then
+          raise_application_error(
+               -20002,
+               'Impossible d''ajouter "ETRE_ASSOCIE" car "TERRAIN" n''existe pas.');
      end if;
 
 end;
@@ -1668,6 +1505,27 @@ end;
 --   Table : OCCUPER
 -- ------------------------------------------------------------------------------- 
 
+-- Trigger de suppression -----------------------------------------------
+CREATE OR REPLACE trigger TD_OCCUPER
+after delete on OCCUPER for each row 
+declare numrows INTEGER;
+begin
+     -- Interdire la suppression d'une occurrence de OCCUPER s'il existe des
+     -- occurrences correspondantes de la table ETRE_ASSOCIE.
+
+     select count(*) into numrows
+     from ETRE_ASSOCIE
+     where
+          ETRE_ASSOCIE.HEURE_DEBUT_CRENEAU = :old.HEURE_DEBUT_CRENEAU and
+		  ETRE_ASSOCIE.NUM_TERRAIN = :old.NUM_TERRAIN and
+		  ETRE_ASSOCIE.DATE_OCCUPATION = :old.DATE_OCCUPATION;
+     if (numrows > 0) then
+          raise_application_error(
+          -20001,
+          'Impossible de supprimer "OCCUPER". Des occurrences de "ETRE_ASSOCIE" existent.');
+     end if;
+end;
+/
 
 -- Trigger de modification ----------------------------------------------
 CREATE OR REPLACE trigger TU_OCCUPER
@@ -1675,43 +1533,59 @@ after update on OCCUPER for each row
 declare numrows INTEGER;
 begin
 
-     -- Interdire la modification de la clé étrangère référençant la table 
-     -- CRENEAU.
+     -- Interdire la modification de la clé primaire heure_debut_creneau si
+     -- le creneau n'existe pas dans la table CRENEAU
 
      if
-          :old.HEURE_DEBUT_CRENEAU <> :new.HEURE_DEBUT_CRENEAU or 
-          :old.NUM_TERRAIN <> :new.NUM_TERRAIN or 
-          :old.DATE_OCCUPATION <> :new.DATE_OCCUPATION
+          :old.HEURE_DEBUT_CRENEAU <> :new.HEURE_DEBUT_CRENEAU 
      then
+		  select count(*) into numrows
+          from CRENEAU
+          where
+               :new.HEURE_DEBUT_CRENEAU = CRENEAU.HEURE_DEBUT_CRENEAU;
+          if 
+               (
+               numrows = 0 
+               )
+		  then
                raise_application_error(
                -20008,
                'Modification de la clé étrangère référençant "CRENEAU" interdite.');
+		 end if;
      end if;
-     -- Interdire la modification de la clé étrangère référençant la table 
-     -- TERRAIN.
+	 
+     -- Interdire la modification de la clé primaire terrain si
+     -- le terrain n'existe pas dans la table TERRAIN
 
      if
-          :old.HEURE_DEBUT_CRENEAU <> :new.HEURE_DEBUT_CRENEAU or 
-          :old.NUM_TERRAIN <> :new.NUM_TERRAIN or 
-          :old.DATE_OCCUPATION <> :new.DATE_OCCUPATION
+          :old.NUM_TERRAIN <> :new.NUM_TERRAIN 
      then
+		  select count(*) into numrows
+          from TERRAIN
+          where
+               :new.NUM_TERRAIN = TERRAIN.NUM_TERRAIN;
+          if 
+               (
+               numrows = 0 
+               )
+		  then
                raise_application_error(
                -20008,
                'Modification de la clé étrangère référençant "TERRAIN" interdite.');
+		 end if;
      end if;
+	 
      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
      -- table OCCUPER s'il n'existe pas d'occurrence correspondante de la 
-     -- table OCCUPATION.
+     -- table ENTRAINEMENT.
 
      if
-          :old.HEURE_DEBUT_CRENEAU <> :new.HEURE_DEBUT_CRENEAU or 
-          :old.NUM_TERRAIN <> :new.NUM_TERRAIN or 
-          :old.DATE_OCCUPATION <> :new.DATE_OCCUPATION
+          :old.NUM_ENTRAINEMENT <> :new.NUM_ENTRAINEMENT
      then
           select count(*) into numrows
-          from OCCUPATION
+          from ENTRAINEMENT
           where
-               :new.NUM_OCCUPATION = OCCUPATION.NUM_OCCUPATION;
+               :new.NUM_ENTRAINEMENT = ENTRAINEMENT.NUM_ENTRAINEMENT;
           if 
                (
                numrows = 0 
@@ -1719,7 +1593,51 @@ begin
           then
                raise_application_error(
                -20007,
-               'Impossible de mettre à jour "OCCUPER" car "OCCUPATION" n''existe pas.');
+               'Impossible de mettre à jour "OCCUPER" car "ENTRAINEMENT" n''existe pas.');
+          end if;
+     end if;
+	 
+	      -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
+     -- table OCCUPER s'il n'existe pas d'occurrence correspondante de la 
+     -- table FACTURE.
+
+     if
+          :old.NUM_FACTURE <> :new.NUM_FACTURE
+     then
+          select count(*) into numrows
+          from FACTURE
+          where
+               :new.NUM_FACTURE = FACTURE.NUM_FACTURE;
+          if 
+               (
+               numrows = 0 
+               )
+          then
+               raise_application_error(
+               -20007,
+               'Impossible de mettre à jour "OCCUPER" car "FACTURE" n''existe pas.');
+          end if;
+     end if;
+	 
+	 -- Sauf valeur nulle, interdire la modification de la clé étrangère de la 
+     -- table OCCUPER s'il n'existe pas d'occurrence correspondante de la 
+     -- table PERSONNE.
+
+     if
+          :old.NUM_JOUEUR <> :new.NUM_JOUEUR
+     then
+          select count(*) into numrows
+          from PERSONNE
+          where
+               :new.NUM_JOUEUR = PERSONNE.NUM_PERSONNE;
+          if 
+               (
+               numrows = 0 
+               )
+          then
+               raise_application_error(
+               -20007,
+               'Impossible de mettre à jour "OCCUPER" car "PERSONNE" n''existe pas.');
           end if;
      end if;
 
@@ -1765,23 +1683,6 @@ begin
                -20002,
                'Impossible d''ajouter "OCCUPER" car "TERRAIN" n''existe pas.');
      end if;
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de OCCUPER 
-     -- s'il n'existe pas d'occurrence correspondante dans la table OCCUPATION.
-
-     select count(*) into numrows
-     from OCCUPATION
-     where
-          :new.NUM_OCCUPATION = OCCUPATION.NUM_OCCUPATION;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "OCCUPER" car "OCCUPATION" n''existe pas.');
-     end if;
-
 end;
 /
 
@@ -1795,7 +1696,8 @@ CREATE OR REPLACE trigger TD_CODIFICATION
 after delete on CODIFICATION for each row
 declare numrows INTEGER;
 begin
-
+	
+	
      -- Interdire la suppression d'une occurrence de CODIFICATION s'il existe des
      -- occurrences correspondantes de la table TERRAIN.
 
