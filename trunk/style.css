@@ -1,0 +1,11 @@
+body
+{
+   color: white; /* Les paragraphes seront bleus */
+   font-size: 14px; /* La taille de 18 pixels me semble pas mal */
+   font-family:Verdana;
+   background-color:#4682b4;
+}
+
+.error {
+	color:red;
+}
