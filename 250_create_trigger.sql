@@ -32,7 +32,7 @@ begin
      select count(*) into numrows
      from ABONNEMENT
      where
-          ABONNEMENT.NUM_PERSONNE = :old.NUM_PERSONNE;
+          ABONNEMENT.NUM_JOUEUR = :old.NUM_PERSONNE;
      if (numrows > 0) then
           raise_application_error(
           -20001,
@@ -56,7 +56,7 @@ begin
      select count(*) into numrows
      from ENTRAINEMENT
      where
-          ENTRAINEMENT.NUM_EMPLOYE = :old.NUM_PERSONNE;
+          ENTRAINEMENT.NUM_ENTRAINEUR = :old.NUM_PERSONNE;
      if (numrows > 0) then
           raise_application_error(
           -20001,
@@ -149,9 +149,9 @@ begin
      then
           update ABONNEMENT
           set
-               ABONNEMENT.NUM_PERSONNE = :new.NUM_PERSONNE
+               ABONNEMENT.NUM_JOUEUR = :new.NUM_PERSONNE
           where
-               ABONNEMENT.NUM_PERSONNE = :old.NUM_PERSONNE;
+               ABONNEMENT.NUM_JOUEUR = :old.NUM_PERSONNE;
      end if;
      -- Ne pas modifier la clé primaire de la table PERSONNE s'il existe des 
      -- occurrences correspondantes dans la table S_INSCRIRE.
@@ -179,7 +179,7 @@ begin
           select count(*) into numrows
           from ENTRAINEMENT
           where
-               ENTRAINEMENT.NUM_EMPLOYE = :old.NUM_PERSONNE;
+               ENTRAINEMENT.NUM_ENTRAINEUR = :old.NUM_PERSONNE;
           if (numrows > 0)
           then 
                raise_application_error(
@@ -501,7 +501,7 @@ begin
           from CODIFICATION
           where
                :new.CODE_SURFACE = CODIFICATION.CODE and
-               :new.NATURE = CODIFICATION.NATURE;
+               :new.NATURE_SURFACE = CODIFICATION.NATURE;
           if 
                (
                numrows = 0 
@@ -648,7 +648,7 @@ begin
           from CODIFICATION
           where
                :new.CODE_NIVEAU = CODIFICATION.CODE and
-               :new.NATURE = CODIFICATION.NATURE;
+               :new.NATURE_NIVEAU = CODIFICATION.NATURE;
           if 
                (
                numrows = 0 
@@ -1803,7 +1803,7 @@ begin
      from TERRAIN
      where
           TERRAIN.CODE_SURFACE = :old.CODE and
-          TERRAIN.NATURE = :old.NATURE;
+          TERRAIN.NATURE_SURFACE = :old.NATURE;
      if (numrows > 0) then
           raise_application_error(
           -20001,
@@ -1842,7 +1842,7 @@ begin
      from ENTRAINEMENT
      where
           ENTRAINEMENT.CODE_NIVEAU = :old.CODE and
-          ENTRAINEMENT.NATURE = :old.NATURE;
+          ENTRAINEMENT.NATURE_NIVEAU = :old.NATURE;
      if (numrows > 0) then
           raise_application_error(
           -20001,
@@ -1870,7 +1870,7 @@ begin
           from TERRAIN
           where
                TERRAIN.CODE_SURFACE = :old.CODE and
-               TERRAIN.NATURE = :old.NATURE;
+               TERRAIN.NATURE_SURFACE = :old.NATURE;
           if (numrows > 0)
           then 
                raise_application_error(
@@ -1927,7 +1927,7 @@ begin
           from ENTRAINEMENT
           where
                ENTRAINEMENT.CODE_NIVEAU = :old.CODE and
-               ENTRAINEMENT.NATURE = :old.NATURE;
+               ENTRAINEMENT.NATURE_NIVEAU = :old.NATURE;
           if (numrows > 0)
           then 
                raise_application_error(
