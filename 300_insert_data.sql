@@ -116,7 +116,7 @@ VALUES('1erSe','Classement','Echelon de 1ère série. Capital de 840 points.');
 
 --Début des codifications des statuts pour la table PERSONNE
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('U','ROLE','Utilisateur','');
+VALUES('U','ROLE','Utilisateur');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
 VALUES('J','ROLE','Joueur');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
