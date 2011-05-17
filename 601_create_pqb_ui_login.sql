@@ -30,11 +30,11 @@ AS
 				htp.tableheader('');
 				htp.tableheader('');
 				htp.tableRowOpen;
-					htp.tableData('Identifiant :');
+					htp.tableData('Identifiant :', cattributes => 'class="enteteFormulaire"');
 					htp.tableData(htf.formText('login',20));
 				htp.tableRowClose;	
 				htp.tableRowOpen;
-					htp.tableData('Mot de passe :');
+					htp.tableData('Mot de passe :', cattributes => 'class="enteteFormulaire"');
 					htp.tableData(htf.formPassword('password',20));
 				htp.tableRowClose;
 				htp.tableRowOpen;
@@ -93,7 +93,7 @@ AS
 			  htp.br;
 				pq_ui_login.login();
 			  ELSE
-				htp.print('No erreur Oracle : ' || to_char(SQLCODE) || ' ' || SQLERRM) ; 
+				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Connexion à l''application');				
 			END IF;
 		htp.bodyClose; 
 		htp.htmlclose;
