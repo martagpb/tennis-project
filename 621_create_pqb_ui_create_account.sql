@@ -13,8 +13,8 @@
 CREATE OR REPLACE PACKAGE BODY pq_ui_create_account
 AS 
 	PROCEDURE formCreate IS
-	rep_css VARCHAR2(255) := '/public/css/';
-	rep_js VARCHAR2(255) := '/public/js/';
+		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_js VARCHAR2(255) := pq_ui_commun.get_rep_js;
 	begin
 		htp.htmlOpen;
 			htp.headOpen;
@@ -33,47 +33,47 @@ AS
 					htp.tableheader('');
 					htp.tableheader('');
 					htp.tableRowOpen;
-						htp.tableData('Nom * :');
+						htp.tableData('Nom * :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(htf.formText('lastname',20));
 						htp.tableData('',cattributes => 'id="lastnameText" class="error"');
 					htp.tableRowClose;	
 					htp.tableRowOpen;
-						htp.tableData('Prénom * :');
+						htp.tableData('Prénom * :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(htf.formText('firstname',20));
 						htp.tableData('',cattributes => 'id="firstnameText" class="error"');
 					htp.tableRowClose;
 					htp.tableRowOpen;
-						htp.tableData('Identifiant * :');
+						htp.tableData('Identifiant * :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(htf.formText('login',20));
 						htp.tableData('',cattributes => 'id="identifiantText" class="error"');
 					htp.tableRowClose;
 					htp.tableRowOpen;
-						htp.tableData('Mot de passe * :');
+						htp.tableData('Mot de passe * :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(htf.formPassword('password',20));
 						htp.tableData('',cattributes => 'id="passwordText" class="error"');
 					htp.tableRowClose;
 					htp.tableRowOpen;
-						htp.tableData('Adresse mail* :');
+						htp.tableData('Adresse mail * :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(htf.formText('mail',20));
 						htp.tableData('',cattributes => 'id="mailText" class="error"');
 					htp.tableRowClose;
 					htp.tableRowOpen;
-						htp.tableData('Téléphone :');
+						htp.tableData('Téléphone :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(htf.formText('phone',20));
 						htp.tableData('',cattributes => 'id="phoneText" class="error"');
 					htp.tableRowClose;
 					htp.tableRowOpen;
-						htp.tableData('Adresse :');
+						htp.tableData('Adresse :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(htf.formText('street',20));
 						htp.tableData('');
 					htp.tableRowClose;
 					htp.tableRowOpen;
-						htp.tableData('Code postal :');
+						htp.tableData('Code postal :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(htf.formText('postal',20));
 						htp.tableData('',cattributes => 'id="postalText" class="error"');
 					htp.tableRowClose;
 					htp.tableRowOpen;
-						htp.tableData('Ville :');
+						htp.tableData('Ville :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(htf.formText('city',20));
 						htp.tableData('',cattributes => 'id="cityText" class="error"');
 					htp.tableRowClose;
@@ -83,13 +83,15 @@ AS
 					htp.tableRowClose;
 				htp.tableClose();
 			htp.formClose;
+			htp.br;
+			htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
 			htp.bodyClose;
 		htp.htmlClose;
 	END;
 	
 	PROCEDURE create_account ( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,phone IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2)
 	IS
-	rep_css VARCHAR2(255) := '/public/css/';
+		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
 	BEGIN 
 		htp.htmlOpen; 
 		htp.headOpen;
@@ -104,12 +106,7 @@ AS
 		htp.htmlclose; 
 		EXCEPTION 
 		WHEN OTHERS THEN
-		  htp.br; 
-		  htp.br; 
-		  htp.print('Erreur'); 
-		  htp.br; 
-		  htp.print('No erreur Oracle : ' || to_char(SQLCODE) || ' ' || SQLERRM) ; 
-		  htp.br; 
+		  pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Création d''un compte');
 	END ; 
 END pq_ui_create_account;
 /
