@@ -9,3 +9,11 @@ body
 .error {
 	color:red;
 }
+
+.enteteFormulaire { /* On colle à droite les cellules */
+	text-align:right;
+}
+
+td { /* Les cellules classiques */
+	text-align:left;
+}
