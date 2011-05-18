@@ -55,13 +55,14 @@ AS
 		crypted_password VARCHAR2(255);
 		decrypted_password VARCHAR(255);
 		rep_css VARCHAR2(255) := '/public/css/';
+		numPersonne NUMBER(5);
 	BEGIN 
 	SELECT 
-			MDP_PERSONNE INTO crypted_password  
-		FROM
-			PERSONNE
-		WHERE
-			LOGIN_PERSONNE=login;
+		MDP_PERSONNE INTO crypted_password  
+	FROM
+		PERSONNE
+	WHERE
+		LOGIN_PERSONNE=login;	
 		htp.htmlOpen; 
 		htp.headOpen;
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
@@ -73,6 +74,9 @@ AS
 										decrypted_string  => decrypted_password );
 		IF (decrypted_password=password) then
 			htp.print('Redirection');
+			PA_PERSONNE.getNum(login => login,
+								numPersonne => numPersonne);
+			owa.set_user_id(numPersonne);
 		ELSE
 			pq_ui_login.login();
 			htp.print('Mauvais mot de passe');
