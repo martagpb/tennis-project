@@ -10,40 +10,40 @@
 --      Date de dernière modification : 14/05/2011
 -- -----------------------------------------------------------------------------
 
-CREATE OR REPLACE PACKAGE UI_S_INSCRIRE
+CREATE OR REPLACE PACKAGE pq_ui_s_inscrire
 IS
 	--Permet d’afficher une inscription existante
-	PROCEDURE DIS_INSCRIPTION(
+	PROCEDURE dis_inscription(
 	  vnumEntrainement IN NUMBER
 	, vnumPersonne IN NUMBER);
 	
 	-- Exécute la procédure d'ajout d'une inscription et gère les erreurs éventuelles.
-	PROCEDURE EXEC_ADD_INSCRIPTION(
+	PROCEDURE exec_add_inscription(
 	  vnumEntrainement IN NUMBER
 	, vnumPersonne IN NUMBER);
 	
 	-- Exécute la procédure de mise à jour d'une inscription et gère les erreurs éventuelles
-	PROCEDURE EXEC_UPD_INSCRIPTION(
+	PROCEDURE exec_upd_inscription(
 	  vnumEntrainement IN NUMBER
 	, vnumPersonne IN NUMBER);
 	
 	-- Exécute la procédure de suppression d'une inscription et gère les erreurs éventuelles
-	PROCEDURE EXEC_DEL_INSCRIPTION(
+	PROCEDURE exec_del_inscription(
 	  vnumEntrainement IN NUMBER
 	, vnumPersonne IN NUMBER);
 	
 	-- Exécute la procédure d’affichage des inscriptions et gère les erreurs éventuelles
-	PROCEDURE EXEC_DIS_INSCRIPTION(
+	PROCEDURE exec_dis_inscription(
 	  vnumEntrainement IN NUMBER
 	, vnumPersonne IN NUMBER);
 	
 	-- Affiche le formulaire permettant la saisie d’une nouvelle inscription
-	PROCEDURE FORM_ADD_INSCRIPTION;
+	PROCEDURE form_add_inscription;
 	
 	-- Affiche le formulaire de saisie permettant la modification d’une inscription existante
-	PROCEDURE FORM_UPD_INSCRIPTION(
+	PROCEDURE form_upd_inscription(
 	  vnumEntrainement IN NUMBER
 	, vnumPersonne IN NUMBER);
 				
-END UI_S_INSCRIRE;
+END pq_ui_s_inscrire;
 /
