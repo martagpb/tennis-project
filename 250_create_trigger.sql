@@ -230,51 +230,6 @@ END;
 
 
 
--- Trigger d'insertion AFTER----------------------------------------------
-CREATE OR REPLACE trigger TI_PERSONNE_AFTER
-after insert on PERSONNE for each row
-declare numrows INTEGER;
-begin
-
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de PERSONNE 
-     -- s'il n'existe pas d'occurrence correspondante dans la table CODIFICATION.
-
-     select count(*) into numrows
-     from CODIFICATION
-     where
-          :new.CODE_STATUT_EMPLOYE = CODIFICATION.CODE and
-          :new.NATURE_STATUT_EMPLOYE = CODIFICATION.NATURE;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "PERSONNE" car "CODIFICATION" n''existe pas.');
-     end if;
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de PERSONNE 
-     -- s'il n'existe pas d'occurrence correspondante dans la table CODIFICATION.
-
-     select count(*) into numrows
-     from CODIFICATION
-     where
-          :new.CODE_NIVEAU = CODIFICATION.CODE and
-          :new.NATURE_NIVEAU = CODIFICATION.NATURE;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "PERSONNE" car "CODIFICATION" n''existe pas.');
-     end if;
-
-end;
-/
-
-
 
 
 -- ------------------------------------------------------------------------------- 
