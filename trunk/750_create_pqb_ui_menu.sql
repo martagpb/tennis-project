@@ -13,7 +13,7 @@
 CREATE OR REPLACE PACKAGE BODY UI_MENU
 AS 
 	PROCEDURE GENERATE_MENU IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 		statutEmploye VARCHAR2(255);
 		statutJoueur VARCHAR2(255);
 	BEGIN
@@ -30,7 +30,7 @@ AS
 				--affiche le menu ADHERENT
 				htp.br;
 			END CASE;
-		ELSE IF(statutEmploye IS NOT NULL) THEN
+		ELSIF(statutEmploye IS NOT NULL) THEN
 			CASE statutEmploye
 				WHEN 'Entraineur' THEN
 				--affiche le menu ENTRAINEUR	

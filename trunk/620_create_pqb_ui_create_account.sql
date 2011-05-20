@@ -13,8 +13,8 @@
 CREATE OR REPLACE PACKAGE BODY pq_ui_create_account
 AS 
 	PROCEDURE formCreate IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
-		rep_js VARCHAR2(255) := pq_ui_commun.get_rep_js;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		rep_js VARCHAR2(255) := pq_ui_param_commun.get_rep_js;
 	begin
 		htp.htmlOpen;
 			htp.headOpen;
@@ -91,7 +91,7 @@ AS
 	
 	PROCEDURE create_account ( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,phone IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN 
 		htp.htmlOpen; 
 		htp.headOpen;
