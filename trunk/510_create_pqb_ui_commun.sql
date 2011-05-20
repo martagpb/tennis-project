@@ -1,6 +1,6 @@
 -- -----------------------------------------------------------------------------
---           Création du corps du package d'affichage des données
---           qui sont communes à plusieurs tables
+--  Création du corps du package des  méthodes communes
+--  qui permettent l'affichage de données pour l'utilisateur.
 --                      Oracle Version 10g
 --                        (14/05/2011)
 -- -----------------------------------------------------------------------------
@@ -18,7 +18,7 @@ AS
 	, vliberreur in varchar2
 	, vactionencours in varchar2)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	begin
 		htp.htmlOpen;
 			htp.headOpen;
@@ -48,25 +48,7 @@ AS
 				htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
 			htp.bodyClose;
 		htp.htmlClose;
-	END;
-	
-	-- Fonction permettant de retourner le chemin complet du répertoire CSS
-	FUNCTION get_rep_css
-	RETURN VARCHAR2
-	IS
-		rep_css VARCHAR2(255) := '/public/css/';
-	BEGIN
-		RETURN rep_css;
-	END;
-	
-	-- Fonction permettant de retourner le chemin complet du répertoire JavaScript (JS)
-	FUNCTION get_rep_js
-	RETURN VARCHAR2
-	IS
-		rep_js VARCHAR2(255) := '/public/js/';
-	BEGIN
-		RETURN rep_js;
-	END;
+	END;	
 	
 END pq_ui_commun;
 /

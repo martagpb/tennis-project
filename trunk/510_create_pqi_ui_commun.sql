@@ -1,6 +1,6 @@
 -- -----------------------------------------------------------------------------
---           Création du package d'interface d'affichage des données
---           qui sont communes à plusieurs tables
+--  Création du package d'interface des  méthodes communes
+--  qui permettent l'affichage de données pour l'utilisateur.
 --                      Oracle Version 10g
 --                        (14/05/2011)
 -- -----------------------------------------------------------------------------
@@ -17,14 +17,6 @@ IS
 	  vnumero in varchar2
 	, vliberreur in varchar2
 	, vactionencours in varchar2);	
-	
-	-- Fonction permettant de retourner le chemin complet du répertoire CSS
-	FUNCTION get_rep_css
-	RETURN VARCHAR2;	
-	
-	-- Fonction permettant de retourner le chemin complet du répertoire JavaScript (JS)
-	FUNCTION get_rep_js
-	RETURN VARCHAR2;	
-	
+		
 END pq_ui_commun;
 /
