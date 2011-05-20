@@ -15,8 +15,8 @@ AS
 	--Permet d'afficher tous les créneaux et les actions possibles de gestion
 	PROCEDURE manage_creneaux
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
-		rep_js VARCHAR2(255)  := pq_ui_commun.get_rep_js;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		rep_js VARCHAR2(255)  := pq_ui_param_commun.get_rep_js;
 		-- On stocke dans un curseur la liste de tous les créneaux existants
 		CURSOR listCreneaux IS
 		SELECT 
@@ -71,7 +71,7 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;
@@ -95,7 +95,7 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;
@@ -120,7 +120,7 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;
@@ -144,7 +144,7 @@ AS
 	PROCEDURE exec_del_creneau(
 	  vheureDebutCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;
@@ -169,7 +169,7 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;
@@ -189,8 +189,8 @@ AS
 	-- Affiche le formulaire permettant la saisie d’un nouveau créneau	
 	PROCEDURE form_add_creneau
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
-		rep_js VARCHAR2(255)  := pq_ui_commun.get_rep_js;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		rep_js VARCHAR2(255)  := pq_ui_param_commun.get_rep_js;
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;
@@ -236,8 +236,8 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
-		rep_js VARCHAR2(255)  := pq_ui_commun.get_rep_js;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		rep_js VARCHAR2(255)  := pq_ui_param_commun.get_rep_js;
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;

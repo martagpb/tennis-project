@@ -13,7 +13,7 @@
 CREATE OR REPLACE PACKAGE BODY pq_ui_login
 AS 
 	PROCEDURE login IS 
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;
@@ -52,7 +52,7 @@ AS
 		checkLog BOOLEAN;
 		crypted_password VARCHAR2(255);
 		decrypted_password VARCHAR(255);
-		rep_css VARCHAR2(255) := pq_ui_commun.get_rep_css;
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN 
 	SELECT 
 			MDP_PERSONNE INTO crypted_password  
