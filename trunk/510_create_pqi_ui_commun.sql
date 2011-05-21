@@ -17,6 +17,13 @@ IS
 	  vnumero in varchar2
 	, vliberreur in varchar2
 	, vactionencours in varchar2);	
+	
+	PROCEDURE aff_header(niveau IN NUMBER);
+	PROCEDURE aff_menu(niveau IN NUMBER);
+	PROCEDURE aff_menu_niveau1;
+	PROCEDURE aff_menu_niveau2;
+	PROCEDURE aff_menu_niveau3;
+	PROCEDURE aff_footer;
 		
 END pq_ui_commun;
 /

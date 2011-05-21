@@ -13,13 +13,8 @@
 CREATE OR REPLACE PACKAGE BODY pq_ui_login
 AS 
 	PROCEDURE login IS 
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
+		pq_ui_commun.aff_header(0);
 			htp.br;
 			htp.br;
 			htp.div(cattributes => 'id="login"');
@@ -44,15 +39,13 @@ AS
 			htp.br;
 			htp.br;
 			htp.anchor('pq_ui_create_account.formCreate', 'Création de compte');
-			htp.bodyClose;
-		htp.htmlClose;
+		pq_ui_commun.aff_footer;
 	END login;
 	
 	PROCEDURE check_login ( login IN VARCHAR2, password IN VARCHAR2) IS 
 		checkLog BOOLEAN;
 		crypted_password VARCHAR2(255);
 		decrypted_password VARCHAR(255);
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN 
 	SELECT 
 			MDP_PERSONNE INTO crypted_password  
@@ -60,11 +53,7 @@ AS
 			PERSONNE
 		WHERE
 			LOGIN_PERSONNE=login;
-		htp.htmlOpen; 
-		htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-		htp.bodyOpen(); 
+		pq_ui_commun.aff_header(0);
 		htp.br; 
 		dbms_obfuscation_toolkit.desdecrypt(input_string => crypted_password, 
 										key_string => 'tennispro', 
@@ -75,26 +64,15 @@ AS
 			pq_ui_login.login;
 			htp.print('Mauvais mot de passe');
 		END IF;
-		htp.bodyClose; 
-		htp.htmlclose; 
+		pq_ui_commun.aff_footer;
 		EXCEPTION 
 			when others then 
-			htp.htmlOpen; 
-		htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-		htp.bodyOpen; 
-			  htp.br; 
-			  htp.br; 
 			  IF (SQLCODE=100) THEN
 			  htp.print('Compte inconnu');
-			  htp.br;
 				pq_ui_login.login;
 			  ELSE
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Connexion à l''application');				
 			END IF;
-		htp.bodyClose; 
-		htp.htmlclose;
 	END check_login; 
 END pq_ui_login;
 /

@@ -13,15 +13,8 @@
 CREATE OR REPLACE PACKAGE BODY pq_ui_create_account
 AS 
 	PROCEDURE formCreate IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-		rep_js VARCHAR2(255) := pq_ui_param_commun.get_rep_js;
 	begin
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 		
-			htp.headClose;
-			htp.bodyOpen();
+		pq_ui_commun.aff_header(3);
 			htp.br;
 			htp.print('Création d''un nouveau compte joueur');
 			htp.br;
@@ -85,25 +78,18 @@ AS
 			htp.formClose;
 			htp.br;
 			htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
-			htp.bodyClose;
-		htp.htmlClose;
+			pq_ui_commun.aff_footer;
 	END;
 	
 	PROCEDURE create_account ( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,phone IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN 
-		htp.htmlOpen; 
-		htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-		htp.bodyOpen(); 
+	pq_ui_commun.aff_header(3);
 		htp.br; 
 		  pq_pa_create_account.create_account(lastname,firstname,login,password,mail,phone,street,postal,city); 
 		  htp.print('Compte créé');
 		  htp.anchor('pq_ui_login.login', 'Retour');
-		htp.bodyClose; 
-		htp.htmlclose; 
+		pq_ui_commun.aff_footer;
 		EXCEPTION 
 		WHEN OTHERS THEN
 		  pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Création d''un compte');
