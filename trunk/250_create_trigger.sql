@@ -518,6 +518,20 @@ end;
 /
 
 
+-- Trigger d'insertion BEFORE----------------------------------------------
+CREATE OR REPLACE TRIGGER TI_TERRAIN_BEFORE
+	BEFORE INSERT ON TERRAIN
+	REFERENCING OLD as OLD NEW as NEW
+	FOR EACH ROW BEGIN
+	IF inserting then 
+		SELECT SEQ_TERRAIN.NEXTVAL
+		INTO :NEW.NUM_TERRAIN
+		FROM DUAL;
+	END IF;
+END;
+/
+
+
 
 -- Trigger d'insertion AFTER----------------------------------------------
 CREATE OR REPLACE trigger TI_TERRAIN_AFTER
