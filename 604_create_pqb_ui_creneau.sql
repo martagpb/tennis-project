@@ -15,9 +15,6 @@ AS
 	--Permet d'afficher tous les créneaux et les actions possibles de gestion
 	PROCEDURE manage_creneaux
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-		rep_js VARCHAR2(255)  := pq_ui_param_commun.get_rep_js;
-		-- On stocke dans un curseur la liste de tous les créneaux existants
 		CURSOR listCreneaux IS
 		SELECT 
 			CRE.HEURE_DEBUT_CRENEAU
@@ -28,12 +25,7 @@ AS
 			1
 		  , 2;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 	
-			htp.headClose;
-			htp.bodyOpen;
+			pq_ui_commun.aff_header(3);
 				htp.br;				
 				htp.print('Gestion des créneaux' || ' (' || htf.anchor('pq_ui_creneau.manage_creneaux','Actualiser')|| ')' );
 				htp.br;	
@@ -59,8 +51,7 @@ AS
 					end loop;	
 					htp.tableClose;
 				htp.formClose;
-			htp.bodyClose;
-		htp.htmlClose;
+			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des créneaux');
@@ -71,13 +62,8 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
+		pq_ui_commun.aff_header(3);
 				htp.br;	
 				htp.print('Affichage des informations d''un créneau' || ' (' || htf.anchor('pq_ui_creneau.dis_creneau?vheureDebutCreneau='||vheureDebutCreneau||'&'||'vheureFinCreneau='||vheureFinCreneau,'Actualiser')|| ')' );
 				htp.br;
@@ -86,8 +72,7 @@ AS
 				htp.br;
 				htp.br;		
 				htp.anchor('pq_ui_creneau.manage_creneaux', 'Retourner à la gestion des créneaux');	
-			htp.bodyClose;
-		htp.htmlClose;
+			pq_ui_commun.aff_footer;
 	END dis_creneau;
 	
 	-- Exécute la procédure d'ajout d'un créneau et gère les erreurs éventuelles.
@@ -95,21 +80,15 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
+		pq_ui_commun.aff_header(3);
 				htp.br;
 				pq_db_creneau.add_creneau(vheureDebutCreneau,vheureFinCreneau);
 				htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été ajouté avec succès.');
 				htp.br;
 				htp.br;			
 				pq_ui_creneau.manage_creneaux;
-			htp.bodyClose;
-		htp.htmlClose;
+			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout d''un créneau en cours...');
@@ -120,21 +99,15 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
+		pq_ui_commun.aff_header(3);
 				htp.br;				
 				pq_db_creneau.upd_creneau(vheureDebutCreneau,vheureFinCreneau);
 				htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été mise à jour avec succès.');
 				htp.br;
 				htp.br;			
 				pq_ui_creneau.manage_creneaux;
-			htp.bodyClose;
-		htp.htmlClose;
+			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un créneau en cours...');
@@ -144,21 +117,15 @@ AS
 	PROCEDURE exec_del_creneau(
 	  vheureDebutCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
+		pq_ui_commun.aff_header(3);
 				htp.br;	
 				pq_db_creneau.del_creneau(vheureDebutCreneau);
 				htp.print('Le créneau qui commençait à '|| vheureDebutCreneau || ' a été supprimé avec succès.');
 				htp.br;
 				htp.br;			
 				pq_ui_creneau.manage_creneaux;
-			htp.bodyClose;
-		htp.htmlClose;
+		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression d''un créneau en cours...');
@@ -169,18 +136,12 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
+		pq_ui_commun.aff_header(3);
 				htp.br;				
 				pq_ui_creneau.dis_creneau(vheureDebutCreneau,vheureFinCreneau);
 				htp.br;		
-			htp.bodyClose;
-		htp.htmlClose;
+		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Affichage d''un créneau en cours...');
@@ -189,15 +150,8 @@ AS
 	-- Affiche le formulaire permettant la saisie d’un nouveau créneau	
 	PROCEDURE form_add_creneau
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-		rep_js VARCHAR2(255)  := pq_ui_param_commun.get_rep_js;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 	
-			htp.headClose;
-			htp.bodyOpen;
+		pq_ui_commun.aff_header(3);
 				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_add_creneau', 'POST', cattributes => 'onSubmit="return validerCreneau(this,document)"');
 					htp.tableOpen;
 					htp.br;
@@ -223,8 +177,7 @@ AS
 				htp.formClose;
 				htp.br;
 				htp.anchor('pq_ui_creneau.manage_creneaux', 'Retourner à la gestion des créneaux');
-			htp.bodyClose;
-		htp.htmlClose;
+			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Saisie d''un nouveau créneau');
@@ -236,15 +189,8 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-		rep_js VARCHAR2(255)  := pq_ui_param_commun.get_rep_js;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 	
-			htp.headClose;
-			htp.bodyOpen;
+		pq_ui_commun.aff_header(3);
 				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_upd_creneau', 'GET', cattributes => 'onSubmit="return validerCreneau(this,document)"');
 					htp.formhidden ('vheureDebutCreneau',vheureDebutCreneau);
 					htp.tableOpen;
@@ -268,8 +214,7 @@ AS
 				htp.formClose;
 				htp.br;
 				htp.anchor('pq_ui_creneau.manage_creneaux', 'Retourner à la gestion des créneaux');
-			htp.bodyClose;
-		htp.htmlClose;
+			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification d''un créneau');
