@@ -28,14 +28,14 @@ IS
 	
 		-- Exécute la procédure d'ajout d'un entrainement et gère les erreurs éventuelles.
 	PROCEDURE exec_add_entrainement(
-	  vnumEntrainement IN VARCHAR2
-	, vnumEntraineur IN VARCHAR2
-	, vcodeNiveau IN VARCHAR2
+	  vnumEntrainement IN NUMBER
+	, vnumEntraineur IN NUMBER
+	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN VARCHAR2
+	, vnbPlaces IN NUMBER
 	, vdateDebut IN VARCHAR2
 	, vdateFin IN VARCHAR2
-	, vestRecurent IN VARCHAR2);
+	, vestRecurent IN NUMBER);
 	
 	-- Exécute la procédure de mise à jour d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_upd_entrainement(

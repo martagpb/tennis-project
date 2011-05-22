@@ -102,37 +102,27 @@ IS
 	
 	-- Exécute la procédure d'ajout d'un entrainement et gère les erreurs éventuelles.
 	PROCEDURE exec_add_entrainement(
-	  vnumEntrainement IN VARCHAR2
-	, vnumEntraineur IN VARCHAR2
-	, vcodeNiveau IN VARCHAR2
+	  vnumEntrainement IN NUMBER
+	, vnumEntraineur IN NUMBER
+	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN VARCHAR2
+	, vnbPlaces IN NUMBER
 	, vdateDebut IN VARCHAR2
 	, vdateFin IN VARCHAR2
-	, vestRecurent IN VARCHAR2)
+	, vestRecurent IN NUMBER)
 	IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
+		
 		htp.htmlOpen;
 			htp.headOpen;
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
 			htp.headClose;
 			htp.bodyOpen;
-				htp.print('numéro de l''entrainement' || vnumEntrainement);
+				pq_db_entrainement.add_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'),vestRecurent);
 				htp.br();
-				htp.print('numéro de l''entraineur' || vnumEntraineur);
 				htp.br();
-				htp.print('code du niveau' || vcodeNiveau);
-				htp.br();
-				htp.print('nature du niveau' || vnatureNiveau);
-				htp.br();
-				htp.print('nombre de places'|| vnbPlaces);
-				htp.br();
-				htp.print('date de début' || vdateDebut);
-				htp.br();
-				htp.print('date de fin' || vdateFin);
-				htp.br();
-				htp.print('est récurent' || vestRecurent);
+				pq_ui_entrainement.manage_entrainement;
 				htp.br();
 			htp.bodyClose;
 		htp.htmlClose;
@@ -312,7 +302,7 @@ IS
 				htp.tableData('Entraineur * :', cattributes => 'class="enteteFormulaire"');	
 					--Forme une liste déroulante avec tous les entraineur à partir de la table personne									
 					htp.print('<td>');
-					htp.print('<select id="vnumEntraineur">');		
+					htp.print('<select name="vnumEntraineur" id="vnumEntraineur">');		
 					for currentEntraineur in entraineurlist loop
 							htp.print('<option value="'||currentEntraineur.NUM_PERSONNE||'">'||currentEntraineur.PRENOM_PERSONNE||' '||currentEntraineur.NOM_PERSONNE||'</option>');
 					end loop;
@@ -323,14 +313,13 @@ IS
 				htp.tableData('Niveau * :', cattributes => 'class="enteteFormulaire"');	
 					--Forme une liste déroulante avec tous les niveaux de la table codification								
 					htp.print('<td>');
-					htp.print('<select id="vcodeNiveau">');		
+					htp.print('<select name="vcodeNiveau" id="vcodeNiveau">');		
 					for currentNiveau in niveaulist loop
 							htp.print('<option value="'||currentNiveau.CODE||'">'||currentNiveau.CODE||'</option>');
 					end loop;
 					htp.print('</select>');										
 					htp.print('</td>');							
 				htp.tableRowClose;
-				htp.formhidden ('vcodeNiveau','NC');
 				htp.formhidden ('vnatureNiveau','Classement');
 				htp.tableRowOpen;
 					htp.tableData('Nombre de places * :', cattributes => 'class="enteteFormulaire"');	
@@ -341,7 +330,8 @@ IS
 				htp.tableRowOpen;
 					htp.tableData('Date de début * :', cattributes => 'class="enteteFormulaire"');	
 					htp.print('<td>');					
-					htp.formText('vdateDebut',8);										
+					htp.formText('vdateDebut',8);
+					htp.print('date sous le forme "22/01/10"');
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
@@ -351,10 +341,12 @@ IS
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
-					htp.tableData('Récurence :', cattributes => 'class="enteteFormulaire"');	
-					htp.print('<td>');					
-					htp.print('<INPUT type="checkbox" name="vestRecurent" value="1">');										
-					htp.print('</td>');						
+					htp.tableData('L''entrainement est il récurent ? * :', cattributes => 'class="enteteFormulaire"');												
+						htp.print('<td>');
+						htp.print('<select name="vestRecurent" id="vestRecurent">');
+							htp.print('<option value="1" selected="selected">oui</option>');
+							htp.print('<option value="0">non</option></select>');
+						htp.print('</td>');							
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('');
@@ -362,6 +354,8 @@ IS
 				htp.tableRowClose;
 				htp.tableClose;
 			htp.formClose;
+			htp.br;
+			htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');
 			htp.bodyClose;
 		htp.htmlClose;
 	END form_add_entrainement;
