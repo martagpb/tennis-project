@@ -14,8 +14,7 @@ CREATE OR REPLACE PACKAGE pq_db_terrain
 IS
 	--Permet d’ajouter un terrain
 	PROCEDURE add_terrain(
-	  vnumTerrain IN NUMBER
-	, vcodeSurface IN CHAR
+	  vcodeSurface IN CHAR
 	, vnatureSurface IN VARCHAR2
 	, vactif IN NUMBER);
 	
