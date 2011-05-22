@@ -3,7 +3,7 @@
 --		Type   : Fichier javascript
 --      Projet : BD50
 --      Auteur : Gonzalves / Invernizzi / Joly / Leviste
---      Date de dernière modification : 18/05/2011
+--      Date de dernière modification : 21/05/2011
 -- -----------------------------------------------------------------------------
 */
 
@@ -38,19 +38,17 @@ function valider(form,document){
 		||	login== ""
 		|| 	login== null
 		||	password== ""
-		|| 	password== null) {
-		
-			
+		|| 	password== null) {			
 		alert("Veuillez remplir tous les champs obligatoires");
 		return false;
 	}
 	else if(!verifiermail(mail)){
 		document.getElementById("mailText").innerHTML ="Format invalide";
-		return false
+		return false;
 	}
 	else if(password.value.length!=8){
 		document.getElementById("passwordText").innerHTML ="Le mot de passe doit faire 8 caractères";
-		return false
+		return false;
 	}
 	return true;
 }
@@ -59,7 +57,7 @@ function verifiermail(mail) {
    return (mail.indexOf("@")>=0)&&(mail.indexOf(".")>=0);
 }
 
-/*Fonction permettant de valider la sélection d'un créneau horaire*/
+/*Fonction permettant de valider la création d'un créneau horaire*/
 function validerCreneau(form,document){
 
 	heureDebutCreneau = form.vheureDebutCreneau.value;
@@ -83,4 +81,40 @@ function confirmerChoix(form,document){
     return true;
   }
    return false;
+}
+
+/*Fonction permettant de valider la création d'un terrain*/
+function validerTerrain(form,document){
+
+	libelleSurface = form.vlibelleSurface.value; // On récupère : code, nature et libelle
+	actif = form.vactif.value;
+	
+	if(  
+	     libelleSurface == null 
+	   ||  libelleSurface == "" 
+	   ||  actif == null 
+	   ||  actif == "" 
+	){
+		alert("Veuillez remplir tous les champs obligatoires");
+		return false;
+	}else{		
+	
+		//On construit un tableau qui va contenir les 3 valeurs (code, nature et libelle)
+		var codeNatureLibelleArray = new Array();
+		codeNatureLibelleArray = libelleSurface.split('*'); // On découpe la chaine
+		
+		//On extrait le code
+		vCode = codeNatureLibelleArray[0];
+		//On extrait la nature
+		vNature = codeNatureLibelleArray[1];
+		//On peut extraire le libelle si besoin
+		//vLibelle = codeNatureLibelleArray[2];
+		
+		//On indique les bonnes valeurs dans les balises hidden qui correspondent à la nature et au code de la surface sélectionnée			
+		document.getElementById("idVcodeSurface").value = vCode;		
+		document.getElementById("idVnatureSurface").value = vNature;	
+		//document.getElementById("vlibelleSurface").value = vLibelle;
+	}
+		
+	return true;
 }
