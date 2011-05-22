@@ -23,18 +23,28 @@ AS
 		COMMIT;
 	END add_etre_affecte;
 	
-	--Permet de supprimer une affectation
-	PROCEDURE del_etre_affecte(
-	  vnumEntrainement IN NUMBER
-	, vnumTerrain IN NUMBER)
+	--Permet de supprimer les affectations relatives à un entrainement
+	PROCEDURE del_etre_affecte_entrainement(
+	  vnumEntrainement IN NUMBER)
 	IS
 	BEGIN
 		DELETE FROM ETRE_AFFECTE
 		WHERE
-			NUM_ENTRAINEMENT=vnumEntrainement
-			AND NUM_TERRAIN=vnumTerrain;
+			NUM_ENTRAINEMENT=vnumEntrainement;
 		COMMIT;
-	END del_etre_affecte;
+	END del_etre_affecte_entrainement;
+	
+	--Permet de supprimer une affectation relatives à un terrain
+	PROCEDURE del_etre_affecte_terrain(
+	  vnumTerrain IN NUMBER)
+	IS
+	BEGIN
+		DELETE FROM ETRE_AFFECTE
+		WHERE
+			NUM_TERRAIN=vnumTerrain;
+		COMMIT;
+	END del_etre_affecte_terrain;
+	 
 	
 END pq_db_etre_affecte;
 /
