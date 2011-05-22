@@ -32,7 +32,7 @@ IS
 		FROM 
 			ENTRAINEMENT ENTR
 		ORDER BY 
-			1;
+			NUM_ENTRAINEMENT;
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;
@@ -48,17 +48,19 @@ IS
 				htp.br;	
 				htp.br;	
 				htp.tableOpen;
-					htp.tableheader('Numéro d''entrainement');
+					htp.tableheader('Numéro de l''entrainement');
 					htp.tableheader('Informations');
 					htp.tableheader('Mise à jour');
 					htp.tableheader('Suppression');
 					for currentEntrainement in listEntrainement loop
 						htp.tableRowOpen;
 						htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);				
-						htp.tabledata(htf.anchor('pq_ui_entrainement.dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&vnumEmploye='||currentEntrainement.NUM_ENTRAINEUR||
-						'&vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT||
-						'&vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Informations'));
-						htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Mise à jour'));
+						htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
+						'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
+						||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Informations'));
+						htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
+						'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
+						||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Mise à jour'));
 						htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
 						htp.tableRowClose;
 					end loop;	
@@ -73,7 +75,7 @@ IS
 	-- Exécute la procédure d’affichage des entrainements et gère les erreurs éventuelles
 	PROCEDURE exec_dis_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
@@ -89,7 +91,7 @@ IS
 			htp.headClose;
 			htp.bodyOpen;
 				htp.br;				
-				pq_ui_entrainement.dis_entrainement(vnumEntrainement,vnumEmploye,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin,vestRecurent));
+				pq_ui_entrainement.dis_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin,vestRecurent);
 				htp.br;		
 			htp.bodyClose;
 		htp.htmlClose;
@@ -98,54 +100,16 @@ IS
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Affichage de l''entrainement en cours...');
 	END exec_dis_entrainement;
 	
-	--Permet d’afficher un entrainement existant
-	PROCEDURE dis_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
-	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER)
-	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
-				htp.br;	
-				htp.print('Affichage des informations d''un entrainement' || ' (' || htf.anchor('pq_ui_entrainement.dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&vnumEmploye='||currentEntrainement.NUM_ENTRAINEUR||
-						'&vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT||
-						'&vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Actualiser')|| ')' )
-				htp.br;
-				htp.br;					
-				htp.print('L''entrainement numéro '|| vnumEntrainement || ' est animé par l''entraineur numéro '|| vnumEmploye || '.');
-				htp.br;					
-				htp.print('L''entrainement s''adresses aux joueurs possèdant le niveau : '|| vcodeNiveau || '.');
-				htp.br;
-				htp.print('Le nombre de places disponibles est de : '|| vnbPlaces || '.');
-				htp.br;
-				htp.print('Il a lieu entre le  : '|| vdateDebut || 'et le' || vdateFin ||'.');
-				htp.br;
-				htp.br;		
-				htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');	
-			htp.bodyClose;
-		htp.htmlClose;
-	END dis_entrainement;
-	
 	-- Exécute la procédure d'ajout d'un entrainement et gère les erreurs éventuelles.
 	PROCEDURE exec_add_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
-	, vcodeNiveau IN CHAR
+	  vnumEntrainement IN VARCHAR2
+	, vnumEntraineur IN VARCHAR2
+	, vcodeNiveau IN VARCHAR2
 	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER)
+	, vnbPlaces IN VARCHAR2
+	, vdateDebut IN VARCHAR2
+	, vdateFin IN VARCHAR2
+	, vestRecurent IN VARCHAR2)
 	IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 	BEGIN
@@ -154,14 +118,33 @@ IS
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
 			htp.headClose;
 			htp.bodyOpen;
+				htp.print('numéro de l''entrainement' || vnumEntrainement);
+				htp.br();
+				htp.print('numéro de l''entraineur' || vnumEntraineur);
+				htp.br();
+				htp.print('code du niveau' || vcodeNiveau);
+				htp.br();
+				htp.print('nature du niveau' || vnatureNiveau);
+				htp.br();
+				htp.print('nombre de places'|| vnbPlaces);
+				htp.br();
+				htp.print('date de début' || vdateDebut);
+				htp.br();
+				htp.print('date de fin' || vdateFin);
+				htp.br();
+				htp.print('est récurent' || vestRecurent);
+				htp.br();
 			htp.bodyClose;
 		htp.htmlClose;
+		EXCEPTION
+		WHEN OTHERS THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout d''un entrainement en cours...');
 	END exec_add_entrainement;
 	
 	-- Exécute la procédure de mise à jour d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_upd_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
@@ -176,6 +159,22 @@ IS
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
 			htp.headClose;
 			htp.bodyOpen;
+				htp.print('numéro de l''entrainement' || vnumEntrainement);
+				htp.br();
+				htp.print('numéro de l''entraineur' || vnumEntraineur);
+				htp.br();
+				htp.print('code du niveau' || vcodeNiveau);
+				htp.br();
+				htp.print('nature du niveau' || vnatureNiveau);
+				htp.br();
+				htp.print('nombre de places'|| vnbPlaces);
+				htp.br();
+				htp.print('date de début' || vdateDebut);
+				htp.br();
+				htp.print('date de fin' || vdateFin);
+				htp.br();
+				htp.print('est récurent' || vestRecurent);
+				htp.br();
 			htp.bodyClose;
 		htp.htmlClose;
 	END exec_upd_entrainement;
@@ -191,22 +190,178 @@ IS
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
 			htp.headClose;
 			htp.bodyOpen;
+				pq_db_entrainement.del_entrainement(vnumEntrainement);
+				pq_db_etre_affecte.del_etre_affecte_entrainement(vnumEntrainement);
+				pq_db_avoir_lieu.del_avoir_lieu_entrainement(vnumEntrainement);
+				htp.print('L''entrainement n° '|| vnumEntrainement || ' a été supprimé avec succès.');
+				htp.br;
+				htp.br;			
+				pq_ui_entrainement.manage_entrainement;
 			htp.bodyClose;
 		htp.htmlClose;
+		EXCEPTION
+		WHEN OTHERS THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression d''un entrainement en cours...');
 	END exec_del_entrainement;
 	
-
+	--Permet d’afficher un entrainement existant
+	PROCEDURE dis_entrainement(
+	  vnumEntrainement IN NUMBER
+	, vnumEntraineur IN NUMBER
+	, vcodeNiveau IN CHAR
+	, vnatureNiveau IN VARCHAR2
+	, vnbPlaces IN NUMBER
+	, vdateDebut IN DATE
+	, vdateFin IN DATE
+	, vestRecurent IN NUMBER)
+	IS
+		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		vprenomEntraineur VARCHAR2(40);
+		vnomEntraineur VARCHAR2(40);
+		CURSOR listSeance IS SELECT NUM_JOUR,HEURE_DEBUT_CRENEAU,NUM_TERRAIN FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=vnumEntrainement;
+	BEGIN
+		SELECT P.PRENOM_PERSONNE INTO vprenomEntraineur FROM PERSONNE P WHERE P.NUM_PERSONNE=vnumEntraineur;
+		SELECT P.NOM_PERSONNE INTO vnomEntraineur FROM PERSONNE P WHERE P.NUM_PERSONNE=vnumEntraineur;
+		htp.htmlOpen;
+			htp.headOpen;
+				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
+			htp.headClose;
+			htp.bodyOpen;
+				htp.br;	
+				htp.print('Affichage des informations d''un entrainement' || ' (' || htf.anchor('pq_ui_entrainement.dis_entrainement?vnumEntrainement='||vnumEntrainement||'&'||'vnumEntraineur='||vnumEntraineur||'&'||
+						'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
+						||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent,'Actualiser')|| ')' );
+				htp.br;
+				htp.br;					
+				htp.print('Desription de l''entrainement numéro '|| vnumEntrainement || ' :');
+				htp.br;	
+				htp.br;
+				htp.print('Il est animé par '|| vprenomEntraineur || ' ' || vnomEntraineur || '.');
+				htp.br;
+				htp.print('L''entrainement s''adresse aux joueurs possèdant au moins le niveau : '|| vcodeNiveau || '.');
+				htp.br;
+				htp.print('Le nombre de places disponibles est de : '|| vnbPlaces || '.');
+				htp.br;
+				htp.print('Il a lieu entre le  : '|| TO_CHAR(vdateDebut,'DD/MM/YYYY') || ' et le ' || TO_CHAR(vdateFin,'DD/MM/YYYY') ||'.');
+				htp.br;
+				htp.br;
+				htp.print('L''entrainement à lieu   : ');
+				htp.br;
+				for currentSeance in listSeance loop
+					htp.print('   *   ' || 'Le ');
+					if(currentSeance.NUM_JOUR=1)
+						then
+							htp.print('lundi ');
+					end if;
+					if(currentSeance.NUM_JOUR=2)
+						then
+							htp.print('mardi ');
+					end if;
+					if(currentSeance.NUM_JOUR=3)
+						then
+							htp.print('mercredi ');
+					end if;
+					if(currentSeance.NUM_JOUR=4)
+						then
+							htp.print('jeudi ');
+					end if;
+					if(currentSeance.NUM_JOUR=5)
+						then
+							htp.print('vendredi ');
+					end if;
+					if(currentSeance.NUM_JOUR=6)
+						then
+							htp.print('samedi ');
+					end if;
+					if(currentSeance.NUM_JOUR=7)
+						then
+							htp.print('dimanche ');
+					end if;
+					htp.print(' à ' || currentSeance.HEURE_DEBUT_CRENEAU || ' sur le terrain numéro ' || currentSeance.NUM_TERRAIN || '.' );	
+					htp.br;
+				end loop;
+				htp.br;		
+				htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');	
+			htp.bodyClose;
+		htp.htmlClose;
+	END dis_entrainement;
 	
 	-- Affiche le formulaire permettant la saisie d’un nouvel entrainement
 	PROCEDURE form_add_entrainement
 	IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		CURSOR entraineurlist IS SELECT NUM_PERSONNE,NOM_PERSONNE,PRENOM_PERSONNE FROM PERSONNE WHERE CODE_STATUT_EMPLOYE='ENT';
+		CURSOR niveaulist IS SELECT CODE FROM CODIFICATION WHERE NATURE = 'Classement';
 	BEGIN
 		htp.htmlOpen;
 			htp.headOpen;
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
 			htp.headClose;
 			htp.bodyOpen;
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_add_entrainement', 'GET');				
+				htp.formhidden ('vnumEntrainement','1');
+				htp.br;
+				htp.print('Création d''un nouvel entrainement' || ' (' || htf.anchor('pq_ui_entrainement.form_add_entrainement','Actualiser')|| ')' );
+				htp.br;
+				htp.br;
+				htp.print('Les champs marqués d''une étoile sont obligatoires.');
+				htp.br;
+				htp.tableOpen;
+				htp.br;				
+				htp.tableRowOpen;
+				htp.tableData('Entraineur * :', cattributes => 'class="enteteFormulaire"');	
+					--Forme une liste déroulante avec tous les entraineur à partir de la table personne									
+					htp.print('<td>');
+					htp.print('<select id="vnumEntraineur">');		
+					for currentEntraineur in entraineurlist loop
+							htp.print('<option value="'||currentEntraineur.NUM_PERSONNE||'">'||currentEntraineur.PRENOM_PERSONNE||' '||currentEntraineur.NOM_PERSONNE||'</option>');
+					end loop;
+					htp.print('</select>');										
+					htp.print('</td>');						
+				htp.tableRowClose;	
+				htp.tableRowOpen;
+				htp.tableData('Niveau * :', cattributes => 'class="enteteFormulaire"');	
+					--Forme une liste déroulante avec tous les niveaux de la table codification								
+					htp.print('<td>');
+					htp.print('<select id="vcodeNiveau">');		
+					for currentNiveau in niveaulist loop
+							htp.print('<option value="'||currentNiveau.CODE||'">'||currentNiveau.CODE||'</option>');
+					end loop;
+					htp.print('</select>');										
+					htp.print('</td>');							
+				htp.tableRowClose;
+				htp.formhidden ('vcodeNiveau','NC');
+				htp.formhidden ('vnatureNiveau','Classement');
+				htp.tableRowOpen;
+					htp.tableData('Nombre de places * :', cattributes => 'class="enteteFormulaire"');	
+					htp.print('<td>');					
+					htp.formText('vnbPlaces',2);										
+					htp.print('</td>');						
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Date de début * :', cattributes => 'class="enteteFormulaire"');	
+					htp.print('<td>');					
+					htp.formText('vdateDebut',8);										
+					htp.print('</td>');						
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Date de fin * :', cattributes => 'class="enteteFormulaire"');	
+					htp.print('<td>');					
+					htp.formText('vdateFin',8);										
+					htp.print('</td>');						
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Récurence :', cattributes => 'class="enteteFormulaire"');	
+					htp.print('<td>');					
+					htp.print('<INPUT type="checkbox" name="vestRecurent" value="1">');										
+					htp.print('</td>');						
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('');
+					htp.tableData(htf.formSubmit(NULL,'Validation'));
+				htp.tableRowClose;
+				htp.tableClose;
+			htp.formClose;
 			htp.bodyClose;
 		htp.htmlClose;
 	END form_add_entrainement;
@@ -214,7 +369,7 @@ IS
 	-- Affiche le formulaire de saisie permettant la modification d’un entrainement existant	
 	PROCEDURE form_upd_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
@@ -231,22 +386,23 @@ IS
 				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 	
 			htp.headClose;
 			htp.bodyOpen;
-				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_upd_creneau', 'GET', cattributes => 'onSubmit="return validerCreneau(this,document)"');
-					htp.tableOpen;
+			htp.formOpen(owa_util.get_owa_service_path || 'pq_ui_entrainement.exec_upd_entrainement', 'GET', cattributes => 'onSubmit="return validerEntrainement(this,document)"');
+				htp.tableOpen;
 					htp.br;
-					htp.print('Mise à jour d''un entrainement' || ' (' || htf.anchor('pq_ui_entrainement.form_upd_creneau?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&vnumEmploye='||currentEntrainement.NUM_ENTRAINEUR||
-						'&vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT||
-						'&vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,,'Actualiser')|| ')' );
+					htp.print('Mise à jour d''un entrainement' || ' (' || htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||vnumEntrainement||'&'||'vnumEntraineur='||vnumEntraineur||'&'||
+						'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
+						||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent,'Actualiser')|| ')' );
 					htp.br;
 					htp.br;
-					htp.tableRowOpen;
+						htp.tableRowOpen;
 						htp.tableData('Numéro de l''entrainement :', cattributes => 'class="enteteFormulaire"');
 						htp.tableData(vnumEntrainement);
 					htp.tableRowClose;	
+					htp.tableRowOpen;
 						htp.tableData('');
 						htp.tableData(htf.formSubmit(NULL,'Validation'));
-					htp.tableRowClose;
-					htp.tableClose;
+					htp.tableRowClose;	
+				htp.tableClose;	
 				htp.formClose;
 				htp.br;
 				htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');

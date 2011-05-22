@@ -15,7 +15,7 @@ IS
 	--Permet d’ajouter un entrainement
 	PROCEDURE add_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
@@ -24,15 +24,16 @@ IS
 	, vestRecurent IN NUMBER)
 	IS
 	BEGIN
-		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEMENT,NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT)
-		VALUES (vnumEntrainement,vnumEmploye,vcodeNiveau,vnbPlaces,vdateDebut,vdateFin,VestRecurent);
+		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEMENT,NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,
+								  DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT)
+		VALUES (vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin,vestRecurent);
 		COMMIT;
 	END add_entrainement;
 	
 	--Permet de modifier un entrainement existant
 	PROCEDURE upd_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
@@ -43,7 +44,7 @@ IS
 	BEGIN
 		UPDATE ENTRAINEMENT
 		SET
-				NUM_ENTRAINEUR = vnumEmploye
+				NUM_ENTRAINEUR = vnumEntraineur
 			   ,CODE_NIVEAU = vcodeNiveau
 			   ,NATURE_NIVEAU = vnatureNiveau
 			   ,NB_PLACE_ENTRAINEMENT = vnbPlaces

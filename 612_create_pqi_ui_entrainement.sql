@@ -15,10 +15,10 @@ IS
 	--Permet d'afficher tous les entrainement existant 
 	PROCEDURE manage_entrainement;
 	
-	--Permet d’afficher un entrainement existant
-	PROCEDURE dis_entrainement(
+		-- Exécute la procédure d’affichage des entrainements et gère les erreurs éventuelles
+	PROCEDURE exec_dis_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
@@ -26,21 +26,21 @@ IS
 	, vdateFin IN DATE
 	, vestRecurent IN NUMBER);
 	
+		-- Exécute la procédure d'ajout d'un entrainement et gère les erreurs éventuelles.
+	PROCEDURE exec_add_entrainement(
+	  vnumEntrainement IN VARCHAR2
+	, vnumEntraineur IN VARCHAR2
+	, vcodeNiveau IN VARCHAR2
+	, vnatureNiveau IN VARCHAR2
+	, vnbPlaces IN VARCHAR2
+	, vdateDebut IN VARCHAR2
+	, vdateFin IN VARCHAR2
+	, vestRecurent IN VARCHAR2);
+	
 	-- Exécute la procédure de mise à jour d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_upd_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
-	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER);
-
-	-- Exécute la procédure d'ajout d'un entrainement et gère les erreurs éventuelles.
-	PROCEDURE exec_add_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
@@ -51,11 +51,11 @@ IS
 	-- Exécute la procédure de suppression d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_del_entrainement(
 	  vnumEntrainement IN NUMBER);
-	
-	-- Exécute la procédure d’affichage des entrainements et gère les erreurs éventuelles
-	PROCEDURE exec_dis_entrainement(
+	  
+	--Permet d’afficher un entrainement existant
+	PROCEDURE dis_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
@@ -69,13 +69,13 @@ IS
 	-- Affiche le formulaire de saisie permettant la modification d’un entrainement existant	
 	PROCEDURE form_upd_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN DATE
 	, vdateFin IN DATE
-	, vestRecurent IN NUMBER)
+	, vestRecurent IN NUMBER);
 		
 END pq_ui_entrainement;
 /

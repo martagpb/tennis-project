@@ -25,6 +25,10 @@ IS
 	, vheureDebutCreneau IN CHAR
 	, vnumTerrain IN NUMBER);
 	
+	--Permet de supprimer une occurence via l'entrainement
+	PROCEDURE del_avoir_lieu_entrainement(
+		vnumEntrainement IN NUMBER);
+	
 	--Permet de modifier une occurence existante
 	PROCEDURE upd_avoir_lieu(
 	  vnumJour IN NUMBER

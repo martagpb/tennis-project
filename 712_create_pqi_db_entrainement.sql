@@ -15,7 +15,7 @@ IS
 	--Permet d’ajouter un entrainement
 	PROCEDURE add_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
@@ -26,7 +26,7 @@ IS
 	--Permet de modifier un entrainement existant
 	PROCEDURE upd_entrainement(
 	  vnumEntrainement IN NUMBER
-	, vnumEmploye IN NUMBER
+	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER

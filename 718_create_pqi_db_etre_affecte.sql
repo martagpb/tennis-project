@@ -17,10 +17,13 @@ IS
 	  vnumEntrainement IN NUMBER
 	, vnumTerrain IN NUMBER);
 	
-	--Permet de supprimer une affectation
-	PROCEDURE del_etre_affecte(
-	  vnumEntrainement IN NUMBER
-	, vnumTerrain IN NUMBER);
+	--Permet de supprimer les affectations relatives à un entrainement
+	PROCEDURE del_etre_affecte_entrainement(
+	  vnumEntrainement IN NUMBER);
+	
+	--Permet de supprimer une affectation relatives à un terrain
+	PROCEDURE del_etre_affecte_terrain(
+	  vnumTerrain IN NUMBER);
 	
 END pq_db_etre_affecte;
 /
