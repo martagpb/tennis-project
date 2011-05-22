@@ -186,6 +186,11 @@ AS
 				htp.print('</li>');	
 				htp.listItem;
 					htp.anchor('#', 'Administration');
+					htp.ulistOpen(cattributes => 'class="niveau2"');						
+						htp.listItem;
+							htp.anchor('pq_ui_terrain.manage_terrains_with_menu', 'Gestion des terrains');
+						htp.print('</li>');
+					htp.ulistClose;
 				htp.print('</li>');	
 			htp.ulistClose;
 		htp.print('</div>');		
