@@ -31,5 +31,21 @@ AS
 		RETURN rep_js;
 	END;
 	
+	-- Fonction qui retourne 'oui' ou 'non' à la place des valeurs '1' ou '0'
+	FUNCTION dis_number_to_yes_or_not(
+	   vvalue in NUMBER)
+	RETURN VARCHAR2
+	IS
+		response VARCHAR2(255) := 'indéterminé';
+	BEGIN
+		CASE vvalue
+			WHEN 0 THEN
+				response:= 'non';
+			WHEN 1 THEN
+				response:= 'oui';
+		END CASE;
+		RETURN response;
+	END;
+	
 END pq_ui_param_commun;
 /
