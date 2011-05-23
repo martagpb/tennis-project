@@ -23,7 +23,8 @@ IS
 	
 	--Permet de supprimer une affectation relatives à un terrain
 	PROCEDURE del_etre_affecte_terrain(
-	  vnumTerrain IN NUMBER);
+	  vnumEntrainement IN NUMBER
+	, vnumTerrain IN NUMBER);
 	
 END pq_db_etre_affecte;
 /

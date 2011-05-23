@@ -199,15 +199,17 @@ IS
 	, vestRecurent IN NUMBER)
 	IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		rep_js VARCHAR2(255) := pq_ui_param_commun.get_rep_js;
 		vprenomEntraineur VARCHAR2(40);
 		vnomEntraineur VARCHAR2(40);
-		CURSOR listSeance IS SELECT NUM_JOUR,HEURE_DEBUT_CRENEAU,NUM_TERRAIN FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=vnumEntrainement;
+		CURSOR listSeance IS SELECT NUM_JOUR,HEURE_DEBUT_CRENEAU,NUM_TERRAIN FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=vnumEntrainement ORDER BY NUM_JOUR;
 	BEGIN
 		SELECT P.PRENOM_PERSONNE INTO vprenomEntraineur FROM PERSONNE P WHERE P.NUM_PERSONNE=vnumEntraineur;
 		SELECT P.NOM_PERSONNE INTO vnomEntraineur FROM PERSONNE P WHERE P.NUM_PERSONNE=vnumEntraineur;
 		htp.htmlOpen;
 			htp.headOpen;
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
+				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 
 			htp.headClose;
 			htp.bodyOpen;
 				htp.br;	
@@ -215,7 +217,7 @@ IS
 						'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
 						||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent,'Actualiser')|| ')' );
 				htp.br;
-				htp.br;					
+				htp.br;						
 				htp.print('Desription de l''entrainement numéro '|| vnumEntrainement || ' :');
 				htp.br;	
 				htp.br;
@@ -228,9 +230,12 @@ IS
 				htp.print('Il a lieu entre le  : '|| TO_CHAR(vdateDebut,'DD/MM/YYYY') || ' et le ' || TO_CHAR(vdateFin,'DD/MM/YYYY') ||'.');
 				htp.br;
 				htp.br;
-				htp.print('L''entrainement à lieu   : ');
+				htp.print('Séances   : ');
 				htp.br;
+				htp.tableOpen;
 				for currentSeance in listSeance loop
+					htp.tableRowOpen;
+					htp.print('<td>');
 					htp.print('   *   ' || 'Le ');
 					if(currentSeance.NUM_JOUR=1)
 						then
@@ -261,9 +266,20 @@ IS
 							htp.print('dimanche ');
 					end if;
 					htp.print(' à ' || currentSeance.HEURE_DEBUT_CRENEAU || ' sur le terrain numéro ' || currentSeance.NUM_TERRAIN || '.' );	
+					htp.tabledata(htf.anchor('pq_ui_avoir_lieu.exec_del_avoir_lieu?vnumJour='||currentSeance.NUM_JOUR||'&'||'vheureDebutCreneau='||currentSeance.HEURE_DEBUT_CRENEAU||'&'||'vnumTerrain='||currentSeance.NUM_TERRAIN||'&'||'vnumEntrainement='||vnumEntrainement, 'Supprimer',cattributes => 'onClick="return confirmerChoix(this,document)"'));
+					htp.print('</td>');
+					htp.tableRowClose;
 					htp.br;
 				end loop;
-				htp.br;		
+				htp.br;	
+				htp.tableClose;
+				htp.br;
+				htp.br;
+				htp.anchor('pq_ui_avoir_lieu.form_add_avoir_lieu?vnumEntrainement='||vnumEntrainement||'&'||'vnumEntraineur='||vnumEntraineur||'&'||
+						'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
+						||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent, 'Ajouter une séance');	
+				htp.br;
+				htp.br;
 				htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');	
 			htp.bodyClose;
 		htp.htmlClose;

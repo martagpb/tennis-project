@@ -36,12 +36,14 @@ AS
 	
 	--Permet de supprimer une affectation relatives à un terrain
 	PROCEDURE del_etre_affecte_terrain(
-	  vnumTerrain IN NUMBER)
+	  vnumEntrainement IN NUMBER
+	, vnumTerrain IN NUMBER)
 	IS
 	BEGIN
 		DELETE FROM ETRE_AFFECTE
 		WHERE
-			NUM_TERRAIN=vnumTerrain;
+			NUM_TERRAIN = vnumTerrain
+			AND NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;
 	END del_etre_affecte_terrain;
 	 
