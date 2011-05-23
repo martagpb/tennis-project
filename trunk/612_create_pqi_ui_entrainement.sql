@@ -44,8 +44,8 @@ IS
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
+	, vdateDebut IN VARCHAR2
+	, vdateFin IN VARCHAR2
 	, vestRecurent IN NUMBER);
 	
 	-- Exécute la procédure de suppression d'un entrainement et gère les erreurs éventuelles
