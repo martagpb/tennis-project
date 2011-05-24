@@ -20,6 +20,10 @@ IS
 	-- Fonction permettant de retourner le chemin complet du répertoire JavaScript (JS)
 	FUNCTION get_rep_js
 	RETURN VARCHAR2;	
+	
+	-- Fonction permettant de retourner le chemin complet du répertoire contenant les images
+	FUNCTION get_rep_img
+	RETURN VARCHAR2;	
 			
 	-- Fonction qui retourne 'oui' ou 'non' à la place des valeurs '1' ou '0'
 	FUNCTION dis_number_to_yes_or_not(
