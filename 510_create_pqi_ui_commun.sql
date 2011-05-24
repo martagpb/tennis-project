@@ -18,6 +18,14 @@ IS
 	, vliberreur in varchar2
 	, vactionencours in varchar2);	
 	
+	-- Affiche le détail d'une erreur personnalisée
+	PROCEDURE dis_error_custom(
+	  vtitre in varchar2
+	, vexplicationerreur in varchar2
+	, vconseilerreur in varchar2
+	, vlienretour  in varchar2
+	, vlibellelien in varchar2);	
+	
 	PROCEDURE aff_header(niveau IN NUMBER);
 	PROCEDURE aff_menu(niveau IN NUMBER);
 	PROCEDURE aff_menu_niveau1;
