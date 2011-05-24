@@ -19,34 +19,58 @@ AS
 	, vactionencours in varchar2)
 	IS
 	begin
-				htp.br;
-				htp.print('Détails sur l''erreur d''oracle');
-				htp.br;
-				htp.br;
-				htp.tableopen;		
-					htp.tablerowopen;
-						htp.tabledata('N° :', cattributes => 'class="enteteFormulaire"');
-						htp.tabledata(vnumero);
-					htp.tablerowclose;
-					htp.tablerowopen;
-						htp.tabledata('Description :', cattributes => 'class="enteteFormulaire"');
-						htp.tabledata(vliberreur);
-					htp.tablerowclose;
-					htp.tablerowopen;
-						htp.tabledata('Action en cours :', cattributes => 'class="enteteFormulaire"');	
-						htp.tabledata(vactionencours);
-					htp.tablerowclose;
-				htp.tableclose;
-				htp.br;
-				htp.br;
-				htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
+			htp.br;
+			htp.print('Détails sur l''erreur d''oracle');
+			htp.br;
+			htp.br;
+			htp.tableopen;		
+				htp.tablerowopen;
+					htp.tabledata('N° :', cattributes => 'class="enteteFormulaire"');
+					htp.tabledata(vnumero);
+				htp.tablerowclose;
+				htp.tablerowopen;
+					htp.tabledata('Description :', cattributes => 'class="enteteFormulaire"');
+					htp.tabledata(vliberreur);
+				htp.tablerowclose;
+				htp.tablerowopen;
+					htp.tabledata('Action en cours :', cattributes => 'class="enteteFormulaire"');	
+					htp.tabledata(vactionencours);
+				htp.tablerowclose;
+			htp.tableclose;
+			htp.br;
+			htp.br;
+			htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
 		pq_ui_commun.aff_footer;
 	END;	
+	
+	-- Affiche le détail d'une erreur personnalisée
+	PROCEDURE dis_error_custom(
+	  vtitre in varchar2
+	, vexplicationerreur in varchar2
+	, vconseilerreur in varchar2
+	, vlienretour  in varchar2
+	, vlibellelien in varchar2)
+	IS
+	begin
+			htp.br;
+			htp.print(vtitre);
+			htp.br;
+			htp.br;
+			htp.print('Explication : ' || vexplicationerreur);
+			htp.br;
+			htp.br;
+			htp.print('Conseil : ' || vconseilerreur);
+			htp.br;
+			htp.br;
+			htp.anchor(vlienretour, vlibellelien);
+		pq_ui_commun.aff_footer;
+	END;
 	
 	PROCEDURE aff_header (niveau IN NUMBER)
 	IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 		rep_js VARCHAR2(255) := pq_ui_param_commun.get_rep_js;
+		rep_img VARCHAR2(255) := pq_ui_param_commun.get_rep_img;
 		PERMISSION_DENIED EXCEPTION;
 		niveauPersonne NUMBER(1) :=3;
 	BEGIN
@@ -58,6 +82,7 @@ AS
 			htp.headClose;
 			htp.bodyOpen;
 			--logo
+			htp.print('<img title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.jpg">');
 			pq_ui_commun.aff_menu(niveauPersonne);
 			htp.div(cattributes => 'id="corps"');
 			IF(niveauPersonne<niveau)
@@ -186,10 +211,13 @@ AS
 				htp.print('</li>');	
 				htp.listItem;
 					htp.anchor('#', 'Administration');
-					htp.ulistOpen(cattributes => 'class="niveau2"');						
+					htp.ulistOpen(cattributes => 'class="niveau2"');			
 						htp.listItem;
 							htp.anchor('pq_ui_terrain.manage_terrains_with_menu', 'Gestion des terrains');
 						htp.print('</li>');
+						htp.listItem;
+							htp.anchor('pq_ui_creneau.manage_creneaux_with_menu', 'Gestion des créneaux');
+						htp.print('</li>');		
 					htp.ulistClose;
 				htp.print('</li>');	
 			htp.ulistClose;
@@ -201,7 +229,7 @@ AS
 	BEGIN
 		htp.print('</div>');
 		htp.div(cattributes => 'id="footer"');
-			htp.print('Tennis');
+			htp.print('Système de réservation d''un centre de tennis');
 		htp.print('</div>');
 		htp.bodyClose;
 		htp.htmlClose;
