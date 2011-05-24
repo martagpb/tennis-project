@@ -42,7 +42,9 @@ IS
 													currentEntrainement.DATE_DEBUT_ENTRAINEMENT,currentEntrainement.DATE_FIN_ENTRAINEMENT,
 													currentEntrainement.EST_RECURENT_ENTRAINEMENT);
 				end loop;
-				htp.print('La séance a été ajouté avec succès.');
+				htp.br;
+				htp.br;
+				htp.print('La séance a été ajoutée avec succès.');
 				htp.br;		
 			htp.bodyClose;
 		htp.htmlClose;
@@ -76,7 +78,7 @@ IS
 					then
 					pq_db_etre_affecte.del_etre_affecte_terrain(vnumEntrainement,vnumTerrain);
 				end if;
-				htp.print('La séance a été supprimé avec succès.');
+				htp.print('La séance a été supprimée avec succès.');
 				htp.br;
 				htp.br;			
 				for currentEntrainement in listEntrainement loop
