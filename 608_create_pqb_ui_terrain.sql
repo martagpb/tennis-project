@@ -43,31 +43,34 @@ AS
 		ORDER BY 
 			1;
 	BEGIN		
+		htp.br;	
 		htp.print('Gestion des terrains' || ' (' || htf.anchor('pq_ui_terrain.manage_terrains_with_menu','Actualiser')|| ')' );
 		htp.br;	
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_terrain.form_add_terrain','Ajouter un terrain'));
 		htp.br;	
-		htp.br;					
-		htp.tableOpen;
-		htp.tableheader('N° du terrain');
-		htp.tableheader('Libellé surface');
-		htp.tableheader('Actif');
-		htp.tableheader('Informations');
-		htp.tableheader('Mise à jour');
-		htp.tableheader('Suppression');
-		for currentTerrain in listTerrain loop
-			htp.tableRowOpen;
-			htp.tabledata(currentTerrain.NUM_TERRAIN);
-			--On récupère le libellé du terrain à partir du code et de la nature
-			htp.tabledata(pq_db_codification.get_libelle(currentTerrain.CODE_SURFACE,currentTerrain.NATURE_SURFACE));
-			htp.tabledata(pq_ui_param_commun.dis_number_to_yes_or_not(currentTerrain.ACTIF));							
-			htp.tabledata(htf.anchor('pq_ui_terrain.dis_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Informations'));
-			htp.tabledata(htf.anchor('pq_ui_terrain.form_upd_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Mise à jour'));
-			htp.tabledata(htf.anchor('pq_ui_terrain.exec_del_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-			htp.tableRowClose;
-		end loop;	
-		htp.tableClose;			
+		htp.br;		
+		htp.formOpen('',cattributes => 'class="tableau"');	
+			htp.tableOpen;
+			htp.tableheader('N° du terrain');
+			htp.tableheader('Libellé surface');
+			htp.tableheader('Actif');
+			htp.tableheader('Informations');
+			htp.tableheader('Mise à jour');
+			htp.tableheader('Suppression');
+			for currentTerrain in listTerrain loop
+				htp.tableRowOpen;
+				htp.tabledata(currentTerrain.NUM_TERRAIN);
+				--On récupère le libellé du terrain à partir du code et de la nature
+				htp.tabledata(pq_db_codification.get_libelle(currentTerrain.CODE_SURFACE,currentTerrain.NATURE_SURFACE));
+				htp.tabledata(pq_ui_param_commun.dis_number_to_yes_or_not(currentTerrain.ACTIF));							
+				htp.tabledata(htf.anchor('pq_ui_terrain.dis_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Informations'));
+				htp.tabledata(htf.anchor('pq_ui_terrain.form_upd_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Mise à jour'));
+				htp.tabledata(htf.anchor('pq_ui_terrain.exec_del_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				htp.tableRowClose;
+			end loop;	
+			htp.tableClose;
+		htp.formClose;			
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des terrains');
@@ -82,6 +85,7 @@ AS
 	IS
 	BEGIN
 		pq_ui_commun.aff_header(3);
+			htp.br;	
 			htp.print('Affichage des informations d''un terrain' || ' (' || htf.anchor('pq_ui_terrain.dis_terrain?vnumTerrain='||vnumTerrain||'&'||'vcodeSurface='||vcodeSurface||'&'||'vnatureSurface='||vnatureSurface||'&'||'vactif='||vactif,'Actualiser')|| ')' );
 			htp.br;
 			htp.br;					
