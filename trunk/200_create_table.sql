@@ -31,7 +31,8 @@ CREATE TABLE PERSONNE
     NUM_RUE_PERSONNE VARCHAR2(75)  NULL,
     CP_PERSONNE VARCHAR2(6)  NULL,
     VILLE_PERSONNE VARCHAR2(75)  NULL,
-    STATUT_JOUEUR VARCHAR2(1)  NULL   CHECK (STATUT_JOUEUR IN ('A', 'V'))
+    STATUT_JOUEUR VARCHAR2(1)  NULL   CHECK (STATUT_JOUEUR IN ('A', 'V')),
+	NIVEAU_DROIT NUMBER(1) DEFAULT 0
    ) ;
 
 -- -----------------------------------------------------------------------------
@@ -195,3 +196,14 @@ CREATE TABLE CODIFICATION
    ) ;
 
 
+ -- -----------------------------------------------------------------------------
+--       TABLE TEMPORAIRE DE STOCKAGE DE SESSION
+-- -----------------------------------------------------------------------------
+  
+   
+CREATE GLOBAL TEMPORARY TABLE temp_session
+(
+	num_session	VARCHAR2(50),
+	num_personne NUMBER(5),	
+	droit		NUMBER(1)
+) ON COMMIT PRESERVE ROWS ;

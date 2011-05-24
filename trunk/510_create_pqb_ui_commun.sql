@@ -1,16 +1,5 @@
--- -----------------------------------------------------------------------------
---  Création du corps du package des  méthodes communes
---  qui permettent l'affichage de données pour l'utilisateur.
---                      Oracle Version 10g
---                        (14/05/2011)
--- -----------------------------------------------------------------------------
---      Nom de la base : Tennis
---      Projet : Tennis_V1.24
---      Auteur : Gonzalves / Invernizzi / Joly / Leviste
---      Date de dernière modification : 17/05/2011
--- -----------------------------------------------------------------------------
-
-CREATE OR REPLACE PACKAGE BODY pq_ui_commun
+create or replace
+PACKAGE BODY pq_ui_commun
 AS
 	---Procédure permettant d'afficher les détails d'une erreur d'oracle
 	PROCEDURE dis_error(
@@ -23,7 +12,7 @@ AS
 			htp.print('Détails sur l''erreur d''oracle');
 			htp.br;
 			htp.br;
-			htp.tableopen;		
+			htp.tableopen;
 				htp.tablerowopen;
 					htp.tabledata('N° :', cattributes => 'class="enteteFormulaire"');
 					htp.tabledata(vnumero);
@@ -33,7 +22,7 @@ AS
 					htp.tabledata(vliberreur);
 				htp.tablerowclose;
 				htp.tablerowopen;
-					htp.tabledata('Action en cours :', cattributes => 'class="enteteFormulaire"');	
+					htp.tabledata('Action en cours :', cattributes => 'class="enteteFormulaire"');
 					htp.tabledata(vactionencours);
 				htp.tablerowclose;
 			htp.tableclose;
@@ -41,8 +30,9 @@ AS
 			htp.br;
 			htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
 		pq_ui_commun.aff_footer;
-	END;	
-	
+	END;
+
+
 	-- Affiche le détail d'une erreur personnalisée
 	PROCEDURE dis_error_custom(
 	  vtitre in varchar2
@@ -65,31 +55,64 @@ AS
 			htp.anchor(vlienretour, vlibellelien);
 		pq_ui_commun.aff_footer;
 	END;
-	
-	PROCEDURE aff_header (niveau IN NUMBER)
+
+PROCEDURE aff_accueil
+IS
+	perm BOOLEAN;
+	PERMISSION_DENIED EXCEPTION;
+BEGIN
+	pq_ui_commun.aff_header(niveau => 1, permission => perm);
+	IF perm=false THEN
+		RAISE PERMISSION_DENIED;
+	END IF;
+	htp.print('Accueil');
+	pq_ui_commun.aff_footer;
+EXCEPTION
+	WHEN PERMISSION_DENIED THEN
+		 pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+END;
+
+PROCEDURE aff_header (niveau IN NUMBER, permission OUT BOOLEAN)
 	IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 		rep_js VARCHAR2(255) := pq_ui_param_commun.get_rep_js;
 		rep_img VARCHAR2(255) := pq_ui_param_commun.get_rep_img;
 		PERMISSION_DENIED EXCEPTION;
 		niveauPersonne NUMBER(1) :=3;
+		target_cookie OWA_COOKIE.cookie;
 	BEGIN
-		--récupération du niveau
+		target_cookie := OWA_COOKIE.get('numpersonne');
+		SELECT
+			NIVEAU_DROIT INTO niveauPersonne
+		FROM
+			PERSONNE
+		WHERE
+			NUM_PERSONNE=TO_NUMBER(target_cookie.vals(1));
+                IF(niveauPersonne<niveau)
+                        THEN RAISE PERMISSION_DENIED;
+                END IF;
+				permission:=true;
 		htp.htmlOpen;
 			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 
+				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />');
+				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>');
 			htp.headClose;
 			htp.bodyOpen;
 			--logo
 			htp.print('<img title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.jpg">');
 			pq_ui_commun.aff_menu(niveauPersonne);
 			htp.div(cattributes => 'id="corps"');
-			IF(niveauPersonne<niveau)
-				THEN RAISE PERMISSION_DENIED;
-			END IF;
+
+        EXCEPTION
+              WHEN PERMISSION_DENIED THEN
+                htp.print('Vous n''avez pas la permission d''accéder à cette page');
+                permission := false;
+              WHEN others THEN
+                  pq_ui_login.LOGIN;
+                  permission := false;
 	END;
-	
+
+
 	PROCEDURE aff_menu(niveau IN NUMBER)
 	IS
 	BEGIN
@@ -102,8 +125,8 @@ AS
 				pq_ui_commun.aff_menu_niveau3;
 		END CASE;
 	END;
-	
-	
+
+
 	PROCEDURE aff_menu_niveau1
 	IS
 	BEGIN
@@ -111,7 +134,7 @@ AS
 			htp.ulistOpen(cattributes => 'id="ulmenu"');
 				htp.listItem;
 					htp.anchor('#', 'Accueil');
-				htp.print('</li>');	
+				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Réservation');
 					htp.ulistOpen(cattributes => 'class="niveau2"');
@@ -125,14 +148,17 @@ AS
 				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Mon compte');
-				htp.print('</li>');	
+				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Informations');
-				htp.print('</li>');	
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_commun.deconnect', 'Deconnexion');
+				htp.print('</li>');
 			htp.ulistClose;
-		htp.print('</div>');		
+		htp.print('</div>');
 	END;
-		
+
 	PROCEDURE aff_menu_niveau2
 	IS
 	BEGIN
@@ -140,7 +166,7 @@ AS
 			htp.ulistOpen(cattributes => 'id="ulmenu"');
 				htp.listItem;
 					htp.anchor('#', 'Accueil');
-				htp.print('</li>');	
+				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Réservation');
 					htp.ulistOpen(cattributes => 'class="niveau2"');
@@ -162,17 +188,20 @@ AS
 							htp.anchor('#', 'Souscrire');
 						htp.print('</li>');
 					htp.ulistClose;
-				htp.print('</li>');	
+				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Mon compte');
-				htp.print('</li>');	
+				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Informations');
-				htp.print('</li>');	
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_commun.deconnect', 'Deconnexion');
+				htp.print('</li>');
 			htp.ulistClose;
-		htp.print('</div>');		
+		htp.print('</div>');
 	END;
-		
+
 	PROCEDURE aff_menu_niveau3
 	IS
 	BEGIN
@@ -180,7 +209,7 @@ AS
 			htp.ulistOpen(cattributes => 'id="ulmenu"');
 				htp.listItem;
 					htp.anchor('#', 'Accueil');
-				htp.print('</li>');	
+				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Réservation');
 					htp.ulistOpen(cattributes => 'class="niveau2"');
@@ -202,28 +231,31 @@ AS
 							htp.anchor('#', 'Souscrire');
 						htp.print('</li>');
 					htp.ulistClose;
-				htp.print('</li>');	
+				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Mon compte');
-				htp.print('</li>');	
+				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Informations');
-				htp.print('</li>');	
+				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Administration');
-					htp.ulistOpen(cattributes => 'class="niveau2"');			
+					htp.ulistOpen(cattributes => 'class="niveau2"');
 						htp.listItem;
 							htp.anchor('pq_ui_terrain.manage_terrains_with_menu', 'Gestion des terrains');
 						htp.print('</li>');
 						htp.listItem;
 							htp.anchor('pq_ui_creneau.manage_creneaux_with_menu', 'Gestion des créneaux');
-						htp.print('</li>');		
+						htp.print('</li>');
 					htp.ulistClose;
-				htp.print('</li>');	
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_commun.deconnect', 'Deconnexion');
+				htp.print('</li>');
 			htp.ulistClose;
-		htp.print('</div>');		
+		htp.print('</div>');
 	END;
-	
+
 	PROCEDURE aff_footer
 	IS
 	BEGIN
@@ -235,5 +267,13 @@ AS
 		htp.htmlClose;
 	END;
 	
+	PROCEDURE deconnect
+	IS
+	BEGIN
+		owa_util.mime_header('text/html', false);
+                owa_cookie.remove('numpersonne',NULL);
+                owa_util.http_header_close;
+		pq_ui_login.login;
+	END;
+
 END pq_ui_commun;
-/
