@@ -31,6 +31,15 @@ AS
 		RETURN rep_js;
 	END;
 	
+	-- Fonction permettant de retourner le chemin complet du répertoire contenant les images
+	FUNCTION get_rep_img
+	RETURN VARCHAR2
+	IS
+		rep_img VARCHAR2(255) := '/public/img/';
+	BEGIN
+		RETURN rep_img;
+	END;
+	
 	-- Fonction qui retourne 'oui' ou 'non' à la place des valeurs '1' ou '0'
 	FUNCTION dis_number_to_yes_or_not(
 	   vvalue in NUMBER)
