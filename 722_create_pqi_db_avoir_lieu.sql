@@ -29,12 +29,5 @@ IS
 	PROCEDURE del_avoir_lieu_entrainement(
 		vnumEntrainement IN NUMBER);
 	
-	--Permet de modifier une occurence existante
-	PROCEDURE upd_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER);
-	
 END pq_db_avoir_lieu;
 /

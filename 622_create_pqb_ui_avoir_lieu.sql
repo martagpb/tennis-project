@@ -23,20 +23,26 @@ IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 		CURSOR listEntrainement IS SELECT NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,
 										  DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
+		Nb NUMBER(3);
 	BEGIN
 		htp.htmlOpen;
+			SELECT COUNT(*) INTO Nb FROM ETRE_AFFECTE WHERE NUM_ENTRAINEMENT = vnumEntrainement AND NUM_TERRAIN = vnumTerrain;
 			htp.headOpen;
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
 			htp.headClose;
 			htp.bodyOpen;
 				pq_db_avoir_lieu.add_avoir_lieu(vnumJour,vheureDebutCreneau,vnumTerrain,vnumEntrainement);
-				pq_db_etre_affecte.add_etre_affecte(vnumEntrainement,vnumTerrain);
+				if(Nb=0)
+					then
+					pq_db_etre_affecte.add_etre_affecte(vnumEntrainement,vnumTerrain);
+				end if;
 				for currentEntrainement in listEntrainement loop
 				pq_ui_entrainement.dis_entrainement(vnumEntrainement,currentEntrainement.NUM_ENTRAINEUR,currentEntrainement.CODE_NIVEAU,
 												    currentEntrainement.NATURE_NIVEAU,currentEntrainement.NB_PLACE_ENTRAINEMENT,
 													currentEntrainement.DATE_DEBUT_ENTRAINEMENT,currentEntrainement.DATE_FIN_ENTRAINEMENT,
 													currentEntrainement.EST_RECURENT_ENTRAINEMENT);
 				end loop;
+				htp.print('La séance a été ajouté avec succès.');
 				htp.br;		
 			htp.bodyClose;
 		htp.htmlClose;
@@ -45,29 +51,6 @@ IS
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout de la séance en cours...');
 	END exec_add_avoir_lieu;
 	
-	-- Exécute la procédure de mise à jour d'une séance d'un entrainement et gère les erreurs éventuelles.
-	PROCEDURE exec_upd_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER)
-	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
-				htp.br;				
-				
-				htp.br;		
-			htp.bodyClose;
-		htp.htmlClose;
-	EXCEPTION
-		WHEN OTHERS THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour de la séance en cours...');
-	END exec_upd_avoir_lieu;
 	
 	-- Exécute la procédure de suppression d'une séance d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_del_avoir_lieu(
@@ -79,15 +62,20 @@ IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 		CURSOR listEntrainement IS SELECT NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,
 										  DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
+		Nb NUMBER(3);
 	BEGIN
 		htp.htmlOpen;
+			SELECT COUNT(*) INTO Nb FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT = vnumEntrainement AND NUM_TERRAIN = vnumTerrain;
 			htp.headOpen;
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
 			htp.headClose;
 			htp.bodyOpen;
 				htp.br;				
 				pq_db_avoir_lieu.del_avoir_lieu(vnumJour,vheureDebutCreneau,vnumTerrain);
-				pq_db_etre_affecte.del_etre_affecte_terrain(vnumEntrainement,vnumTerrain);
+				if(Nb=1)
+					then
+					pq_db_etre_affecte.del_etre_affecte_terrain(vnumEntrainement,vnumTerrain);
+				end if;
 				htp.print('La séance a été supprimé avec succès.');
 				htp.br;
 				htp.br;			
@@ -181,27 +169,6 @@ IS
 			htp.bodyClose;
 		htp.htmlClose;
 	END form_add_avoir_lieu;
-	
-	-- Affiche le formulaire de saisie permettant la modification d’un entrainement existant	
-	PROCEDURE form_upd_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER)
-	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
-				htp.br;				
-				
-				htp.br;		
-			htp.bodyClose;
-		htp.htmlClose;
-	END form_upd_avoir_lieu;
 		
 END pq_ui_avoir_lieu;
 /

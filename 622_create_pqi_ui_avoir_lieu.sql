@@ -20,13 +20,6 @@ IS
 	, vnumTerrain IN NUMBER
 	, vnumEntrainement IN NUMBER);
 	
-	-- Exécute la procédure de mise à jour d'une séance d'un entrainement et gère les erreurs éventuelles.
-	PROCEDURE exec_upd_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER);
-	
 	-- Exécute la procédure de suppression d'une séance d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_del_avoir_lieu(
 	  vnumJour IN NUMBER
@@ -44,13 +37,6 @@ IS
 	, vdateDebut IN DATE
 	, vdateFin IN DATE
 	, vestRecurent IN NUMBER);
-	
-	-- Affiche le formulaire de saisie permettant la modification d’un entrainement existant	
-	PROCEDURE form_upd_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER);
 		
 END pq_ui_avoir_lieu;
 /

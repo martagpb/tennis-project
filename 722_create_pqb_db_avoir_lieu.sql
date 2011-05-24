@@ -51,24 +51,6 @@ IS
 		COMMIT;
 	END del_avoir_lieu_entrainement;
 	
-	--Permet de modifier une occurence existante
-	PROCEDURE upd_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER)
-	IS
-	BEGIN
-		UPDATE AVOIR_LIEU
-		SET
-			NUM_ENTRAINEMENT = vnumEntrainement
-		WHERE
-			NUM_JOUR = vnumJour
-			AND HEURE_DEBUT_CRENEAU = vheureDebutCreneau
-			AND NUM_TERRAIN = vnumTerrain;
-		COMMIT;
-	END upd_avoir_lieu;
-	
 END pq_db_avoir_lieu;
 /
 
