@@ -15,7 +15,10 @@ IS
 	--Permet d'afficher tous les entrainement existant 
 	PROCEDURE manage_entrainement;
 	
-		-- Exécute la procédure d’affichage des entrainements et gère les erreurs éventuelles
+	--Permet d'afficher tous les entrainement inactifs (historique)
+	PROCEDURE manage_historique_entrainement;
+	
+	-- Exécute la procédure d’affichage des entrainements et gère les erreurs éventuelles
 	PROCEDURE exec_dis_entrainement(
 	  vnumEntrainement IN NUMBER
 	, vnumEntraineur IN NUMBER
@@ -26,7 +29,7 @@ IS
 	, vdateFin IN DATE
 	, vestRecurent IN NUMBER);
 	
-		-- Exécute la procédure d'ajout d'un entrainement et gère les erreurs éventuelles.
+	-- Exécute la procédure d'ajout d'un entrainement et gère les erreurs éventuelles.
 	PROCEDURE exec_add_entrainement(
 	  vnumEntrainement IN NUMBER
 	, vnumEntraineur IN NUMBER
