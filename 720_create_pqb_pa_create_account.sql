@@ -20,8 +20,8 @@ AS
 		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
 										key_string => 'tennispro', 
 										encrypted_string => crypted_password );
-		INSERT INTO PERSONNE(NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE)
-		VALUES (lastname,firstname,login,crypted_password,phone,mail,street,postal,city);
+		INSERT INTO PERSONNE(NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
+		VALUES (lastname,firstname,login,crypted_password,phone,mail,street,postal,city,1);
 		COMMIT; 
 	END; 
 END pq_pa_create_account;
