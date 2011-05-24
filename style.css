@@ -1,92 +1,143 @@
-body
-{
-   color: white; /* Les paragraphes seront bleus */
-   font-size: 14px; /* La taille de 18 pixels me semble pas mal */
-   font-family:Verdana;
-   background-color:#4682b4;
-   text-align: center; /* pour corriger le bug de centrage IE */ 
+/*------------------------------------------------------------
+|	   Type   : Feuille de style CSS						  |
+|      Projet : BD50										  |
+|      Auteur : Gonzalves / Invernizzi / Joly / Leviste	      |
+|      Date de dernière modification : 23/05/2011		      |
+-------------------------------------------------------------*/
+
+/*Body*/
+body {
+	 background-color: #4682B4; /* Couleur de fond */ 
+     color: white;  /* Couleur du texte */
+     font-family: "Comic Sans MS",Verdana; /* Police du texte */
+     font-size: 14px; /* La taille du texte */
+     text-align: center; /* Pour corriger le bug de centrage pour IE9 et inférieurs  */ 
 }
 
+/*Menu*/
+#menuadherent {
+     height: 100px;
+     margin: 0pt auto;
+     width: 500px;
+}
 
-#menuadherent{
-	 margin:0 auto;
-	width: 500px;
-	height : 100px;
-	}
-	
-	
-#menuadmin{
-	 margin:0 auto;
-	width: 700px;
-	height : 100px;
-	}
-	
-#menuvisiteur{
-	 margin:0 auto;
-	width: 550px;
-	height : 100px;
-	}	
+#menuadmin {
+     height: 80px;
+     margin: auto;
+     width: 610px;
+}
 
-li:hover ul.niveau2, li.sfhover ul.niveau2, li li:hover{
-	display:block;
-	}
+#menuvisiteur {
+     height: 100px;
+     margin: 0pt auto;
+     width: 550px;
+}
+
+/*Corps*/
+#corps {
+     background-color: rgb(154,196,237); 
+     border: 1px dashed white;
+     height: 100%;
+     margin: 0pt auto;
+     width: 90%;
+}
+
+/*Pied de page*/
+#footer {
+     height: 40px;
+     margin: 0pt auto;
+     text-align: center;
+     width: 80%;
+}
+
+/*Positionnement du logo */
+img {
+    left: 25%;
+    position: absolute;
+    width: 80px;
+}
+
+/*Message d'erreur*/
+.error {
+     color: red;
+     font-size: 12px;
+     font-style: italic;
+     font-weight: bold;
+}
+
+/*Gestion des tableaux */
+
+table { /* Le tableau en lui-même */
+     margin: auto;  				/* On centre le tableau */
+}
+
+/*Tableaux spécifiques pour la classe tableau */
+
+.tableau table { /* Le tableau en lui-même */
+     border-collapse: collapse;  /* On colle les bordures intérieures entre-elles */
+     border: 2px solid black; 	 /* Taille, couleur et type des bordures extérieures du tableau */
+     margin: auto;  				/* On centre le tableau */
+}
+
+.tableau th { /* Les cellules d'en-tête du tableau*/
+     background-color: #1F1F1F; /* Couleur de fond de l'en-tête du tableau */  
+     padding: 6px;				/* On espace les titres d'en-tête avec une marge intérieure */
+}
+
+.tableau td {
+     border: 1px solid black;
+     padding: 3px;				/* On ajoute une marge intérieure dans les cellules pour éloigner le texte des bordures */
+     text-align: center; 		/* On centre le texte des cellules */
+}
+
+/*Gestion des menus et sous-menus*/
+
+li:hover ul.niveau2, li.sfhover ul.niveau2, li li:hover {
+     display: block;
+}
 
 ul ul {
-	display: none; 
-	position: absolute; 
-	margin:0px; 
-	padding: 0px; 
-	color:black; 
-	background-color:#6495ED;
-	}
-	
-#corps {
-	width:80%;
-	border: 1px solid;
-	height: 100%;
-	margin: 0 auto;
+     background-color: rgb(106,168,229);
+     display: none;
+     margin: 0px;
+     padding: 0px;
+     position: absolute;
 }
 
-#footer {
-	width:80%;
-	height: 40px;
-	margin: 0 auto;
-	text-align:center;
-}
-	
 ul.niveau2 {
-	left: 0px; 
-	top: 30px;
-	}
+     left: 0px;
+     top: 30px;
+}
 
 li {
-	list-style-type: none; 
-	position: relative; 
-	background-color:#6495ED; 
-	margin-top:6px;
-	}
+     background-color: rgb(106,168,229);
+     list-style-type: none;
+     margin-top: 6px;
+     position: relative;
+}
 
 ul {
- padding:0;
- margin:0;
- list-style-type:none;
- }
+     list-style-type: none;
+     margin: 0pt;
+     padding: 0pt;
+}
+
 li {
- margin-left:2px;
- float:left; /*pour IE*/
- }
+     float: left;
+     margin-left: 1px;
+}
+
 ul li a {
- display:block;
- float:left;   
- background-color:#6495ED;
- color:black;
- text-decoration:none;
- text-align:center;
- padding:5px;
- border:2px solid;
+     background-color: rgb(106,168,229);   
+     color: white;
+     display: block;
+     float: left;
+     padding: 10px;
+     text-align: center;
+     text-decoration: none;
+     font-weight: bold;
+}
 
- }
 ul li a:hover, ul li a.sfhover {
- background-color:#D3D3D3;
-
- } 
+    text-decoration: underline; /*On souligne le nom du menu ou du sous-menu lors du passage de la souris*/
+}
