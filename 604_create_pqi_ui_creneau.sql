@@ -12,7 +12,10 @@
 
 CREATE OR REPLACE PACKAGE pq_ui_creneau
 IS
-	--Permet d'afficher tous les créneaux et les actions possibles de gestion
+	--Permet d'afficher tous les créneaux et les actions possibles de gestion (avec le menu)
+	PROCEDURE manage_creneaux_with_menu;
+
+	--Permet d'afficher tous les créneaux et les actions possibles de gestion (sans le menu)
 	PROCEDURE manage_creneaux;
 	
 	--Permet d’afficher un créneau existant
@@ -46,6 +49,18 @@ IS
 	PROCEDURE form_upd_creneau(
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR);
+	
+	-- Fonction permettant d'extraire les heures d'un créneau
+	FUNCTION get_heure(
+		vcreneau IN CHAR
+	)
+	RETURN CHAR;
+	
+	-- Fonction permettant d'extraire les minutes d'un créneau
+	FUNCTION get_minute(
+		vcreneau IN CHAR
+	)
+	RETURN CHAR;
 	
 END pq_ui_creneau;
 /
