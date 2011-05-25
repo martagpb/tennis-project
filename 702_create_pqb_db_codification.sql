@@ -18,10 +18,19 @@ AS
 	, vnature IN VARCHAR2
 	, vlibelle IN VARCHAR2)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		INSERT INTO CODIFICATION(CODE, NATURE, LIBELLE)
 		VALUES(vcode,vnature,vlibelle);  
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END add_codification;     
         
 	--Permet de modifier une codification existante
@@ -30,7 +39,13 @@ AS
 	, vnature IN VARCHAR2
 	, vlibelle IN VARCHAR2)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		UPDATE CODIFICATION
 		SET
 			LIBELLE = vnature
@@ -38,6 +53,9 @@ AS
 			CODE   = vcode
 		AND NATURE = vnature;
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END upd_codification;
 	
 	--Permet de supprimer une codification existante
@@ -45,12 +63,21 @@ AS
 	  vcode IN CHAR
 	, vnature IN VARCHAR2)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		DELETE FROM CODIFICATION
 		WHERE 
 			CODE   = vcode
 		AND NATURE = vnature;
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END del_codification;
 	
 	-- Fonction permettant de retourner le libellé d'une condification en indiquant le code et la nature de la codification
@@ -60,7 +87,13 @@ AS
 	RETURN VARCHAR2
 	IS
 		libelle VARCHAR2(255) := 'indéterminé';
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		SELECT 
 			COD.LIBELLE INTO libelle
 		FROM 
@@ -69,6 +102,9 @@ AS
 			UPPER(COD.CODE)   = UPPER(vcode) 
 		AND UPPER(COD.NATURE) = UPPER(vnature);
 		RETURN libelle;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END;
 	
 END pq_db_codification;

@@ -17,10 +17,19 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR) 
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		INSERT INTO CRENEAU(HEURE_DEBUT_CRENEAU, HEURE_FIN_CRENEAU)
 		VALUES(vheureDebutCreneau,vheureFinCreneau);  
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END add_creneau;
 	
 	--Permet de modifier un créneau existant
@@ -28,7 +37,13 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau   IN CHAR) 
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		UPDATE CRENEAU
 		SET
 			HEURE_DEBUT_CRENEAU = vheureDebutCreneau
@@ -36,17 +51,29 @@ AS
 		WHERE
 			HEURE_DEBUT_CRENEAU = vheureDebutCreneau;
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END upd_creneau;
 	
 	--Permet de supprimer un créneau existant
 	PROCEDURE del_creneau(
 	  vheureDebutCreneau IN CHAR)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		DELETE FROM CRENEAU
 		WHERE 
 			HEURE_DEBUT_CRENEAU = vheureDebutCreneau;
 		COMMIT;
+		EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END del_creneau;
 	
 END pq_db_creneau;
