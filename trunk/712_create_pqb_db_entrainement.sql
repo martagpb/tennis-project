@@ -25,8 +25,8 @@ IS
 	IS
 	BEGIN
 		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEMENT,NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,
-								  DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT)
-		VALUES (vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin,vestRecurent);
+								  DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT,EST_ACTIF_ENTRAINEMENT)
+		VALUES (vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin,vestRecurent,1);
 		COMMIT;
 	END add_entrainement;
 	
@@ -66,6 +66,20 @@ IS
 			NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;
 	END del_entrainement;
+	
+		
+	--Permet de passer un entrainement à l'état inactif
+	PROCEDURE stop_entrainement(
+	  vnumEntrainement IN NUMBER)
+	 IS
+	 BEGIN
+	  	UPDATE ENTRAINEMENT
+		SET
+				EST_ACTIF_ENTRAINEMENT=0	
+		WHERE
+			NUM_ENTRAINEMENT = vnumEntrainement;
+		COMMIT;
+	END stop_entrainement;
 		
 END pq_db_entrainement;
 /
