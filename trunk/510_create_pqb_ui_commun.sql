@@ -8,7 +8,7 @@ AS
 	, vactionencours in varchar2)
 	IS
 	begin
-			htp.br;
+			pq_ui_commun.aff_header;
 			htp.print('Détails sur l''erreur d''oracle');
 			htp.br;
 			htp.br;
@@ -55,16 +55,19 @@ AS
 			htp.anchor(vlienretour, vlibellelien);
 		pq_ui_commun.aff_footer;
 	END;
+	
+
 
 PROCEDURE aff_accueil
 IS
 	perm BOOLEAN;
 	PERMISSION_DENIED EXCEPTION;
 BEGIN
-	pq_ui_commun.aff_header(niveau => 1, permission => perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 	IF perm=false THEN
 		RAISE PERMISSION_DENIED;
 	END IF;
+        pq_ui_commun.aff_header;
 	htp.print('Accueil');
 	pq_ui_commun.aff_footer;
 EXCEPTION
@@ -72,26 +75,56 @@ EXCEPTION
 		 pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 END;
 
-PROCEDURE aff_header (niveau IN NUMBER, permission OUT BOOLEAN)
+PROCEDURE isAuthorized (niveauP IN NUMBER, permission OUT BOOLEAN)
+IS
+        niveauPersonne PERSONNE.NIVEAU_DROIT%TYPE;
+        unlog EXCEPTION;
+BEGIN
+	getNiveau(niveau => niveauPersonne);
+        IF niveauPersonne=-1 THEN
+          RAISE unlog;
+        END IF;
+	IF(niveauPersonne<niveauP) THEN
+			permission:=false;
+	ELSE
+			permission:=true;
+	END IF;
+EXCEPTION
+	WHEN unlog THEN
+		permission:=false;
+        pq_ui_login.LOGIN;
+
+END;
+
+PROCEDURE getNiveau(niveau OUT PERSONNE.NIVEAU_DROIT%TYPE)
+IS
+    target_cookie OWA_COOKIE.cookie;
+BEGIN
+	target_cookie := OWA_COOKIE.get('numpersonne');
+	SELECT
+		NIVEAU_DROIT INTO niveau
+	FROM
+		PERSONNE
+	WHERE
+		NUM_PERSONNE=TO_NUMBER(target_cookie.vals(1));
+EXCEPTION
+	WHEN others THEN
+       niveau:=-1;
+END;
+                
+
+PROCEDURE aff_header
 	IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 		rep_js VARCHAR2(255) := pq_ui_param_commun.get_rep_js;
 		rep_img VARCHAR2(255) := pq_ui_param_commun.get_rep_img;
-		PERMISSION_DENIED EXCEPTION;
-		niveauPersonne NUMBER(1) :=3;
-		target_cookie OWA_COOKIE.cookie;
+                niveauP NUMBER;
+                UNLOG EXCEPTION;
 	BEGIN
-		target_cookie := OWA_COOKIE.get('numpersonne');
-		SELECT
-			NIVEAU_DROIT INTO niveauPersonne
-		FROM
-			PERSONNE
-		WHERE
-			NUM_PERSONNE=TO_NUMBER(target_cookie.vals(1));
-                IF(niveauPersonne<niveau)
-                        THEN RAISE PERMISSION_DENIED;
+                getNiveau(niveau => niveauP);
+                IF niveauP=-1 THEN
+                  RAISE UNLOG;
                 END IF;
-				permission:=true;
 		htp.htmlOpen;
 			htp.headOpen;
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />');
@@ -100,16 +133,11 @@ PROCEDURE aff_header (niveau IN NUMBER, permission OUT BOOLEAN)
 			htp.bodyOpen;
 			--logo
 			htp.print('<img title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.jpg">');
-			pq_ui_commun.aff_menu(niveauPersonne);
+			pq_ui_commun.aff_menu(niveauP);
 			htp.div(cattributes => 'id="corps"');
-
         EXCEPTION
-              WHEN PERMISSION_DENIED THEN
-                htp.print('Vous n''avez pas la permission d''accéder à cette page');
-                permission := false;
-              WHEN others THEN
+              WHEN UNLOG THEN
                   pq_ui_login.LOGIN;
-                  permission := false;
 	END;
 
 

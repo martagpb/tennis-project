@@ -18,10 +18,19 @@ AS
 	, vnatureSurface IN VARCHAR2
 	, vactif IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		INSERT INTO TERRAIN(CODE_SURFACE, NATURE_SURFACE, ACTIF)
 		VALUES(vcodeSurface,vnatureSurface,vactif);  
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END add_terrain;
 	
 	--Permet de modifier un terrain existant
@@ -31,7 +40,13 @@ AS
 	, vnatureSurface IN VARCHAR2
 	, vactif IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 	UPDATE TERRAIN
 		SET
 		    CODE_SURFACE   = vcodeSurface
@@ -40,17 +55,29 @@ AS
 		WHERE
 			NUM_TERRAIN = vnumTerrain;
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END upd_terrain;
 	
 	--Permet de supprimer un terrain existant
 	PROCEDURE del_terrain(
 	  vnumTerrain IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		DELETE FROM TERRAIN
 		WHERE 
 			NUM_TERRAIN = vnumTerrain;
 		COMMIT;
+		EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END del_terrain;
 	
 END pq_db_terrain;

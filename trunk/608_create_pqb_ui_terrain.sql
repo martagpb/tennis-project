@@ -16,9 +16,14 @@ AS
 	--Permet d'afficher tous les terrains et les actions possibles de gestion avec le menu
 	PROCEDURE manage_terrains_with_menu
 	IS
+		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 		pq_ui_terrain.manage_terrains;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
@@ -42,7 +47,13 @@ AS
 			TERRAIN TER
 		ORDER BY 
 			1;
-	BEGIN		
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		htp.br;	
 		htp.print('Gestion des terrains' || ' (' || htf.anchor('pq_ui_terrain.manage_terrains_with_menu','Actualiser')|| ')' );
 		htp.br;	
@@ -72,6 +83,8 @@ AS
 			htp.tableClose;
 		htp.formClose;			
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des terrains');
 	END manage_terrains;
@@ -83,8 +96,14 @@ AS
 	, vnatureSurface IN VARCHAR2
 	, vactif IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 			htp.br;	
 			htp.print('Affichage des informations d''un terrain' || ' (' || htf.anchor('pq_ui_terrain.dis_terrain?vnumTerrain='||vnumTerrain||'&'||'vcodeSurface='||vcodeSurface||'&'||'vnatureSurface='||vnatureSurface||'&'||'vactif='||vactif,'Actualiser')|| ')' );
 			htp.br;
@@ -108,6 +127,9 @@ AS
 			htp.br;		
 			htp.anchor('pq_ui_terrain.manage_terrains_with_menu', 'Retourner à la gestion des terrains');	
 		pq_ui_commun.aff_footer;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END dis_terrain;
 	
 	-- Exécute la procédure d'ajout d'un terrain et gère les erreurs éventuelles.
@@ -116,8 +138,14 @@ AS
 	, vnatureSurface IN VARCHAR2
 	, vactif IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 			htp.br;
 			pq_db_terrain.add_terrain(vcodeSurface,vnatureSurface,vactif);
 			htp.print('Le terrain a été ajouté avec succès.');
@@ -126,6 +154,8 @@ AS
 			pq_ui_terrain.manage_terrains;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout d''un terrain en cours...');
 	END exec_add_terrain;
@@ -137,8 +167,14 @@ AS
 	, vnatureSurface IN VARCHAR2
 	, vactif IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);				
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;				
 			pq_db_terrain.upd_terrain(vnumTerrain,vcodeSurface,vnatureSurface,vactif);
 			htp.print('Le terrain n° '|| vnumTerrain || ' a été mis à jour avec succès.');
 			htp.br;
@@ -146,6 +182,8 @@ AS
 			pq_ui_terrain.manage_terrains;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un terrain en cours...');
 	END exec_upd_terrain;
@@ -154,8 +192,14 @@ AS
 	PROCEDURE exec_del_terrain(
 	  vnumTerrain IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);		
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;		
 			pq_db_terrain.del_terrain(vnumTerrain);
 			htp.print('Le terrain n° '|| vnumTerrain || ' a été supprimé avec succès.');
 			htp.br;
@@ -163,6 +207,8 @@ AS
 			pq_ui_terrain.manage_terrains;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression d''un terrain en cours...');
 	END exec_del_terrain;
@@ -174,11 +220,19 @@ AS
 	, vnatureSurface IN VARCHAR2
 	, vactif IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);			
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;			
 				pq_ui_terrain.dis_terrain(vnumTerrain,vcodeSurface,vnatureSurface,vactif);
 		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Affichage d''un terrain en cours...');
 	END exec_dis_terrain;
@@ -199,8 +253,14 @@ AS
 			COD.NATURE = 'Surface'
 		ORDER BY 
 			1;
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);	
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;	
 			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_terrain.exec_add_terrain', 'POST', cattributes => 'onSubmit="return validerTerrain(this,document)"');				
 				--Les bonnes valeurs dans les champs hidden sont indiquées après validation du formulaire (Cf. validerTerrain)
 				htp.formhidden ('vcodeSurface','DefaultValue', cattributes => 'id="idVcodeSurface"');
@@ -241,6 +301,8 @@ AS
 			htp.formClose;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Saisie d''un nouveau terrain');
 	END form_add_terrain;
@@ -266,8 +328,14 @@ AS
 			COD.NATURE = 'Surface'
 		ORDER BY 
 			1;
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);	
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;	
 				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_terrain.exec_upd_terrain', 'POST', cattributes => 'onSubmit="return validerTerrain(this,document)"');
 					htp.formhidden ('vnumTerrain',vnumTerrain);
 					--Les bonnes valeurs dans les champs hidden sont indiquées après validation du formulaire (Cf. validerTerrain)
@@ -326,6 +394,8 @@ AS
 				htp.anchor('pq_ui_terrain.manage_terrains_with_menu', 'Retourner à la gestion des terrain');
 		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification d''un terrain');
 	END form_upd_terrain;

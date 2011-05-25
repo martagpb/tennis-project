@@ -26,7 +26,7 @@ IS
 	, vlienretour  in varchar2
 	, vlibellelien in varchar2);	
 	
-	PROCEDURE aff_header(niveau IN NUMBER, permission OUT BOOLEAN);
+	PROCEDURE aff_header;
 	PROCEDURE aff_menu(niveau IN NUMBER);
 	PROCEDURE aff_menu_niveau1;
 	PROCEDURE aff_menu_niveau2;
@@ -34,6 +34,8 @@ IS
 	PROCEDURE aff_footer;
 	PROCEDURE  aff_accueil;
 	PROCEDURE deconnect;
+	PROCEDURE isAuthorized(niveauP IN NUMBER, permission OUT BOOLEAN);
+	PROCEDURE getNiveau(niveau OUT PERSONNE.NIVEAU_DROIT%TYPE);
 		
 END pq_ui_commun;
 /

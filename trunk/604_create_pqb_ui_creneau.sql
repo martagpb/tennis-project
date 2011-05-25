@@ -15,11 +15,19 @@ AS
 	--Permet d'afficher tous les créneaux et les actions possibles de gestion (avec le menu)
 	PROCEDURE manage_creneaux_with_menu
 	IS		
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 			pq_ui_creneau.manage_creneaux;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des créneaux');
 	END manage_creneaux_with_menu;
@@ -36,7 +44,13 @@ AS
 		ORDER BY 
 			1
 		  , 2;
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		htp.br;				
 		htp.print('Gestion des créneaux' || ' (' || htf.anchor('pq_ui_creneau.manage_creneaux_with_menu','Actualiser')|| ')' );
 		htp.br;	
@@ -63,6 +77,8 @@ AS
 			htp.tableClose;
 		htp.formClose;
 	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des créneaux');
 	END manage_creneaux;
@@ -72,8 +88,14 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 				htp.br;	
 				htp.print('Affichage des informations d''un créneau' || ' (' || htf.anchor('pq_ui_creneau.dis_creneau?vheureDebutCreneau='||vheureDebutCreneau||'&'||'vheureFinCreneau='||vheureFinCreneau,'Actualiser')|| ')' );
 				htp.br;
@@ -83,6 +105,9 @@ AS
 				htp.br;		
 				htp.anchor('pq_ui_creneau.manage_creneaux_with_menu', 'Retourner à la gestion des créneaux');	
 			pq_ui_commun.aff_footer;
+	EXCEPTION
+	WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END dis_creneau;
 	
 	-- Exécute la procédure d'ajout d'un créneau et gère les erreurs éventuelles.
@@ -90,8 +115,14 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 				htp.br;
 				pq_db_creneau.add_creneau(vheureDebutCreneau,vheureFinCreneau);
 				htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été ajouté avec succès.');
@@ -102,6 +133,8 @@ AS
 	EXCEPTION
 		--Traitement personnalisée de l'erreur :
 			-- Nom Exception: DUP_VAL_ON_INDEX, Erreur oracle : ORA-00001, Code erreur : -1
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN DUP_VAL_ON_INDEX THEN
 			pq_ui_commun.dis_error_custom('Le créneau n''a pas été ajouté','Un créneau existe déjà avec une heure de début qui vaut '|| vheureDebutCreneau ||'.','Merci de choisir une autre valeur de début de créneau.','pq_ui_creneau.form_add_creneau','Retour vers la création d''un créneau');
 		WHEN OTHERS THEN
@@ -113,8 +146,13 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 				htp.br;				
 				pq_db_creneau.upd_creneau(vheureDebutCreneau,vheureFinCreneau);
 				htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été mis à jour avec succès.');
@@ -123,6 +161,8 @@ AS
 				pq_ui_creneau.manage_creneaux;
 			pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un créneau en cours...');
 	END exec_upd_creneau;
@@ -131,8 +171,14 @@ AS
 	PROCEDURE exec_del_creneau(
 	  vheureDebutCreneau IN CHAR)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+		 pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 				htp.br;	
 				pq_db_creneau.del_creneau(vheureDebutCreneau);
 				htp.print('Le créneau qui commençait à '|| vheureDebutCreneau || ' a été supprimé avec succès.');
@@ -141,6 +187,8 @@ AS
 				pq_ui_creneau.manage_creneaux;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression d''un créneau en cours...');
 	END exec_del_creneau;
@@ -150,13 +198,21 @@ AS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
+	perm BOOLEAN;
+	PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 				htp.br;				
 				pq_ui_creneau.dis_creneau(vheureDebutCreneau,vheureFinCreneau);
 				htp.br;		
 		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Affichage d''un créneau en cours...');
 	END exec_dis_creneau;
@@ -169,8 +225,14 @@ AS
 		currentEndHour NUMBER(2) := 0;
 		currentEndMinute NUMBER(2) := 0;
 		complement VARCHAR2(1):= '0';
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 				htp.br;
 				htp.print('Création d''un nouveau créneau' || ' (' || htf.anchor('pq_ui_creneau.form_add_creneau','Actualiser')|| ')' );
 				htp.br;
@@ -260,6 +322,8 @@ AS
 				htp.anchor('pq_ui_creneau.manage_creneaux_with_menu', 'Retourner à la gestion des créneaux');
 			pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Saisie d''un nouveau créneau');
 	END form_add_creneau;
@@ -277,8 +341,14 @@ AS
 		currentEndMinute NUMBER(2) := 0;
 		lastEndMinute NUMBER(2) := TO_NUMBER(pq_ui_creneau.get_minute(vheureFinCreneau));
 		complement VARCHAR2(1):= '0';
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
 				htp.br;
 				htp.print('Mise à jour d''un créneau' || ' (' || htf.anchor('pq_ui_creneau.form_upd_creneau?vheureDebutCreneau='||vheureDebutCreneau||'&'||'vheureFinCreneau='||vheureFinCreneau,'Actualiser')|| ')' );
 				htp.br;
@@ -356,6 +426,8 @@ AS
 				htp.anchor('pq_ui_creneau.manage_creneaux_with_menu', 'Retourner à la gestion des créneaux');
 			pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification d''un créneau');
 	END form_upd_creneau;
