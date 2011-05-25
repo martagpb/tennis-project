@@ -16,8 +16,6 @@ IS
 	--Permet d'afficher tous les entrainement existant 
 	PROCEDURE manage_entrainement
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-		rep_js VARCHAR2(255)  := pq_ui_param_commun.get_rep_js;
 		-- On stocke dans un curseur la liste de tous les entrainements existants
 		CURSOR listEntrainement IS
 		SELECT 
@@ -34,56 +32,57 @@ IS
 			ENTRAINEMENT ENTR
 		ORDER BY 
 			NUM_ENTRAINEMENT;
+		
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 	
-			htp.headClose;
-			htp.bodyOpen;
-				htp.br;				
-				htp.print('Gestion des entrainements' || ' (' || htf.anchor('pq_ui_entrainement.manage_entrainement','Actualiser')|| ')' );
-				htp.br;	
-				htp.br;	
-				htp.print(htf.anchor('pq_ui_entrainement.form_add_entrainement','Ajouter un entrainement'));
-				htp.br;	
-				htp.br;
-				htp.print(htf.anchor('pq_ui_entrainement.manage_historique_entrainement','Historique'));
-				htp.br;
-				htp.br;	
-				htp.tableOpen;
-					htp.tableheader('Numéro de l''entrainement   ');
-					htp.tableheader('Informations   ');
-					htp.tableheader('Mise à jour   ');
-					htp.tableheader('Suppression   ');
-					for currentEntrainement in listEntrainement loop
-						if(currentEntrainement.EST_ACTIF_ENTRAINEMENT=1)
-						then
-							htp.tableRowOpen;
-							htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);				
-							htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
-							'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
-							||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Informations'));
-							htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
-							'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
-							||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Mise à jour'));
-							htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-							htp.tableRowClose;
-						end if;
-					end loop;	
-				htp.tableClose;
-			htp.bodyClose;
-		htp.htmlClose;
+     /*   pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;*/
+		htp.br;				
+		htp.print('Gestion des entrainements' || ' (' || htf.anchor('pq_ui_entrainement.manage_entrainement','Actualiser')|| ')' );
+		htp.br;	
+		htp.br;	
+		htp.print(htf.anchor('pq_ui_entrainement.form_add_entrainement','Ajouter un entrainement'));
+		htp.br;	
+		htp.br;
+		htp.print(htf.anchor('pq_ui_entrainement.manage_historique_entrainement','Historique'));
+		htp.br;
+		htp.br;	
+		htp.tableOpen;
+			htp.tableheader('Numéro de l''entrainement   ');
+			htp.tableheader('Informations   ');
+			htp.tableheader('Mise à jour   ');
+			htp.tableheader('Suppression   ');
+			for currentEntrainement in listEntrainement loop
+				if(currentEntrainement.EST_ACTIF_ENTRAINEMENT=1)
+				then
+					htp.tableRowOpen;
+					htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);				
+					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
+					'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
+					||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Informations'));
+					htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
+					'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
+					||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Mise à jour'));
+					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+					htp.tableRowClose;
+				end if;
+			end loop;	
+		htp.tableClose;
+		pq_ui_commun.aff_footer;
 	EXCEPTION
-		WHEN OTHERS THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des entrainements');
+		WHEN PERMISSION_DENIED THEN
+		pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+	WHEN OTHERS THEN
+		pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des entrainements');
 	END manage_entrainement;
 	
 	--Permet d'afficher tous les entrainement inactifs
 	PROCEDURE manage_historique_entrainement
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-		rep_js VARCHAR2(255)  := pq_ui_param_commun.get_rep_js;
 		-- On stocke dans un curseur la liste de tous les entrainements existants
 		CURSOR listEntrainement IS
 		SELECT 
@@ -100,13 +99,14 @@ IS
 			ENTRAINEMENT ENTR
 		ORDER BY 
 			NUM_ENTRAINEMENT;
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 	
-			htp.headClose;
-			htp.bodyOpen;
+       /* pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;*/
 				htp.br;				
 				htp.print('Gestion de l''historique des entrainements' || ' (' || htf.anchor('pq_ui_entrainement.manage_historique_entrainement','Actualiser')|| ')' );
 				htp.br;
@@ -129,9 +129,10 @@ IS
 				htp.br;
 				htp.br;
 				htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements actuels');
-			htp.bodyClose;
-		htp.htmlClose;
+		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des historiques des entrainements');
 	END manage_historique_entrainement;
@@ -148,19 +149,21 @@ IS
 	, vdateFin IN DATE
 	, vestRecurent IN NUMBER)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
-				htp.br;				
-				pq_ui_entrainement.dis_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin,vestRecurent);
-				htp.br;		
-			htp.bodyClose;
-		htp.htmlClose;
+       /* pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;*/
+		htp.br;				
+		pq_ui_entrainement.dis_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin,vestRecurent);
+		htp.br;		
+		pq_ui_commun.aff_footer;
 	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Affichage de l''entrainement en cours...');
 	END exec_dis_entrainement;
@@ -176,22 +179,24 @@ IS
 	, vdateFin IN VARCHAR2
 	, vestRecurent IN NUMBER)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
-				pq_db_entrainement.add_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'),vestRecurent);
-				htp.print('L''entrainement a été créé avec succès');
-				htp.br();
-				htp.br();
-				pq_ui_entrainement.manage_entrainement;
-				htp.br();
-			htp.bodyClose;
-		htp.htmlClose;
-		EXCEPTION
+        /*pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;*/
+		pq_db_entrainement.add_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'),vestRecurent);
+		htp.print('L''entrainement a été créé avec succès');
+		htp.br();
+		htp.br();
+		pq_ui_entrainement.manage_entrainement;
+		htp.br();
+		pq_ui_commun.aff_footer;
+	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout d''un entrainement en cours...');
 	END exec_add_entrainement;
@@ -207,22 +212,24 @@ IS
 	, vdateFin IN VARCHAR2
 	, vestRecurent IN NUMBER)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
-				pq_db_entrainement.upd_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'),vestRecurent);
-				htp.print('L''entrainement n° '|| vnumEntrainement || ' a été modifié avec succès.');
-				htp.br();
-				htp.br();
-				pq_ui_entrainement.manage_entrainement;
-				htp.br();
-			htp.bodyClose;
-		htp.htmlClose;
+       /* pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;*/
+		pq_db_entrainement.upd_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'),vestRecurent);
+		htp.print('L''entrainement n° '|| vnumEntrainement || ' a été modifié avec succès.');
+		htp.br();
+		htp.br();
+		pq_ui_entrainement.manage_entrainement;
+		htp.br();
+		pq_ui_commun.aff_footer;
 		EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification de l''entrainement en cours...');
 	END exec_upd_entrainement;
@@ -231,23 +238,26 @@ IS
 	PROCEDURE exec_del_entrainement(
 	  vnumEntrainement IN NUMBER)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
-				pq_db_entrainement.del_entrainement(vnumEntrainement);
-				pq_db_etre_affecte.del_etre_affecte_entrainement(vnumEntrainement);
-				pq_db_avoir_lieu.del_avoir_lieu_entrainement(vnumEntrainement);
-				htp.print('L''entrainement n° '|| vnumEntrainement || ' a été supprimé avec succès.');
-				htp.br;
-				htp.br;			
-				pq_ui_entrainement.manage_entrainement;
-			htp.bodyClose;
-		htp.htmlClose;
+        /*pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;*/
+		--passe l'entrainement à l'état inactif
+		pq_db_entrainement.stop_entrainement(vnumEntrainement);
+		pq_db_etre_affecte.del_etre_affecte_entrainement(vnumEntrainement);
+		pq_db_avoir_lieu.del_avoir_lieu_entrainement(vnumEntrainement);
+		htp.print('L''entrainement n° '|| vnumEntrainement || ' a été supprimé avec succès.');
+		htp.br;
+		htp.br;			
+		pq_ui_entrainement.manage_entrainement;
+		pq_ui_commun.aff_footer;
 		EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression d''un entrainement en cours...');
 	END exec_del_entrainement;
@@ -263,115 +273,117 @@ IS
 	, vdateFin IN DATE
 	, vestRecurent IN NUMBER)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-		rep_js VARCHAR2(255) := pq_ui_param_commun.get_rep_js;
 		vprenomEntraineur VARCHAR2(40);
 		vnomEntraineur VARCHAR2(40);
 		vnbSeance NUMBER (3);
 		CURSOR listSeance IS SELECT NUM_JOUR,HEURE_DEBUT_CRENEAU,NUM_TERRAIN FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=vnumEntrainement ORDER BY NUM_JOUR;
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+       /* pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;*/
 		SELECT P.PRENOM_PERSONNE INTO vprenomEntraineur FROM PERSONNE P WHERE P.NUM_PERSONNE=vnumEntraineur;
 		SELECT P.NOM_PERSONNE INTO vnomEntraineur FROM PERSONNE P WHERE P.NUM_PERSONNE=vnumEntraineur;
 		SELECT COUNT(*) INTO vnbSeance FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=vnumEntrainement;
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>'); 
-			htp.headClose;
-			htp.bodyOpen;
-				htp.br;	
-				htp.print('Affichage des informations d''un entrainement' || ' (' || htf.anchor('pq_ui_entrainement.dis_entrainement?vnumEntrainement='||vnumEntrainement||'&'||'vnumEntraineur='||vnumEntraineur||'&'||
-						'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
-						||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent,'Actualiser')|| ')' );
-				htp.br;
-				htp.br;						
-				htp.print('Desription de l''entrainement numéro '|| vnumEntrainement || ' :');
-				htp.br;	
-				htp.br;
-				htp.print('Il est animé par '|| vprenomEntraineur || ' ' || vnomEntraineur || '.');
-				htp.br;
-				htp.print('L''entrainement s''adresse aux joueurs possèdant au moins le niveau : '|| vcodeNiveau || '.');
-				htp.br;
-				htp.print('Le nombre de places disponibles est de : '|| vnbPlaces || '.');
-				htp.br;
-				htp.print('Il a lieu entre le  : '|| TO_CHAR(vdateDebut,'DD/MM/YYYY') || ' et le ' || TO_CHAR(vdateFin,'DD/MM/YYYY') ||'.');
-				htp.br;
-				htp.br;
-				htp.print('Séances   : ');
-				htp.tableOpen;
-				if(vnbSeance=0)
+		htp.br;	
+		htp.print('Affichage des informations d''un entrainement' || ' (' || htf.anchor('pq_ui_entrainement.dis_entrainement?vnumEntrainement='||vnumEntrainement||'&'||'vnumEntraineur='||vnumEntraineur||'&'||
+				'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
+				||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent,'Actualiser')|| ')' );
+		htp.br;
+		htp.br;						
+		htp.print('Desription de l''entrainement numéro '|| vnumEntrainement || ' :');
+		htp.br;	
+		htp.br;
+		htp.print('Il est animé par '|| vprenomEntraineur || ' ' || vnomEntraineur || '.');
+		htp.br;
+		htp.print('L''entrainement s''adresse aux joueurs possèdant au moins le niveau : '|| vcodeNiveau || '.');
+		htp.br;
+		htp.print('Le nombre de places disponibles est de : '|| vnbPlaces || '.');
+		htp.br;
+		htp.print('Il a lieu entre le  : '|| TO_CHAR(vdateDebut,'DD/MM/YYYY') || ' et le ' || TO_CHAR(vdateFin,'DD/MM/YYYY') ||'.');
+		htp.br;
+		htp.br;
+		htp.print('Séances   : ');
+		htp.tableOpen;
+		if(vnbSeance=0)
+		then
+			htp.tableRowOpen;
+			htp.print('<td>');
+			htp.print('L''entrainement n''a pas encore de séance.');
+			htp.print('</td>');
+			htp.tableRowClose;
+		else
+			for currentSeance in listSeance loop
+				htp.tableRowOpen;
+				htp.print('<td>');
+				htp.print('   *   ' || 'Le ');
+				if(currentSeance.NUM_JOUR=1)
 				then
-					htp.tableRowOpen;
-					htp.print('<td>');
-					htp.print('L''entrainement n''a pas encore de séance.');
-					htp.print('</td>');
-					htp.tableRowClose;
-				else
-					for currentSeance in listSeance loop
-						htp.tableRowOpen;
-						htp.print('<td>');
-						htp.print('   *   ' || 'Le ');
-						if(currentSeance.NUM_JOUR=1)
-						then
-							htp.print('lundi ');
-						end if;
-						if(currentSeance.NUM_JOUR=2)
-						then
-							htp.print('mardi ');
-						end if;
-						if(currentSeance.NUM_JOUR=3)
-						then
-							htp.print('mercredi ');
-						end if;
-						if(currentSeance.NUM_JOUR=4)
-						then
-							htp.print('jeudi ');
-						end if;
-						if(currentSeance.NUM_JOUR=5)
-						then
-							htp.print('vendredi ');
-						end if;
-						if(currentSeance.NUM_JOUR=6)
-						then
-							htp.print('samedi ');
-						end if;
-						if(currentSeance.NUM_JOUR=7)
-						then
-							htp.print('dimanche ');
-						end if;
-						htp.print(' à ' || currentSeance.HEURE_DEBUT_CRENEAU || ' sur le terrain numéro ' || currentSeance.NUM_TERRAIN || '.' );	
-						htp.tabledata(htf.anchor('pq_ui_avoir_lieu.exec_del_avoir_lieu?vnumJour='||currentSeance.NUM_JOUR||'&'||'vheureDebutCreneau='||currentSeance.HEURE_DEBUT_CRENEAU||'&'||'vnumTerrain='||currentSeance.NUM_TERRAIN||'&'||'vnumEntrainement='||vnumEntrainement, 'Supprimer',cattributes => 'onClick="return confirmerChoix(this,document)"'));
-						htp.print('</td>');
-						htp.tableRowClose;
-						htp.br;
-					end loop;
+					htp.print('lundi ');
 				end if;
-				htp.br;	
-				htp.tableClose;
+				if(currentSeance.NUM_JOUR=2)
+				then
+					htp.print('mardi ');
+				end if;
+				if(currentSeance.NUM_JOUR=3)
+				then
+					htp.print('mercredi ');
+				end if;
+				if(currentSeance.NUM_JOUR=4)
+				then
+					htp.print('jeudi ');
+				end if;
+				if(currentSeance.NUM_JOUR=5)
+				then
+					htp.print('vendredi ');
+				end if;
+				if(currentSeance.NUM_JOUR=6)
+				then
+					htp.print('samedi ');
+				end if;
+				if(currentSeance.NUM_JOUR=7)
+				then
+					htp.print('dimanche ');
+				end if;
+				htp.print(' à ' || currentSeance.HEURE_DEBUT_CRENEAU || ' sur le terrain numéro ' || currentSeance.NUM_TERRAIN || '.' );	
+				htp.tabledata(htf.anchor('pq_ui_avoir_lieu.exec_del_avoir_lieu?vnumJour='||currentSeance.NUM_JOUR||'&'||'vheureDebutCreneau='||currentSeance.HEURE_DEBUT_CRENEAU||'&'||'vnumTerrain='||currentSeance.NUM_TERRAIN||'&'||'vnumEntrainement='||vnumEntrainement, 'Supprimer',cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				htp.print('</td>');
+				htp.tableRowClose;
 				htp.br;
-				htp.br;
-				htp.anchor('pq_ui_avoir_lieu.form_add_avoir_lieu?vnumEntrainement='||vnumEntrainement||'&'||'vnumEntraineur='||vnumEntraineur||'&'||
-						'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
-						||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent, 'Ajouter une séance');	
-				htp.br;
-				htp.br;
-				htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');	
-			htp.bodyClose;
-		htp.htmlClose;
+			end loop;
+		end if;
+		htp.br;	
+		htp.tableClose;
+		htp.br;
+		htp.br;
+		htp.anchor('pq_ui_avoir_lieu.form_add_avoir_lieu?vnumEntrainement='||vnumEntrainement||'&'||'vnumEntraineur='||vnumEntraineur||'&'||
+				'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
+				||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent, 'Ajouter une séance');	
+		htp.br;
+		htp.br;
+		htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');	
+		pq_ui_commun.aff_footer;
+	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END dis_entrainement;
 	
 	-- Affiche le formulaire permettant la saisie d’un nouvel entrainement
 	PROCEDURE form_add_entrainement
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 		CURSOR entraineurlist IS SELECT NUM_PERSONNE,NOM_PERSONNE,PRENOM_PERSONNE FROM PERSONNE WHERE CODE_STATUT_EMPLOYE='ENT';
 		CURSOR niveaulist IS SELECT CODE FROM CODIFICATION WHERE NATURE = 'Classement';
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
+       /* pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;*/
 			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_add_entrainement', 'GET');				
 				htp.formhidden ('vnumEntrainement','1');
 				htp.br;
@@ -440,8 +452,10 @@ IS
 			htp.formClose;
 			htp.br;
 			htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');
-			htp.bodyClose;
-		htp.htmlClose;
+		pq_ui_commun.aff_footer;
+	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END form_add_entrainement;
 	
 	-- Affiche le formulaire de saisie permettant la modification d’un entrainement existant	
@@ -455,15 +469,16 @@ IS
 	, vdateFin IN DATE
 	, vestRecurent IN NUMBER)
 	IS
-		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 		CURSOR entraineurlist IS SELECT NUM_PERSONNE,NOM_PERSONNE,PRENOM_PERSONNE FROM PERSONNE WHERE CODE_STATUT_EMPLOYE='ENT';
 		CURSOR niveaulist IS SELECT CODE FROM CODIFICATION WHERE NATURE = 'Classement';
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
-			htp.headClose;
-			htp.bodyOpen;
+       /* pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;*/
 			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_upd_entrainement', 'GET');				
 				htp.formhidden ('vnumEntrainement',vnumEntrainement);
 				htp.br;
@@ -549,8 +564,10 @@ IS
 			htp.formClose;
 			htp.br;
 			htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');
-			htp.bodyClose;
-		htp.htmlClose;
+		pq_ui_commun.aff_footer;
+	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	END form_upd_entrainement;
 		
 END pq_ui_entrainement;

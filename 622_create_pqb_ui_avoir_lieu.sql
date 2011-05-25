@@ -24,9 +24,17 @@ IS
 		CURSOR listEntrainement IS SELECT NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,
 										  DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
 		Nb NUMBER(3);
+		vdateDebut Date;
+		vdateFin Date;
+		vnumJourDebut NUMBER(1);
+		vincrementDate DATE;
+		vnumSeance NUMBER(3);
 	BEGIN
 		htp.htmlOpen;
 			SELECT COUNT(*) INTO Nb FROM ETRE_AFFECTE WHERE NUM_ENTRAINEMENT = vnumEntrainement AND NUM_TERRAIN = vnumTerrain;
+			select date_debut_entrainement into vdateDebut from entrainement where num_entrainement=vnumEntrainement;
+			select date_fin_entrainement into vdateFin from entrainement where num_entrainement=vnumEntrainement;
+			select to_char(vdateDebut,'D') into vnumJourDebut from entrainement where num_entrainement=vnumEntrainement;
 			htp.headOpen;
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />'); 
 			htp.headClose;
@@ -36,6 +44,23 @@ IS
 					then
 					pq_db_etre_affecte.add_etre_affecte(vnumEntrainement,vnumTerrain);
 				end if;
+				
+				--Création des occupations
+				vnumSeance:=1;
+				--on retrouve le premier jour de la séance
+				if(vnumjour>=vnumJourDebut)
+				then
+					vincrementDate:=vdateDebut+(vnumjour-vnumJourDebut);
+				else
+					vincrementDate:=vdateDebut+(7-vnumJourDebut+vnumJour);
+				end if;
+				WHILE trunc(vincrementDate) <= trunc(vdateFin)
+				LOOP
+					pq_db_occuper.add_seance(vheureDebutCreneau,vnumTerrain,vincrementDate,vnumEntrainement,vnumSeance);
+					vincrementDate:=vincrementDate+7;
+					vnumSeance:=vnumSeance+1;
+				END LOOP;
+				
 				for currentEntrainement in listEntrainement loop
 				pq_ui_entrainement.dis_entrainement(vnumEntrainement,currentEntrainement.NUM_ENTRAINEUR,currentEntrainement.CODE_NIVEAU,
 												    currentEntrainement.NATURE_NIVEAU,currentEntrainement.NB_PLACE_ENTRAINEMENT,

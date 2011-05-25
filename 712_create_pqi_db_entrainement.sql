@@ -37,6 +37,10 @@ IS
 	--Permet de supprimer un entrainement existant
 	PROCEDURE del_entrainement(
 	  vnumEntrainement IN NUMBER);
+	  
+	--Permet de passer un entrainement à l'état inactif
+	PROCEDURE stop_entrainement(
+	  vnumEntrainement IN NUMBER);
 		
 END pq_db_entrainement;
 /
