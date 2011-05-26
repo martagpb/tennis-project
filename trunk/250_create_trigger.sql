@@ -416,11 +416,6 @@ begin
                   'Impossible de supprimer "TERRAIN" car "ETRE_ASSOCIE" existe.');
         end if;
 	 
-     -- Supprimer les occurrences correspondantes de la table ETRE_AFFECTE.
-
-     delete from ETRE_AFFECTE
-     where
-          ETRE_AFFECTE.NUM_TERRAIN = :old.NUM_TERRAIN;
      -- Supprimer les occurrences correspondantes de la table AVOIR_LIEU.
 
      delete from AVOIR_LIEU
@@ -465,18 +460,7 @@ begin
                'Impossible de mettre à jour "TERRAIN" car "CODIFICATION" n''existe pas.');
           end if;
      end if;
-     -- Répercuter la modification de la clé primaire de TERRAIN sur les 
-     -- occurrences correspondantes de la table ETRE_AFFECTE.
-
-     if
-          :old.NUM_TERRAIN <> :new.NUM_TERRAIN
-     then
-          update ETRE_AFFECTE
-          set
-               ETRE_AFFECTE.NUM_TERRAIN = :new.NUM_TERRAIN
-          where
-               ETRE_AFFECTE.NUM_TERRAIN = :old.NUM_TERRAIN;
-     end if;
+     
      -- Répercuter la modification de la clé primaire de TERRAIN sur les 
      -- occurrences correspondantes de la table AVOIR_LIEU.
 
@@ -577,11 +561,6 @@ after delete on ENTRAINEMENT for each row
 declare numrows INTEGER;
 begin
 
-     -- Supprimer les occurrences correspondantes de la table ETRE_AFFECTE.
-
-     delete from ETRE_AFFECTE
-     where
-          ETRE_AFFECTE.NUM_ENTRAINEMENT = :old.NUM_ENTRAINEMENT;
      -- Supprimer les occurrences correspondantes de la table S_INSCRIRE.
 
      delete from S_INSCRIRE
@@ -659,18 +638,7 @@ begin
                'Impossible de mettre à jour "ENTRAINEMENT" car "PERSONNE" n''existe pas.');
           end if;
      end if;
-     -- Répercuter la modification de la clé primaire de ENTRAINEMENT sur les 
-     -- occurrences correspondantes de la table ETRE_AFFECTE.
-
-     if
-          :old.NUM_ENTRAINEMENT <> :new.NUM_ENTRAINEMENT
-     then
-          update ETRE_AFFECTE
-          set
-               ETRE_AFFECTE.NUM_ENTRAINEMENT = :new.NUM_ENTRAINEMENT
-          where
-               ETRE_AFFECTE.NUM_ENTRAINEMENT = :old.NUM_ENTRAINEMENT;
-     end if;
+     
      -- Répercuter la modification de la clé primaire de ENTRAINEMENT sur les 
      -- occurrences correspondantes de la table S_INSCRIRE.
 
@@ -985,90 +953,6 @@ CREATE OR REPLACE TRIGGER TI_ABONNEMENT_BEFORE
 	END IF;
 END;
 /
-
-
--- ------------------------------------------------------------------------------- 
---   Table : ETRE_AFFECTE
--- ------------------------------------------------------------------------------- 
-
-
-
--- Trigger de modification ----------------------------------------------
-CREATE OR REPLACE trigger TU_ETRE_AFFECTE
-after update on ETRE_AFFECTE for each row
-declare numrows INTEGER;
-begin
-
-     -- Interdire la modification de la clé étrangère référençant la table 
-     -- ENTRAINEMENT.
-
-     if
-          :old.NUM_ENTRAINEMENT <> :new.NUM_ENTRAINEMENT or 
-          :old.NUM_TERRAIN <> :new.NUM_TERRAIN
-     then
-               raise_application_error(
-               -20008,
-               'Modification de la clé étrangère référençant "ENTRAINEMENT" interdite.');
-     end if;
-     -- Interdire la modification de la clé étrangère référençant la table 
-     -- TERRAIN.
-
-     if
-          :old.NUM_ENTRAINEMENT <> :new.NUM_ENTRAINEMENT or 
-          :old.NUM_TERRAIN <> :new.NUM_TERRAIN
-     then
-               raise_application_error(
-               -20008,
-               'Modification de la clé étrangère référençant "TERRAIN" interdite.');
-     end if;
-
-end;
-/
-
-
-
--- Trigger d'insertion ----------------------------------------------
-CREATE OR REPLACE trigger TI_ETRE_AFFECTE
-after insert on ETRE_AFFECTE for each row
-declare numrows INTEGER;
-begin
-
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ETRE_AFFECTE 
-     -- s'il n'existe pas d'occurrence correspondante dans la table ENTRAINEMENT.
-
-     select count(*) into numrows
-     from ENTRAINEMENT
-     where
-          :new.NUM_ENTRAINEMENT = ENTRAINEMENT.NUM_ENTRAINEMENT;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "ETRE_AFFECTE" car "ENTRAINEMENT" n''existe pas.');
-     end if;
-     -- Sauf valeur nulle autorisée, interdire la création d'une occurrence de ETRE_AFFECTE 
-     -- s'il n'existe pas d'occurrence correspondante dans la table TERRAIN.
-
-     select count(*) into numrows
-     from TERRAIN
-     where
-          :new.NUM_TERRAIN = TERRAIN.NUM_TERRAIN;
-     if 
-          (
-          numrows = 0 
-          )
-     then
-          raise_application_error(
-               -20002,
-               'Impossible d''ajouter "ETRE_AFFECTE" car "TERRAIN" n''existe pas.');
-     end if;
-
-end;
-/
-
 
 
 -- ------------------------------------------------------------------------------- 
