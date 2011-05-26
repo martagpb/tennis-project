@@ -41,6 +41,9 @@ IS
 	--Permet de passer un entrainement à l'état inactif
 	PROCEDURE stop_entrainement(
 	  vnumEntrainement IN NUMBER);
+	 
+	 --Permet de passer un entrainement à l'état inactif si ça date de fin est dépassé
+	PROCEDURE verif_actif_entrainement;
 		
 END pq_db_entrainement;
 /

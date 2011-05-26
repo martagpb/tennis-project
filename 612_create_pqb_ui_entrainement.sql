@@ -61,9 +61,7 @@ IS
 				then
 					htp.tableRowOpen;
 					htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);				
-					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
-					'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
-					||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Informations'));
+					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
 					htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
 					'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
 					||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Mise à jour'));
@@ -119,9 +117,7 @@ IS
 						then
 							htp.tableRowOpen;
 							htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);				
-							htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
-							'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
-							||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Informations'));
+							htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
 							htp.tableRowClose;
 						end if;
 					end loop;	
@@ -140,17 +136,12 @@ IS
 	
 	-- Exécute la procédure d’affichage des entrainements et gère les erreurs éventuelles
 	PROCEDURE exec_dis_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEntraineur IN NUMBER
-	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER)
+	  vnumEntrainement IN NUMBER)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
+		CURSOR listEntrainement IS SELECT NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,
+										  DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
 	BEGIN
        /* pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
@@ -158,7 +149,12 @@ IS
 		END IF;
         pq_ui_commun.aff_header;*/
 		htp.br;				
-		pq_ui_entrainement.dis_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin,vestRecurent);
+		for currentEntrainement in listEntrainement loop
+		pq_ui_entrainement.dis_entrainement(vnumEntrainement,currentEntrainement.NUM_ENTRAINEUR,currentEntrainement.CODE_NIVEAU,
+											currentEntrainement.NATURE_NIVEAU,currentEntrainement.NB_PLACE_ENTRAINEMENT,
+											currentEntrainement.DATE_DEBUT_ENTRAINEMENT,currentEntrainement.DATE_FIN_ENTRAINEMENT,
+											currentEntrainement.EST_RECURENT_ENTRAINEMENT);
+		end loop;		
 		htp.br;		
 		pq_ui_commun.aff_footer;
 	EXCEPTION
@@ -179,6 +175,7 @@ IS
 	, vdateFin IN VARCHAR2
 	, vestRecurent IN NUMBER)
 	IS
+		sequenceNumEntrainement NUMBER(6);
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -191,7 +188,8 @@ IS
 		htp.print('L''entrainement a été créé avec succès');
 		htp.br();
 		htp.br();
-		pq_ui_entrainement.manage_entrainement;
+		SELECT SEQ_ENTRAINEMENT.currval INTO sequenceNumEntrainement FROM dual;
+		pq_ui_entrainement.exec_dis_entrainement(sequenceNumEntrainement);
 		htp.br();
 		pq_ui_commun.aff_footer;
 	EXCEPTION
@@ -255,7 +253,7 @@ IS
 		htp.br;			
 		pq_ui_entrainement.manage_entrainement;
 		pq_ui_commun.aff_footer;
-		EXCEPTION
+	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
@@ -359,9 +357,7 @@ IS
 		htp.tableClose;
 		htp.br;
 		htp.br;
-		htp.anchor('pq_ui_avoir_lieu.form_add_avoir_lieu?vnumEntrainement='||vnumEntrainement||'&'||'vnumEntraineur='||vnumEntraineur||'&'||
-				'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
-				||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent, 'Ajouter une séance');	
+		htp.anchor('pq_ui_avoir_lieu.form_add_avoir_lieu?vnumEntrainement='||vnumEntrainement, 'Ajouter une séance');	
 		htp.br;
 		htp.br;
 		htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');	

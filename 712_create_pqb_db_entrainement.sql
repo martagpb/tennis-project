@@ -80,6 +80,18 @@ IS
 			NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;
 	END stop_entrainement;
+	
+		--Permet de passer un entrainement à l'état inactif si ça date de fin est dépassé
+	PROCEDURE verif_actif_entrainement
+	 IS
+	 BEGIN
+	  	UPDATE ENTRAINEMENT
+		SET
+				EST_ACTIF_ENTRAINEMENT=0	
+		WHERE
+			DATE_FIN_ENTRAINEMENT < sysdate;
+		COMMIT;
+	END verif_actif_entrainement;
 		
 END pq_db_entrainement;
 /
