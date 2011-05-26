@@ -29,14 +29,7 @@ IS
 	  
 	-- Affiche le formulaire permettant la saisie d'une nouvelle séance d'un entrainement
 	PROCEDURE form_add_avoir_lieu(
-	  vnumEntrainement IN NUMBER
-	, vnumEntraineur IN NUMBER
-	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER);
+	  vnumEntrainement IN NUMBER);
 		
 END pq_ui_avoir_lieu;
 /

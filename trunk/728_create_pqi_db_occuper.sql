@@ -49,6 +49,13 @@ IS
 	  vheureDebutCreneau IN CHAR
 	, vnumTerrain IN NUMBER
 	, vdateOccupation IN DATE);
+	
+	--Permet de supprimer une séance au dessus d'une date date donnée
+	PROCEDURE del_seance(
+	  vheureDebutCreneau IN CHAR
+	, vnumTerrain IN NUMBER
+	, vdateOccupation IN DATE
+	, vnumEntrainement IN NUMBER);
 	  
 		
 END pq_db_occuper;

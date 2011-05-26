@@ -82,7 +82,7 @@ IS
 	, vnumTerrain IN NUMBER
 	, vdateOccupation IN DATE)
 	IS
-	 BEGIN
+	BEGIN
 	  	DELETE FROM OCCUPER
 		WHERE
 			HEURE_DEBUT_CRENEAU = vheureDebutCreneau
@@ -90,6 +90,23 @@ IS
 			AND DATE_OCCUPATION = vdateOccupation;
 		COMMIT;
 	END del_occupation;
+	
+	--Permet de supprimer une séance au dessus d'une date date donnée
+	PROCEDURE del_seance(
+	  vheureDebutCreneau IN CHAR
+	, vnumTerrain IN NUMBER
+	, vdateOccupation IN DATE
+	, vnumEntrainement IN NUMBER)
+	IS
+	BEGIN
+		DELETE FROM OCCUPER
+		WHERE
+			HEURE_DEBUT_CRENEAU = vheureDebutCreneau
+			AND NUM_TERRAIN = vnumTerrain
+			AND DATE_OCCUPATION > vdateOccupation
+			AND NUM_ENTRAINEMENT = vnumEntrainement;
+		COMMIT;
+	END del_seance;			
 	  
 END pq_db_occuper;
 /
