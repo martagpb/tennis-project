@@ -20,13 +20,12 @@ IS
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER)
+	, vdateFin IN DATE)
 	IS
 	BEGIN
 		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEMENT,NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,
-								  DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT,EST_ACTIF_ENTRAINEMENT)
-		VALUES (vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin,vestRecurent,1);
+								  DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT)
+		VALUES (vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin);
 		COMMIT;
 	END add_entrainement;
 	
@@ -36,10 +35,7 @@ IS
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER)
+	, vnbPlaces IN NUMBER)
 	IS
 	BEGIN
 		UPDATE ENTRAINEMENT
@@ -48,9 +44,6 @@ IS
 			   ,CODE_NIVEAU = vcodeNiveau
 			   ,NATURE_NIVEAU = vnatureNiveau
 			   ,NB_PLACE_ENTRAINEMENT = vnbPlaces
-			   ,DATE_DEBUT_ENTRAINEMENT = vdateDebut
-			   ,DATE_FIN_ENTRAINEMENT = vdateFin
-			   ,EST_RECURENT_ENTRAINEMENT = vestRecurent
 		WHERE
 				NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;
@@ -67,31 +60,6 @@ IS
 		COMMIT;
 	END del_entrainement;
 	
-		
-	--Permet de passer un entrainement à l'état inactif
-	PROCEDURE stop_entrainement(
-	  vnumEntrainement IN NUMBER)
-	 IS
-	 BEGIN
-	  	UPDATE ENTRAINEMENT
-		SET
-				EST_ACTIF_ENTRAINEMENT=0	
-		WHERE
-			NUM_ENTRAINEMENT = vnumEntrainement;
-		COMMIT;
-	END stop_entrainement;
-	
-		--Permet de passer un entrainement à l'état inactif si ça date de fin est dépassé
-	PROCEDURE verif_actif_entrainement
-	 IS
-	 BEGIN
-	  	UPDATE ENTRAINEMENT
-		SET
-				EST_ACTIF_ENTRAINEMENT=0	
-		WHERE
-			DATE_FIN_ENTRAINEMENT < sysdate;
-		COMMIT;
-	END verif_actif_entrainement;
 		
 END pq_db_entrainement;
 /

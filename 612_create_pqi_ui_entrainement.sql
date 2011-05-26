@@ -30,8 +30,7 @@ IS
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN VARCHAR2
-	, vdateFin IN VARCHAR2
-	, vestRecurent IN NUMBER);
+	, vdateFin IN VARCHAR2);
 	
 	-- Exécute la procédure de mise à jour d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_upd_entrainement(
@@ -39,10 +38,7 @@ IS
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN VARCHAR2
-	, vdateFin IN VARCHAR2
-	, vestRecurent IN NUMBER);
+	, vnbPlaces IN NUMBER);
 	
 	-- Exécute la procédure de suppression d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_del_entrainement(
@@ -56,8 +52,7 @@ IS
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER);
+	, vdateFin IN DATE);
 	
 	-- Affiche le formulaire permettant la saisie d’un nouvel entrainement
 	PROCEDURE form_add_entrainement;
@@ -68,10 +63,7 @@ IS
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER);
+	, vnbPlaces IN NUMBER);
 		
 END pq_ui_entrainement;
 /

@@ -20,8 +20,7 @@ IS
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER);
+	, vdateFin IN DATE);
 	
 	--Permet de modifier un entrainement existant
 	PROCEDURE upd_entrainement(
@@ -29,21 +28,11 @@ IS
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER);
+	, vnbPlaces IN NUMBER);
 	
 	--Permet de supprimer un entrainement existant
 	PROCEDURE del_entrainement(
 	  vnumEntrainement IN NUMBER);
-	  
-	--Permet de passer un entrainement à l'état inactif
-	PROCEDURE stop_entrainement(
-	  vnumEntrainement IN NUMBER);
-	 
-	 --Permet de passer un entrainement à l'état inactif si ça date de fin est dépassé
-	PROCEDURE verif_actif_entrainement;
 		
 END pq_db_entrainement;
 /
