@@ -17,7 +17,8 @@ IS
 	  vnumJour IN NUMBER
 	, vheureDebutCreneau IN CHAR
 	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER);
+	, vnumEntrainement IN NUMBER
+	, vexception IN OUT NUMBER);
 	
 	--Permet de supprimer une occurence
 	PROCEDURE del_avoir_lieu(
@@ -28,6 +29,14 @@ IS
 	--Permet de supprimer une occurence via l'entrainement
 	PROCEDURE del_avoir_lieu_entrainement(
 		vnumEntrainement IN NUMBER);
+		
+	--Permet d'ajouter les occupations associées à une séance
+	PROCEDURE add_occupation_seance(
+		  vnumJour IN NUMBER
+		, vheureDebutCreneau IN CHAR 
+		, vnumTerrain IN NUMBER
+		, vnumEntrainement IN NUMBER
+		, vexception IN OUT NUMBER);
 	
 END pq_db_avoir_lieu;
 /

@@ -16,7 +16,6 @@ IS
 	--Permet d'afficher tous les entrainement existant 
 	PROCEDURE manage_entrainement
 	IS
-		-- On stocke dans un curseur la liste de tous les entrainements existants
 		CURSOR listEntrainement IS
 		SELECT 
 			NUM_ENTRAINEMENT
@@ -26,10 +25,10 @@ IS
 		   ,NB_PLACE_ENTRAINEMENT
 		   ,DATE_DEBUT_ENTRAINEMENT
 		   ,DATE_FIN_ENTRAINEMENT
-		   ,EST_RECURENT_ENTRAINEMENT
-		   ,EST_ACTIF_ENTRAINEMENT
 		FROM 
 			ENTRAINEMENT ENTR
+		WHERE
+			TRUNC(DATE_FIN_ENTRAINEMENT)>=TRUNC(SYSDATE)
 		ORDER BY 
 			NUM_ENTRAINEMENT;
 		
@@ -57,22 +56,19 @@ IS
 			htp.tableheader('Mise à jour   ');
 			htp.tableheader('Suppression   ');
 			for currentEntrainement in listEntrainement loop
-				if(currentEntrainement.EST_ACTIF_ENTRAINEMENT=1)
-				then
-					htp.tableRowOpen;
-					htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);				
-					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
-					htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
-					'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT
-					||'&'||'vdateDebut='||currentEntrainement.DATE_DEBUT_ENTRAINEMENT||'&'||'vdateFin='||currentEntrainement.DATE_FIN_ENTRAINEMENT||'&'||'vestRecurent='||currentEntrainement.EST_RECURENT_ENTRAINEMENT,'Mise à jour'));
-					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-					htp.tableRowClose;
-				end if;
-			end loop;	
+				htp.tableRowOpen;
+				htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);				
+				htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
+				htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT||'&'||'vnumEntraineur='||currentEntrainement.NUM_ENTRAINEUR||'&'||
+				'vcodeNiveau='||currentEntrainement.CODE_NIVEAU||'&'||'vnatureNiveau='||currentEntrainement.NATURE_NIVEAU||'&'||'vnbPlaces='||currentEntrainement.NB_PLACE_ENTRAINEMENT,'Mise à jour'));
+				htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				htp.tableRowClose;	
+			end loop;
 		htp.tableClose;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
+		
 		pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 	WHEN OTHERS THEN
 		pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des entrainements');
@@ -81,7 +77,6 @@ IS
 	--Permet d'afficher tous les entrainement inactifs
 	PROCEDURE manage_historique_entrainement
 	IS
-		-- On stocke dans un curseur la liste de tous les entrainements existants
 		CURSOR listEntrainement IS
 		SELECT 
 			NUM_ENTRAINEMENT
@@ -91,10 +86,10 @@ IS
 		   ,NB_PLACE_ENTRAINEMENT
 		   ,DATE_DEBUT_ENTRAINEMENT
 		   ,DATE_FIN_ENTRAINEMENT
-		   ,EST_RECURENT_ENTRAINEMENT
-		   ,EST_ACTIF_ENTRAINEMENT
 		FROM 
 			ENTRAINEMENT ENTR
+		WHERE
+			trunc(DATE_FIN_ENTRAINEMENT)<trunc(sysdate)
 		ORDER BY 
 			NUM_ENTRAINEMENT;
 		perm BOOLEAN;
@@ -113,13 +108,10 @@ IS
 					htp.tableheader('Numéro de l''entrainement     ');
 					htp.tableheader('Informations   ');
 					for currentEntrainement in listEntrainement loop
-						if(currentEntrainement.EST_ACTIF_ENTRAINEMENT=0)
-						then
-							htp.tableRowOpen;
-							htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);				
-							htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
-							htp.tableRowClose;
-						end if;
+						htp.tableRowOpen;
+						htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);				
+						htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
+						htp.tableRowClose;
 					end loop;	
 				htp.tableClose;
 				htp.br;
@@ -141,7 +133,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 		CURSOR listEntrainement IS SELECT NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,
-										  DATE_FIN_ENTRAINEMENT,EST_RECURENT_ENTRAINEMENT FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
+										  DATE_FIN_ENTRAINEMENT FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
 	BEGIN
        /* pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
@@ -152,8 +144,7 @@ IS
 		for currentEntrainement in listEntrainement loop
 		pq_ui_entrainement.dis_entrainement(vnumEntrainement,currentEntrainement.NUM_ENTRAINEUR,currentEntrainement.CODE_NIVEAU,
 											currentEntrainement.NATURE_NIVEAU,currentEntrainement.NB_PLACE_ENTRAINEMENT,
-											currentEntrainement.DATE_DEBUT_ENTRAINEMENT,currentEntrainement.DATE_FIN_ENTRAINEMENT,
-											currentEntrainement.EST_RECURENT_ENTRAINEMENT);
+											currentEntrainement.DATE_DEBUT_ENTRAINEMENT,currentEntrainement.DATE_FIN_ENTRAINEMENT);
 		end loop;		
 		htp.br;		
 		pq_ui_commun.aff_footer;
@@ -172,8 +163,7 @@ IS
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN VARCHAR2
-	, vdateFin IN VARCHAR2
-	, vestRecurent IN NUMBER)
+	, vdateFin IN VARCHAR2)
 	IS
 		sequenceNumEntrainement NUMBER(6);
 		perm BOOLEAN;
@@ -184,7 +174,7 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
         pq_ui_commun.aff_header;*/
-		pq_db_entrainement.add_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'),vestRecurent);
+		pq_db_entrainement.add_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'));
 		htp.print('L''entrainement a été créé avec succès');
 		htp.br();
 		htp.br();
@@ -205,10 +195,7 @@ IS
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN VARCHAR2
-	, vdateFin IN VARCHAR2
-	, vestRecurent IN NUMBER)
+	, vnbPlaces IN NUMBER)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -218,7 +205,7 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
         pq_ui_commun.aff_header;*/
-		pq_db_entrainement.upd_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'),vestRecurent);
+		pq_db_entrainement.upd_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces);
 		htp.print('L''entrainement n° '|| vnumEntrainement || ' a été modifié avec succès.');
 		htp.br();
 		htp.br();
@@ -244,9 +231,6 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
         pq_ui_commun.aff_header;*/
-		--passe l'entrainement à l'état inactif
-		pq_db_entrainement.stop_entrainement(vnumEntrainement);
-		pq_db_etre_affecte.del_etre_affecte_entrainement(vnumEntrainement);
 		pq_db_avoir_lieu.del_avoir_lieu_entrainement(vnumEntrainement);
 		htp.print('L''entrainement n° '|| vnumEntrainement || ' a été supprimé avec succès.');
 		htp.br;
@@ -268,8 +252,7 @@ IS
 	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER)
+	, vdateFin IN DATE)
 	IS
 		vprenomEntraineur VARCHAR2(40);
 		vnomEntraineur VARCHAR2(40);
@@ -289,7 +272,7 @@ IS
 		htp.br;	
 		htp.print('Affichage des informations d''un entrainement' || ' (' || htf.anchor('pq_ui_entrainement.dis_entrainement?vnumEntrainement='||vnumEntrainement||'&'||'vnumEntraineur='||vnumEntraineur||'&'||
 				'vcodeNiveau='||vcodeNiveau||'&'||'vnatureNiveau='||vnatureNiveau||'&'||'vnbPlaces='||vnbPlaces
-				||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin||'&'||'vestRecurent='||vestRecurent,'Actualiser')|| ')' );
+				||'&'||'vdateDebut='||vdateDebut||'&'||'vdateFin='||vdateFin,'Actualiser')|| ')' );
 		htp.br;
 		htp.br;						
 		htp.print('Desription de l''entrainement numéro '|| vnumEntrainement || ' :');
@@ -433,14 +416,6 @@ IS
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
-					htp.tableData('L''entrainement est il récurent ? * :', cattributes => 'class="enteteFormulaire"');												
-						htp.print('<td>');
-						htp.print('<select name="vestRecurent" id="vestRecurent">');
-							htp.print('<option value="1" selected="selected">oui</option>');
-							htp.print('<option value="0">non</option></select>');
-						htp.print('</td>');							
-				htp.tableRowClose;
-				htp.tableRowOpen;
 					htp.tableData('');
 					htp.tableData(htf.formSubmit(NULL,'Validation'));
 				htp.tableRowClose;
@@ -460,10 +435,7 @@ IS
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
 	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE
-	, vestRecurent IN NUMBER)
+	, vnbPlaces IN NUMBER)
 	IS
 		CURSOR entraineurlist IS SELECT NUM_PERSONNE,NOM_PERSONNE,PRENOM_PERSONNE FROM PERSONNE WHERE CODE_STATUT_EMPLOYE='ENT';
 		CURSOR niveaulist IS SELECT CODE FROM CODIFICATION WHERE NATURE = 'Classement';
@@ -525,36 +497,8 @@ IS
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
-					htp.tableData('Date de début * :', cattributes => 'class="enteteFormulaire"');	
-					htp.print('<td>');			
-					htp.print('<INPUT TYPE="text" name="vdateDebut" value="'||TO_CHAR(vdateDebut,'DD/MM/YY')||'"> ');
-					htp.print('</td>');						
-				htp.tableRowClose;
-				htp.tableRowOpen;
-					htp.tableData('Date de fin * :', cattributes => 'class="enteteFormulaire"');	
-					htp.print('<td>');		
-					htp.print('<INPUT TYPE="text" name="vdateFin" value="'||TO_CHAR(vdateFin,'DD/MM/YY')||'"> ');									
-					htp.print('</td>');						
-				htp.tableRowClose;
-				htp.tableRowOpen;
-					htp.tableData('L''entrainement est il récurent ? * :', cattributes => 'class="enteteFormulaire"');												
-						htp.print('<td>');
-						htp.print('<select name="vestRecurent" id="vestRecurent">');
-							if(vestRecurent=1)
-							then
-								htp.print('<option value="1" selected="selected">oui</option>');
-								htp.print('<option value="0" >non</option></select>');
-							end if;
-							if(vestRecurent=0)
-							then
-								htp.print('<option value="1" >oui</option>');
-								htp.print('<option value="0" selected="selected">non</option></select>');
-							end if;
-						htp.print('</td>');							
-				htp.tableRowClose;
-				htp.tableRowOpen;
-					htp.tableData('');
-					htp.tableData(htf.formSubmit(NULL,'Validation'));
+				htp.tableData('');
+				htp.tableData(htf.formSubmit(NULL,'Validation'));
 				htp.tableRowClose;
 				htp.tableClose;
 			htp.formClose;

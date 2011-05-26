@@ -12,7 +12,7 @@
 
 CREATE OR REPLACE PACKAGE pq_db_occuper
 IS
-		--Permet d’ajouter une réservation
+	--Permet d’ajouter une réservation
 	PROCEDURE add_reservation(
 	  vheureDebutCreneau IN CHAR
 	, vnumTerrain IN NUMBER
