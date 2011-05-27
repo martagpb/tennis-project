@@ -24,10 +24,8 @@ IS
 	
 	-- Exécute la procédure d'ajout d'un entrainement et gère les erreurs éventuelles.
 	PROCEDURE exec_add_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEntraineur IN NUMBER
+	  vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN VARCHAR2
 	, vdateFin IN VARCHAR2);
@@ -37,7 +35,6 @@ IS
 	  vnumEntrainement IN NUMBER
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER);
 	
 	-- Exécute la procédure de suppression d'un entrainement et gère les erreurs éventuelles
@@ -46,24 +43,14 @@ IS
 	  
 	--Permet d’afficher un entrainement existant
 	PROCEDURE dis_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEntraineur IN NUMBER
-	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE);
+	  vnumEntrainement IN NUMBER);
 	
 	-- Affiche le formulaire permettant la saisie d’un nouvel entrainement
 	PROCEDURE form_add_entrainement;
 	
 	-- Affiche le formulaire de saisie permettant la modification d’un entrainement existant	
 	PROCEDURE form_upd_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEntraineur IN NUMBER
-	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
-	, vnbPlaces IN NUMBER);
+	  vnumEntrainement IN NUMBER);
 		
 END pq_ui_entrainement;
 /

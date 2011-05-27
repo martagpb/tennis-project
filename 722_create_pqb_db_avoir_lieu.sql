@@ -46,17 +46,6 @@ IS
 		COMMIT;
 	END del_avoir_lieu;
 	
-		--Permet de supprimer une occurence via l'entrainement
-	PROCEDURE del_avoir_lieu_entrainement(
-		vnumEntrainement IN NUMBER)
-	IS
-	BEGIN
-		DELETE FROM AVOIR_LIEU
-		WHERE
-			NUM_ENTRAINEMENT = vnumEntrainement;
-		COMMIT;
-	END del_avoir_lieu_entrainement;
-	
 	--Permet d'ajouter les occupations associées à une séance
 	PROCEDURE add_occupation_seance(
 		  vnumJour IN NUMBER

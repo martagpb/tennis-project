@@ -27,9 +27,11 @@ IS
 		vexception_avoir_lieu NUMBER(1);
 		vexception_occuper NUMBER(1);
 	BEGIN
-		/*pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
-		RAISE PERMISSION_DENIED;*/
+			RAISE PERMISSION_DENIED;
+		end if;
+		pq_ui_commun.aff_header;
 		pq_db_avoir_lieu.add_avoir_lieu(vnumJour,vheureDebutCreneau,vnumTerrain,vnumEntrainement,vexception_avoir_lieu);
 		if(vexception_avoir_lieu=1)
 		then
@@ -70,9 +72,11 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		/*pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
-		RAISE PERMISSION_DENIED;*/
+			RAISE PERMISSION_DENIED;
+		end if;
+		pq_ui_commun.aff_header;
 		htp.br;				
 		pq_db_avoir_lieu.del_avoir_lieu(vnumJour,vheureDebutCreneau,vnumTerrain);
 		--supprime les séances dont la date est > sysdate
@@ -99,9 +103,11 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		/*pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
-		RAISE PERMISSION_DENIED;*/
+			RAISE PERMISSION_DENIED;
+		end if;
+		pq_ui_commun.aff_header;
 		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_avoir_lieu.exec_add_avoir_lieu', 'GET');				
 			htp.br;
 			htp.print('Création d''une nouvelle séance' || ' (' || htf.anchor('pq_ui_avoir_lieu.form_add_avoir_lieu?vnumEntrainement='||vnumEntrainement,'Actualiser')|| ')' );

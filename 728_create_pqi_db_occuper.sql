@@ -56,7 +56,6 @@ IS
 	, vnumTerrain IN NUMBER
 	, vdateOccupation IN DATE
 	, vnumEntrainement IN NUMBER);
-	  
 		
 END pq_db_occuper;
 /
