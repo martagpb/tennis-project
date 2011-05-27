@@ -14,10 +14,8 @@ CREATE OR REPLACE PACKAGE pq_db_entrainement
 IS
 	--Permet d’ajouter un entrainement
 	PROCEDURE add_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEntraineur IN NUMBER
+	  vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN DATE
 	, vdateFin IN DATE);
@@ -27,7 +25,6 @@ IS
 	  vnumEntrainement IN NUMBER
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER);
 	
 	--Permet de supprimer un entrainement existant

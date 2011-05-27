@@ -14,18 +14,16 @@ CREATE OR REPLACE PACKAGE BODY pq_db_entrainement
 IS
 	--Permet d’ajouter un entrainement
 	PROCEDURE add_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEntraineur IN NUMBER
+	  vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN DATE
 	, vdateFin IN DATE)
 	IS
 	BEGIN
-		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEMENT,NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,
+		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,
 								  DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT)
-		VALUES (vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vnbPlaces,vdateDebut,vdateFin);
+		VALUES (vnumEntraineur,vcodeNiveau,'Classement',vnbPlaces,vdateDebut,vdateFin);
 		COMMIT;
 	END add_entrainement;
 	
@@ -34,7 +32,6 @@ IS
 	  vnumEntrainement IN NUMBER
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
-	, vnatureNiveau IN VARCHAR2
 	, vnbPlaces IN NUMBER)
 	IS
 	BEGIN
@@ -42,7 +39,6 @@ IS
 		SET
 				NUM_ENTRAINEUR = vnumEntraineur
 			   ,CODE_NIVEAU = vcodeNiveau
-			   ,NATURE_NIVEAU = vnatureNiveau
 			   ,NB_PLACE_ENTRAINEMENT = vnbPlaces
 		WHERE
 				NUM_ENTRAINEMENT = vnumEntrainement;
@@ -53,11 +49,37 @@ IS
 	PROCEDURE del_entrainement(
 	  vnumEntrainement IN NUMBER)
 	 IS
+		vdateDebut Date;
 	 BEGIN
-	  	DELETE FROM ENTRAINEMENT 
+	 SELECT DATE_DEBUT_ENTRAINEMENT INTO vdateDebut FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
+	 IF(vdateDebut<SYSDATE)
+	 THEN
+	  	UPDATE ENTRAINEMENT 
+		SET 
+			DATE_FIN_ENTRAINEMENT=SYSDATE
 		WHERE
 			NUM_ENTRAINEMENT = vnumEntrainement;
-		COMMIT;
+		--supprimer toutes les occupations à venir
+		DELETE FROM OCCUPER
+		WHERE
+			trunc(DATE_OCCUPATION) > trunc(sysdate)
+			AND NUM_ENTRAINEMENT = vnumEntrainement;
+	 ELSE
+		--supprimer toutes les enregistrements de la table avoir lieu
+		DELETE FROM AVOIR_LIEU
+		WHERE
+			NUM_ENTRAINEMENT = vnumEntrainement;
+		--supprimer toutes les occupations à venir
+		DELETE FROM OCCUPER
+		WHERE
+			trunc(DATE_OCCUPATION) > trunc(sysdate)
+			AND NUM_ENTRAINEMENT = vnumEntrainement;
+		--Supprime l'entrainement	
+		DELETE FROM ENTRAINEMENT
+		WHERE
+			NUM_ENTRAINEMENT = vnumEntrainement;
+	 END IF;
+	COMMIT;
 	END del_entrainement;
 	
 		
