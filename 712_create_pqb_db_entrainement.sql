@@ -16,14 +16,15 @@ IS
 	PROCEDURE add_entrainement(
 	  vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vlibEntrainement IN CHAR
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN DATE
 	, vdateFin IN DATE)
 	IS
 	BEGIN
-		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,NB_PLACE_ENTRAINEMENT,
+		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,LIB_ENTRAINEMENT,NB_PLACE_ENTRAINEMENT,
 								  DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT)
-		VALUES (vnumEntraineur,vcodeNiveau,'Classement',vnbPlaces,vdateDebut,vdateFin);
+		VALUES (vnumEntraineur,vcodeNiveau,'Classement',vlibEntrainement,vnbPlaces,vdateDebut,vdateFin);
 		COMMIT;
 	END add_entrainement;
 	
@@ -32,6 +33,7 @@ IS
 	  vnumEntrainement IN NUMBER
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vlibEntrainement IN CHAR
 	, vnbPlaces IN NUMBER)
 	IS
 	BEGIN
@@ -40,6 +42,7 @@ IS
 				NUM_ENTRAINEUR = vnumEntraineur
 			   ,CODE_NIVEAU = vcodeNiveau
 			   ,NB_PLACE_ENTRAINEMENT = vnbPlaces
+			   ,LIB_ENTRAINEMENT = vlibEntrainement
 		WHERE
 				NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;

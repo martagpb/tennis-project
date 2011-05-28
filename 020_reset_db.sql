@@ -33,7 +33,7 @@ DROP TABLESPACE TENNIS_TEMP
 --       SUPPRESSION UTILISATEUR 
 -- -----------------------------------------------------------------------------
 
-DROP USER tennis;
+DROP USER tennis cascade;
 
 -- -----------------------------------------------------------------------------
 --       SUPPRESSION DAD

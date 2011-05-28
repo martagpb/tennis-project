@@ -16,6 +16,7 @@ IS
 	PROCEDURE add_entrainement(
 	  vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vlibEntrainement IN CHAR
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN DATE
 	, vdateFin IN DATE);
@@ -25,6 +26,7 @@ IS
 	  vnumEntrainement IN NUMBER
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vlibEntrainement IN CHAR
 	, vnbPlaces IN NUMBER);
 	
 	--Permet de supprimer un entrainement existant

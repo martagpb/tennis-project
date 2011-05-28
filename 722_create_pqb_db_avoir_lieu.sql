@@ -23,6 +23,7 @@ IS
 	BEGIN
 		INSERT INTO AVOIR_LIEU(NUM_JOUR,HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_ENTRAINEMENT)
 		VALUES(vnumJour,vheureDebutCreneau,vnumTerrain,vnumEntrainement);
+		COMMIT;
 		vexception:=0;
 		--pas de commit ici, commit après l'ajout des occupations
 	EXCEPTION

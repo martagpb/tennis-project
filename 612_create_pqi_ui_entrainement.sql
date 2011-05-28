@@ -26,6 +26,7 @@ IS
 	PROCEDURE exec_add_entrainement(
 	  vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vlibEntrainement IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN VARCHAR2
 	, vdateFin IN VARCHAR2);
@@ -35,12 +36,13 @@ IS
 	  vnumEntrainement IN NUMBER
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vlibEntrainement IN VARCHAR2
 	, vnbPlaces IN NUMBER);
 	
 	-- Exécute la procédure de suppression d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_del_entrainement(
 	  vnumEntrainement IN NUMBER);
-	  
+	 
 	--Permet d’afficher un entrainement existant
 	PROCEDURE dis_entrainement(
 	  vnumEntrainement IN NUMBER);
