@@ -12,7 +12,7 @@
 
 CREATE OR REPLACE PACKAGE BODY pq_db_occuper
 IS
-		--Permet d’ajouter une réservation
+	--Permet d’ajouter une réservation
 	PROCEDURE add_reservation(
 	  vheureDebutCreneau IN CHAR
 	, vnumTerrain IN NUMBER
@@ -24,6 +24,9 @@ IS
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_FACTURE,NUM_JOUEUR)
 		VALUES(vheureDebutCreneau,vnumTerrain,vdateOccupation,vnumFacture,vnumJoueur);
 		COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
 	END add_reservation;
 	
 	--Permet d’ajouter une séance
@@ -38,9 +41,12 @@ IS
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_ENTRAINEMENT,NUM_SEANCE)
 		VALUES(vheureDebutCreneau,vnumTerrain,vdateOccupation,vnumEntrainement,vnumSeance);
 		COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
 	END add_seance;
 	
-	--Permet d’ajouter une occupation simple
+	--Permet d’ajouter une occupation simple (exemple : un entretien)
 	PROCEDURE add_occupation(
 	  vheureDebutCreneau IN CHAR
 	, vnumTerrain IN NUMBER
@@ -50,6 +56,9 @@ IS
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION)
 		VALUES(vheureDebutCreneau,vnumTerrain,vdateOccupation);
 		COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
 	END add_occupation;
 	
 	--Permet de modifier une occupation existante
@@ -74,6 +83,9 @@ IS
 				AND NUM_TERRAIN = vnumTerrain
 				AND DATE_OCCUPATION = vdateOccupation;
 		COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
 	END upd_occupation;
 	
 	--Permet de supprimer une occupation existante
@@ -89,6 +101,9 @@ IS
 			AND NUM_TERRAIN = vnumTerrain
 			AND DATE_OCCUPATION = vdateOccupation;
 		COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
 	END del_occupation;
 	
 	--Permet de supprimer une séance au dessus d'une date date donnée
@@ -106,6 +121,9 @@ IS
 			AND DATE_OCCUPATION > vdateOccupation
 			AND NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
 	END del_seance;			
 	  
 END pq_db_occuper;
