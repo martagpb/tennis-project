@@ -17,10 +17,6 @@ IS
 	  vnumEntrainement IN NUMBER
 	, vnumPersonne IN NUMBER);
 	
-	--Permet de modifier une inscription existante
-	PROCEDURE upd_inscription(
-	  vnumEntrainement IN NUMBER
-	, vnumPersonne IN NUMBER);
 	
 	--Permet de supprimer une inscription existante
 	PROCEDURE del_inscription(

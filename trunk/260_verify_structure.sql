@@ -9,7 +9,8 @@
 --      Date de dernière modification : 10/5/2011
 -- -----------------------------------------------------------------------------
  
-
+ 
+@"C:\oracle\product\10.2.0\serveur\RDBMS\ADMIN\utlvalid.sql"
 
 ANALYZE TABLE FACTURE VALIDATE STRUCTURE CASCADE;
 
