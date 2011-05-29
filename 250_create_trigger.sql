@@ -1230,6 +1230,39 @@ end;
 /
 
 
+-- Trigger d'insertion BEFORE----------------------------------------------
+CREATE OR REPLACE TRIGGER TI_S_INSCRIRE_BEFORE
+	BEFORE INSERT ON S_INSCRIRE
+	FOR EACH ROW
+	DECLARE 
+		PERSONNE_CODE_NIVEAU PERSONNE.CODE_NIVEAU%TYPE;
+		ENTRAINEMENT_CODE_NIVEAU ENTRAINEMENT.CODE_NIVEAU%TYPE;
+	BEGIN
+	IF inserting then 
+		SELECT
+			PER.CODE_NIVEAU INTO PERSONNE_CODE_NIVEAU
+		FROM
+			PERSONNE PER
+		WHERE
+			PER.NUM_PERSONNE=:NEW.NUM_PERSONNE;
+			
+		SELECT
+			ENT.CODE_NIVEAU INTO ENTRAINEMENT_CODE_NIVEAU
+		FROM
+			ENTRAINEMENT ENT
+		WHERE
+			ENT.NUM_ENTRAINEMENT=:NEW.NUM_ENTRAINEMENT;
+			
+		IF PERSONNE_CODE_NIVEAU <> ENTRAINEMENT_CODE_NIVEAU THEN
+			 raise_application_error(
+               -20002,
+               'Impossible d''inscrire la personne car elle n''a pas le niveau requis pour cet entrainement');
+		END IF;
+	END IF;
+END;
+/
+
+
 
 -- ------------------------------------------------------------------------------- 
 --   Table : AVOIR_LIEU

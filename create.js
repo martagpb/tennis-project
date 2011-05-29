@@ -63,6 +63,14 @@ function confirmerChoix(form,document){
    return false;
 }
 
+/*Fonction permettant de déterminer si un utilisateur confirmer son choix*/
+function confirmerChoixLien(){
+  if (confirm("Confirmez-vous votre décision ?")) {
+    return true;
+  }
+   return false;
+}
+
 /*Fonction permettant de valider la création d'un terrain*/
 function validerTerrain(form,document){
 

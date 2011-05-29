@@ -673,6 +673,19 @@ VALUES(8, to_date('02/2012','MM/YYYY'));
 
 -- Fin des enregistrements des tables ABONNEMENT et MENSUALITE
 
+
+
+-- -----------------------------------------------------------------------------
+--       TABLES : S_INSCRIRE
+-- -----------------------------------------------------------------------------
+
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (8,17);
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (2,16);
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (9,18);
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (5,19);
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (6,20);
+
+
 --Validation des insertions des données
 COMMIT;	 
 
