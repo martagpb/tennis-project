@@ -32,21 +32,6 @@ IS
 			vexception:=1;
 	END add_avoir_lieu;
 	
-	--Permet de supprimer une occurence
-	PROCEDURE del_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER)
-	IS
-	BEGIN
-		DELETE FROM AVOIR_LIEU
-		WHERE
-			NUM_JOUR = vnumJour
-			AND HEURE_DEBUT_CRENEAU = vheureDebutCreneau
-			AND NUM_TERRAIN = vnumTerrain;
-		COMMIT;
-	END del_avoir_lieu;
-	
 	--Permet d'ajouter les occupations associées à une séance
 	PROCEDURE add_occupation_seance(
 		  vnumJour IN NUMBER
@@ -84,6 +69,24 @@ IS
 			ROLLBACK;
 			vexception:=1;
 	END add_occupation_seance;
+	
+	--Permet de supprimer une occurence
+	PROCEDURE del_avoir_lieu(
+	  vnumJour IN NUMBER
+	, vheureDebutCreneau IN CHAR
+	, vnumTerrain IN NUMBER)
+	IS
+	BEGIN
+		DELETE FROM AVOIR_LIEU
+		WHERE
+			NUM_JOUR = vnumJour
+			AND HEURE_DEBUT_CRENEAU = vheureDebutCreneau
+			AND NUM_TERRAIN = vnumTerrain;
+		COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
+	END del_avoir_lieu;
 	
 END pq_db_avoir_lieu;
 /

@@ -12,12 +12,119 @@
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_avoir_lieu
 IS	
+	-- Affiche le test de disponibilité des terrains
+	PROCEDURE aff_add_avoir_lieu(
+		  vnumEntrainement IN NUMBER
+		 ,vretourEntraineur IN NUMBER)
+	IS
+		CURSOR creneaulist IS SELECT HEURE_DEBUT_CRENEAU FROM CRENEAU;
+		CURSOR terrainlist IS SELECT T.NUM_TERRAIN,C.LIBELLE FROM TERRAIN T INNER JOIN CODIFICATION C ON T.CODE_SURFACE = C.CODE WHERE C.NATURE = 'Surface';
+	BEGIN
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_avoir_lieu.exec_add_avoir_lieu', 'GET');				
+			htp.br;
+			htp.print('Création d''une nouvelle séance');
+			htp.br;
+			htp.tableOpen;
+			htp.br;				
+			htp.tableRowOpen;
+			htp.tableData('Jour :');									
+				htp.print('<td>');
+				htp.print('<select name="vnumJour" id="vnumJour">');		
+					htp.print('<option value="1">Lundi</option>');
+					htp.print('<option value="2">Mardi</option>');
+					htp.print('<option value="3">Mercredi</option>');
+					htp.print('<option value="4">Jeudi</option>');
+					htp.print('<option value="5">Vendredi</option>');
+					htp.print('<option value="6">Samedi</option>');
+					htp.print('<option value="7">Dimanche</option>');
+				htp.print('</select>');										
+				htp.print('</td>');						
+			htp.tableRowClose;	
+			htp.tableRowOpen;
+			htp.tableData('Heure de début :');								
+				htp.print('<td>');
+				htp.print('<select name="vheureDebutCreneau" id="vheureDebutCreneau">');		
+				for currentCreneau in creneaulist loop
+						htp.print('<option value="'||currentCreneau.HEURE_DEBUT_CRENEAU||'">'||currentCreneau.HEURE_DEBUT_CRENEAU||'</option>');
+				end loop;
+				htp.print('</select>');										
+				htp.print('</td>');							
+			htp.tableRowClose;
+			htp.tableRowOpen;
+			htp.tableData('Terrain :', cattributes => 'class="enteteFormulaire"');								
+				htp.print('<td>');
+				htp.print('<select name="vnumTerrain" id="vnumTerrain">');		
+				for currentTerrain in terrainlist loop
+						htp.print('<option value="'||currentTerrain.NUM_TERRAIN||'">'||currentTerrain.NUM_TERRAIN || ' surface : ' || currentTerrain.LIBELLE||'</option>');
+				end loop;
+				htp.print('</select>');										
+				htp.print('</td>');	
+				htp.formhidden ('vnumEntrainement',vnumEntrainement);
+			htp.tableRowClose;
+			htp.tableRowOpen;
+				htp.tableData('');
+				htp.tableData(htf.formSubmit(NULL,'Validation'));
+			htp.tableRowClose;
+			htp.formhidden('vretourEntraineur',vretourEntraineur);
+			htp.tableClose;
+		htp.formClose;	
+	END aff_add_avoir_lieu;	
+	
+	-- Affiche le test de disponibilité des terrains
+	PROCEDURE aff_test_avoir_lieu(
+		 vnumEntrainement IN NUMBER
+		,vretourEntraineur IN NUMBER)
+	IS
+		CURSOR creneaulist IS SELECT HEURE_DEBUT_CRENEAU FROM CRENEAU;
+		CURSOR terrainlist IS SELECT T.NUM_TERRAIN,C.LIBELLE FROM TERRAIN T INNER JOIN CODIFICATION C ON T.CODE_SURFACE = C.CODE WHERE C.NATURE = 'Surface';
+	BEGIN
+		htp.br;
+		htp.print('Vérifier les terrains diponibles pour les critères suivants : ');
+		htp.br;
+		htp.br;
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_avoir_lieu.exec_test_dipo_avoir_lieu', 'GET');
+			htp.tableOpen;
+			htp.tableRowOpen;
+			htp.tableData('Jour :');									
+				htp.print('<td>');
+				htp.print('<select name="vnumJourTest" id="vnumJourTest">');		
+					htp.print('<option value="1">Lundi</option>');
+					htp.print('<option value="2">Mardi</option>');
+					htp.print('<option value="3">Mercredi</option>');
+					htp.print('<option value="4">Jeudi</option>');
+					htp.print('<option value="5">Vendredi</option>');
+					htp.print('<option value="6">Samedi</option>');
+					htp.print('<option value="7">Dimanche</option>');
+				htp.print('</select>');										
+				htp.print('</td>');						
+			htp.tableRowClose;	
+			htp.tableRowOpen;
+			htp.tableData('Heure de début :');								
+				htp.print('<td>');
+				htp.print('<select name="vheureDebutCreneauTest" id="vheureDebutCreneauTest">');		
+				for currentCreneau in creneaulist loop
+						htp.print('<option value="'||currentCreneau.HEURE_DEBUT_CRENEAU||'">'||currentCreneau.HEURE_DEBUT_CRENEAU||'</option>');
+				end loop;
+				htp.print('</select>');										
+				htp.print('</td>');							
+			htp.tableRowClose;
+			htp.tableRowOpen;
+				htp.tableData('');
+				htp.tableData(htf.formSubmit(NULL,'Test'));
+			htp.tableRowClose;
+			htp.formhidden('vnumEntrainementTest',vnumEntrainement);
+			htp.formhidden('vretourEntraineur',vretourEntraineur);
+			htp.tableClose;
+		htp.formClose;
+	END aff_test_avoir_lieu;	
+
 	-- Exécute la procédure d'ajout d'une séance d'un entrainement et gère les erreurs éventuelles.
 	PROCEDURE exec_add_avoir_lieu(
 	  vnumJour IN NUMBER
 	, vheureDebutCreneau IN CHAR 
 	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER)
+	, vnumEntrainement IN NUMBER
+	, vretourEntraineur IN NUMBER)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -44,8 +151,12 @@ IS
 		then
 			RAISE FAILED_CREATE_SEANCE;
 		end if;
-		
-		pq_ui_entrainement.exec_dis_entrainement(vnumEntrainement);
+		if(vretourEntraineur=0) 
+		then
+			pq_ui_entrainement.dis_entrainement(vnumEntrainement);
+		else
+			pq_ui_entrainement_entraineur.dis_entrainement_entr(vnumEntrainement);
+		end if;
 		htp.br;
 		htp.br;
 		htp.print('La séance a été ajoutée avec succès.');
@@ -53,7 +164,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
 		WHEN FAILED_CREATE_AVOIR_LIEU  THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'ERREUR Un entrainement est déja programmé sur le terrain numéro ' ||vnumTerrain||' à '||vheureDebutCreneau);
 		WHEN FAILED_CREATE_SEANCE THEN
@@ -68,7 +179,8 @@ IS
 	  vnumJour IN NUMBER
 	, vheureDebutCreneau IN CHAR
 	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER)
+	, vnumEntrainement IN NUMBER
+	, vretourEntraineur IN NUMBER)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -84,13 +196,18 @@ IS
 		pq_db_occuper.del_seance(vheureDebutCreneau,vnumTerrain,sysdate,vnumEntrainement);		
 		htp.print('La séance a été supprimée avec succès.');
 		htp.br;
-		htp.br;			
-		pq_ui_entrainement.dis_entrainement(vnumEntrainement);
+		htp.br;		
+		if(vretourEntraineur=0)
+		then
+			pq_ui_entrainement.dis_entrainement(vnumEntrainement);
+		else
+			pq_ui_entrainement_entraineur.dis_entrainement_entr(vnumEntrainement);
+		end if;
 		htp.br;	
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression de la séance en cours...');
 	END exec_del_avoir_lieu;
@@ -99,7 +216,8 @@ IS
 	PROCEDURE exec_test_dipo_avoir_lieu(
 	  vnumJourTest IN NUMBER
 	 ,vheureDebutCreneauTest IN CHAR
-	 ,vnumEntrainementTest IN NUMBER)
+	 ,vnumEntrainementTest IN NUMBER
+	 ,vretourEntraineur IN NUMBER)
 	IS
 		CURSOR listTerrainDispo IS
 		SELECT 
@@ -172,18 +290,19 @@ IS
 				htp.tableRowClose;
 			end loop;	
 		htp.tableClose;		
-		pq_ui_avoir_lieu.aff_add_avoir_lieu(vnumEntrainementTest);
+		aff_add_avoir_lieu(vnumEntrainementTest,vretourEntraineur);
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'ERREUR...');
 	END exec_test_dipo_avoir_lieu;
 	
 	-- Affiche le formulaire permettant la saisie d'une nouvelle séance d'un entrainement
 	PROCEDURE form_add_avoir_lieu(
-	  vnumEntrainement IN NUMBER)
+	   vnumEntrainement IN NUMBER
+	  ,vretourEntraineur IN NUMBER)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -193,117 +312,21 @@ IS
 			RAISE PERMISSION_DENIED;
 		end if;
 		pq_ui_commun.aff_header;
-		pq_ui_avoir_lieu.aff_test_avoir_lieu(vnumEntrainement);
-		pq_ui_avoir_lieu.aff_add_avoir_lieu(vnumEntrainement);
+		aff_test_avoir_lieu(vnumEntrainement,vretourEntraineur);
+		aff_add_avoir_lieu(vnumEntrainement,vretourEntraineur);
 		htp.br;
-		htp.anchor('pq_ui_entrainement.dis_entrainement?vnumEntrainement='||vnumEntrainement, 'Retourner au descriptif de l''entrainement');
+		if(vretourEntraineur=0)
+		then
+			htp.anchor('pq_ui_entrainement.dis_entrainement?vnumEntrainement='||vnumEntrainement, 'Retourner au descriptif de l''entrainement');
+		else
+			htp.anchor('pq_ui_entrainement_entraineur.dis_entrainement_entr?pnumEntrainement='||vnumEntrainement, 'Retourner au descriptif de l''entrainement');
+		end if;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
 	END form_add_avoir_lieu;
-
-	-- Affiche le test de disponibilité des terrains
-	PROCEDURE aff_add_avoir_lieu(
-		vnumEntrainement IN NUMBER)
-	IS
-		CURSOR creneaulist IS SELECT HEURE_DEBUT_CRENEAU FROM CRENEAU;
-		CURSOR terrainlist IS SELECT T.NUM_TERRAIN,C.LIBELLE FROM TERRAIN T INNER JOIN CODIFICATION C ON T.CODE_SURFACE = C.CODE WHERE C.NATURE = 'Surface';
-	BEGIN
-		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_avoir_lieu.exec_add_avoir_lieu', 'GET');				
-			htp.br;
-			htp.print('Création d''une nouvelle séance');
-			htp.br;
-			htp.tableOpen;
-			htp.br;				
-			htp.tableRowOpen;
-			htp.tableData('Jour :');									
-				htp.print('<td>');
-				htp.print('<select name="vnumJour" id="vnumJour">');		
-					htp.print('<option value="1">Lundi</option>');
-					htp.print('<option value="2">Mardi</option>');
-					htp.print('<option value="3">Mercredi</option>');
-					htp.print('<option value="4">Jeudi</option>');
-					htp.print('<option value="5">Vendredi</option>');
-					htp.print('<option value="6">Samedi</option>');
-					htp.print('<option value="7">Dimanche</option>');
-				htp.print('</select>');										
-				htp.print('</td>');						
-			htp.tableRowClose;	
-			htp.tableRowOpen;
-			htp.tableData('Heure de début :');								
-				htp.print('<td>');
-				htp.print('<select name="vheureDebutCreneau" id="vheureDebutCreneau">');		
-				for currentCreneau in creneaulist loop
-						htp.print('<option value="'||currentCreneau.HEURE_DEBUT_CRENEAU||'">'||currentCreneau.HEURE_DEBUT_CRENEAU||'</option>');
-				end loop;
-				htp.print('</select>');										
-				htp.print('</td>');							
-			htp.tableRowClose;
-			htp.tableRowOpen;
-			htp.tableData('Terrain :', cattributes => 'class="enteteFormulaire"');								
-				htp.print('<td>');
-				htp.print('<select name="vnumTerrain" id="vnumTerrain">');		
-				for currentTerrain in terrainlist loop
-						htp.print('<option value="'||currentTerrain.NUM_TERRAIN||'">'||currentTerrain.NUM_TERRAIN || ' surface : ' || currentTerrain.LIBELLE||'</option>');
-				end loop;
-				htp.print('</select>');										
-				htp.print('</td>');	
-				htp.formhidden ('vnumEntrainement',vnumEntrainement);
-			htp.tableRowClose;
-			htp.tableRowOpen;
-				htp.tableData('');
-				htp.tableData(htf.formSubmit(NULL,'Validation'));
-			htp.tableRowClose;
-			htp.tableClose;
-		htp.formClose;	
-	END aff_add_avoir_lieu;	
-	
-	-- Affiche le test de disponibilité des terrains
-	PROCEDURE aff_test_avoir_lieu(
-		vnumEntrainement IN NUMBER)
-	IS
-		CURSOR creneaulist IS SELECT HEURE_DEBUT_CRENEAU FROM CRENEAU;
-		CURSOR terrainlist IS SELECT T.NUM_TERRAIN,C.LIBELLE FROM TERRAIN T INNER JOIN CODIFICATION C ON T.CODE_SURFACE = C.CODE WHERE C.NATURE = 'Surface';
-	BEGIN
-		htp.br;
-		htp.print('Vérifier les terrains diponibles pour les critères suivants : ');
-		htp.br;
-		htp.br;
-		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_avoir_lieu.exec_test_dipo_avoir_lieu', 'GET');
-			htp.tableOpen;
-			htp.tableRowOpen;
-			htp.tableData('Jour :');									
-				htp.print('<td>');
-				htp.print('<select name="vnumJourTest" id="vnumJourTest">');		
-					htp.print('<option value="1">Lundi</option>');
-					htp.print('<option value="2">Mardi</option>');
-					htp.print('<option value="3">Mercredi</option>');
-					htp.print('<option value="4">Jeudi</option>');
-					htp.print('<option value="5">Vendredi</option>');
-					htp.print('<option value="6">Samedi</option>');
-					htp.print('<option value="7">Dimanche</option>');
-				htp.print('</select>');										
-				htp.print('</td>');						
-			htp.tableRowClose;	
-			htp.tableRowOpen;
-			htp.tableData('Heure de début :');								
-				htp.print('<td>');
-				htp.print('<select name="vheureDebutCreneauTest" id="vheureDebutCreneauTest">');		
-				for currentCreneau in creneaulist loop
-						htp.print('<option value="'||currentCreneau.HEURE_DEBUT_CRENEAU||'">'||currentCreneau.HEURE_DEBUT_CRENEAU||'</option>');
-				end loop;
-				htp.print('</select>');										
-				htp.print('</td>');							
-			htp.tableRowClose;
-			htp.tableRowOpen;
-				htp.tableData('');
-				htp.tableData(htf.formSubmit(NULL,'Test'));
-			htp.tableRowClose;
-			htp.formhidden('vnumEntrainementTest',vnumEntrainement);
-			htp.tableClose;
-		htp.formClose;
-	END aff_test_avoir_lieu;	
 		
 END pq_ui_avoir_lieu;
+
 /

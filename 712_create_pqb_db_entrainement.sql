@@ -26,6 +26,9 @@ IS
 								  DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT)
 		VALUES (vnumEntraineur,vcodeNiveau,'Classement',vlibEntrainement,vnbPlaces,vdateDebut,vdateFin);
 		COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
 	END add_entrainement;
 	
 	--Permet de modifier un entrainement existant
@@ -46,6 +49,9 @@ IS
 		WHERE
 				NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
 	END upd_entrainement;
 	
 	--Permet de supprimer un entrainement existant
@@ -83,6 +89,9 @@ IS
 			NUM_ENTRAINEMENT = vnumEntrainement;
 	 END IF;
 	COMMIT;
+	EXCEPTION
+		WHEN OTHERS THEN
+			ROLLBACK;
 	END del_entrainement;
 	
 		

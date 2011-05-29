@@ -110,7 +110,7 @@ function validerTerrain(form,document){
 /*Fonction permettant de valider la création d'un entrainement*/
 function test(form,document){
 	alert("je suis passé par le test");
-	return false;
+	return true;
 }
 
 
