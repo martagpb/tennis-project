@@ -86,7 +86,7 @@ AS
 	BEGIN 
 	pq_ui_commun.aff_header;
 		htp.br; 
-		  pq_pa_create_account.create_account(lastname,firstname,login,password,mail,phone,street,postal,city); 
+		  PA_PERSONNE.createPersonne(lastname,firstname,login,password,mail,phone,street,postal,city); 
 		  htp.print('Compte créé');
 		  htp.anchor('pq_ui_login.login', 'Retour');
 		pq_ui_commun.aff_footer;
