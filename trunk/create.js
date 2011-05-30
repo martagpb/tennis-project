@@ -108,119 +108,27 @@ function validerTerrain(form,document){
 }
 
 /*Fonction permettant de valider la création d'un entrainement*/
-function test(form,document){
-	alert("je suis passé par le test");
-	return true;
-}
-
-
-/*Fonction permettant de valider la création d'un entrainement*/
 function validerEntrainement(form,document){
 
 	libEntrainement = form.vlibEntrainement.value; // On récupère : code, nature et libelle
 	nbPlace= form.vnbPlaces.value;
 	dateDebut=vdateDebut.value;
 	date_fin=vdateFin.value;
+	dateDebutMonth=vdateFin.value;
+	dateDebutDay=vdateDebutDay.value;
+	dateDebutYear=vdateDebutYear.value;
+	dateFinDay=vdateFinDay.value;
+	dateFinMonth=vdateFinMonth.value;
+	dateFinYear=vdateFinYear.value;
 	
 	if(  
 	     libEntrainement == null 
 	   ||  libEntrainement == "" 
-	   ||  nbPlace == null 
-	   ||  nbPlace == "" 
-	   ||  dateDebut == null 
-	   ||  dateDebut == "" 
-	   ||  date_fin == null 
-	   ||  date_fin == "" 
 	){
-		alert("Veuillez remplir tous les champs obligatoires 1");
-		return false;
-		
-	}else if(!validerDate(dateDebut)){
-		return false;	
-	}
-	else if(!validerDate(dateFin)){
-		return false;	
-	}
-	else if(nbPlace.value.length>2)||(nbPlace.value<1){
-		alert("Veuillez saisir un nombre de place compris entre 1 et 99 2");
+		alert("Veuillez remplir le champ libellé");
 		return false;
 	}
-	else if(libEntrainement.length>50){
-		alert("Veuillez saisir un libellé d'une taille maximale de 50 caractères 3");
-		return false;
-	}
-	else if (isNaN(nbPlace)==false){
-			d.value=parseInt(nbPlace);
-		}
-		else{
-			alert("Veuillez entrer une date correcte sous la forme 02/02/02 4");
-			return false
-	}	
-	if(!coherenceDate(date1,date2){
-		alert("Veuillez entrer des dates cohérentes");
-		return false
-	}
-	return true;
-}
-
-/*Fonction vérifiant la validité d'une date*/
-function coherenceDate(date1,date2){
-	tabChaine=date1.split('/')
-	var day1=parseInt(tabChaine[0]);
-	var month1=parseInt(tabChaine[1].split('/')[0]);
-	var year1=parseInt(tabChaine[1].split('/')[1]);
-
-	tabChaine=date2.split('/')
-	var day2=parseInt(tabChaine[0]);
-	var month2=parseInt(tabChaine[1].split('/')[0]);
-	var year2=parseInt(tabChaine[1].split('/')[1]);
-	
-	if(year2<year1){
-			return false
-	}
-	else if	(year2==year1)&&(month2<month1){
-			return false
-	}
-		else if	(year2==year1)&&(month2==month1)&&(day2<day1){
-			return false
-	}
-	return true;
-}		
-
-/*Fonction vérifiant la validité d'une date*/
-function validerDate(date){
-
-	tabChaine=date.split('/')
-	var day=tabChaine[0];
-	var month=tabChaine[1].split('/')[0];
-	var year=tabChaine[1].split('/')[1];
-	
-	if(day.value.length!=2)||(month.value.length!=2)||(year.value.length!=2){	
-		return false;
-	}	
-	if (isNaN(day)==false){
-		d.value=parseInt(day);
-	}
-	else{
-		return false;
-	}
-	if (isNaN(month)==false){
-		d.value=parseInt(month);
-	}
-	else{
-		return false;
-	}
-			if (isNaN(year)==false){
-		d.value=parseInt(year);
-	}
-	else{
-		return false;
-	}
-	
-	if (isNaN(day)==false)||(isNaN(month)==false)||(isNaN(year)==false){
-		return false;
-	}
-	
+	//
 	return true;
 }
 
