@@ -1,4 +1,4 @@
-         -- -----------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 --            Suppression des index de la base de données pour
 --                      Oracle Version 10g
 --                        (10/5/2011)
@@ -6,7 +6,7 @@
 --      Nom de la base : Tennis
 --      Projet : Tennis_V1.24
 --      Auteur : Gonzalves / Invernizzi / Joly / Leviste
---      Date de dernière modification : 10/5/2011
+--      Date de dernière modification : 30/05/2011
 -- -----------------------------------------------------------------------------
  
  
@@ -45,5 +45,6 @@ DROP INDEX I_FK_OCCUPER_ENTRAINEMENT;
 
 DROP INDEX I_FK_ETRE_ASSOCIE_PERSONNE;
 
-DROP  INDEX I_FK_ETRE_ASSOCIE_OCCUPER;
-	
+DROP INDEX I_FK_ETRE_ASSOCIE_OCCUPER;
+
+DROP INDEX I_FK_PERSONNE_LOGIN;
