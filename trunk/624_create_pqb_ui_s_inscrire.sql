@@ -178,4 +178,4 @@ AS
 	END exec_add_inscription;
 	
 END pq_ui_s_inscrire;
- 
+/ 
