@@ -1,6 +1,5 @@
 @echo ------------------------------- 
-@echo Installation du projet Tennis
-@echo Projet realise par J.Gonzalves, D.Invernizzi, R.Joly, M.Leviste
+@echo Creation de l'application du projet
 @echo ------------------------------- 
 
 set SQL_PATH=./
