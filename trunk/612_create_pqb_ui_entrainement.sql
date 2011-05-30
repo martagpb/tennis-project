@@ -65,7 +65,6 @@ IS
 				htp.tableRowClose;	
 			end loop;
 		htp.tableClose;
-		htp.anchor('pq_ui_entrainement_entraineur.manage_entrainement_entraineur','Test');
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des entrainements');
@@ -78,7 +77,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -116,7 +115,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -158,7 +157,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		perm BOOLEAN;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -187,7 +186,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -220,7 +219,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
 		pq_ui_commun.aff_header;
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -246,7 +245,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -284,7 +283,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -376,7 +375,6 @@ IS
 		else
 			htp.anchor('pq_ui_entrainement.manage_historique_entrainement', 'Retourner à la gestion des entrainements');
 		end if;
-		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
@@ -389,13 +387,24 @@ IS
 		CURSOR niveaulist IS SELECT CODE FROM CODIFICATION WHERE NATURE = 'Classement';
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
+		currentPlace NUMBER(2) := 0;
+		currentYearStart NUMBER(4) := to_number(to_char(sysdate,'YYYY'));
+		currentYearEnd NUMBER(4) := to_number(to_char(sysdate,'YYYY'))+10;
+		currentDebutDay NUMBER(2) := 0;
+		currentDebutMonth NUMBER(2) := 0;
+		currentDebutYear NUMBER(4) := 0;
+		currentFinDay NUMBER(2) := 0;
+		currentFinMonth NUMBER(2) := 0;
+		currentFinYear NUMBER(4) := 0;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
         pq_ui_commun.aff_header;
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_add_entrainement', 'POST', cattributes => 'onSubmit="return test(this,document)"');				
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_add_entrainement', 'POST', cattributes => 'onSubmit="return validerEntrainement(this,document)"');				
+				htp.formhidden ('vdateDebut','');
+				htp.formhidden ('vdateFin','');
 				htp.br;
 				htp.print('Création d''un nouvel entrainement');
 				htp.br;
@@ -429,26 +438,57 @@ IS
 				htp.tableRowOpen;
 					htp.tableData('Libellé * :');	
 					htp.print('<td>');					
-					htp.formText('vlibEntrainement',20);										
+					htp.formText('vlibEntrainement',20,cattributes => 'maxlength="50"');										
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Nombre de places * :');	
-					htp.print('<td>');					
-					htp.formText('vnbPlaces',2);										
-					htp.print('</td>');						
+					htp.print('<td>');
+					htp.print('<select id="vnbPlaces">');								
+					FOR currentPlace in 1..99 loop	
+						htp.print('<option value="'||currentPlace||'">'||currentPlace||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('</td>');
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Date de début * :');	
-					htp.print('<td>');					
-					htp.formText('vdateDebut',8);
-					htp.print('date sous le forme "22/01/10"');
+					htp.print('<td>');	
+					htp.print('<select id="vdateDebutDay">');								
+					FOR currentDebutDay in 1..31 loop	
+						htp.print('<option value="'||currentDebutDay||'">'||currentDebutDay||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="vdateDebutMonth">');								
+					FOR currentDebutMonth in 1..12 loop	
+						htp.print('<option value="'||currentDebutMonth||'">'||currentDebutMonth||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="vdateDebutYear">');								
+					FOR currentDebutYear in currentYearStart..currentYearEnd loop	
+						htp.print('<option value="'||currentDebutYear||'">'||currentDebutYear||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Date de fin * :');	
-					htp.print('<td>');					
-					htp.formText('vdateFin',8);										
+					htp.print('<td>');	
+					htp.print('<select id="vdateFinDay">');								
+					FOR currentFinDay in 1..31 loop	
+						htp.print('<option value="'||currentFinDay||'">'||currentFinDay||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="vdateFinMonth">');								
+					FOR currentFinMonth in 1..12 loop	
+						htp.print('<option value="'||currentFinMonth||'">'||currentFinMonth||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="vdateFinYear">');								
+					FOR currentFinYear in currentYearStart..currentYearEnd loop	
+						htp.print('<option value="'||currentFinYear||'">'||currentFinYear||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
@@ -479,7 +519,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -534,13 +574,13 @@ IS
 				htp.tableRowOpen;
 					htp.tableData('Libellé * :');	
 					htp.print('<td>');	
-					htp.print('<INPUT TYPE="text" name="vlibEntrainement" value="'||vlibEntrainement||'"> ');													
+					htp.print('<INPUT TYPE="text" name="vlibEntrainement" maxlength="50" value="'||vlibEntrainement||'"> ');													
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Nombre de places * :');	
 					htp.print('<td>');	
-					htp.print('<INPUT TYPE="text" name="vnbPlaces" value="'||vnbPlaces||'"> ');													
+					htp.print('<INPUT TYPE="text" name="vnbPlaces" maxlength="2" value="'||vnbPlaces||'"> ');													
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
