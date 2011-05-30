@@ -13,7 +13,6 @@ connect tennis/tennis
 set define off
 start 704_create_pqi_db_creneau.sql
 start 704_create_pqb_db_creneau.sql
-start 706_create_pqi_db_codification.sql
 start 708_create_pqi_db_terrain.sql
 start 708_create_pqb_db_terrain.sql
 start 710_create_pqi_db_personne.sql
