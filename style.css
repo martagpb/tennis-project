@@ -15,29 +15,28 @@ body {
 }
 
 /*Menu*/
+ul#ulmenu {
+	text-align : center;
+	width: 1000px;
+	margin: 0;
+}
+
 #menuadherent {
      height: 100px;
-     margin: 0pt auto;
-     width: 500px;
 }
 
 #menuadmin {
      height: 80px;
-     margin: auto;
-     width: 650px;
 }
 
 #menuvisiteur {
      height: 100px;
-     margin: 0pt auto;
-     width: 550px;
 }
 
 /*Corps*/
 #corps {
      background-color: rgb(154,196,237); 
      border: 1px dashed white;
-     height: 100%;
      margin: 0pt auto;
      width: 90%;
 }
