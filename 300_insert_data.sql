@@ -322,11 +322,11 @@ BEGIN
 	--Personne n°21
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','30','Classement','Hamilton','Lewis','Lhami',crypted_password,'0658544589','Lewis.Hamilton@gmail.fr','25 grande rue','25000','Besançon','V',1);
+	VALUES('J','ROLE','30','Classement','Hamilton','Lewis','Lhami',crypted_password,'0658544589','Lewis.Hamilton@gmail.fr','25 grande rue','25000','Besançon','V',2);
 	--Personne n°22
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','15/5','Classement','Webber','Mark','Mwebb',crypted_password,'0658545749','Mark.Webber@gmail.fr','2 grande rue','25000','Besançon','V',1);
+	VALUES('J','ROLE','15/5','Classement','Webber','Mark','Mwebb',crypted_password,'0658545749','Mark.Webber@gmail.fr','2 grande rue','25000','Besançon','V',3);
 END;
 /
 
