@@ -17,7 +17,7 @@ AS
 	IS
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header(3);
+		pq_ui_commun.aff_header;
 		pq_ui_personne.dis_personnes;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
@@ -25,7 +25,7 @@ AS
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des personnes');
-	END manage_personnes_with_menu;	
+	END manage_personnes;	
 				
 	--Permet d'afficher toutes les personnes et les actions possibles de gestion (sans le menu)
 	PROCEDURE dis_personnes
@@ -233,7 +233,7 @@ AS
 	, vactif IN NUMBER)
 	IS
 	BEGIN
-		pq_ui_commun.aff_header(3);
+		pq_ui_commun.aff_header;
 			htp.br;
 			pq_db_personne.add_personne(vcodeSurface,vnatureSurface,vactif);
 			htp.print('Le personne a été ajouté avec succès.');
@@ -254,7 +254,7 @@ AS
 	, vactif IN NUMBER)
 	IS
 	BEGIN
-		pq_ui_commun.aff_header(3);				
+		pq_ui_commun.aff_header;				
 			pq_db_personne.upd_personne(vnumpersonne,vcodeSurface,vnatureSurface,vactif);
 			htp.print('Le personne n° '|| vnumpersonne || ' a été mis à jour avec succès.');
 			htp.br;
@@ -271,7 +271,7 @@ AS
 	  vnumpersonne IN NUMBER)
 	IS
 	BEGIN
-		pq_ui_commun.aff_header(3);		
+		pq_ui_commun.aff_header;		
 			pq_db_personne.del_personne(vnumpersonne);
 			htp.print('Le personne n° '|| vnumpersonne || ' a été supprimé avec succès.');
 			htp.br;
@@ -306,7 +306,7 @@ AS
 		ORDER BY 
 			1;
 	BEGIN
-		pq_ui_commun.aff_header(3);	
+		pq_ui_commun.aff_header;	
 				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_personne.exec_upd_personne', 'POST', cattributes => 'onSubmit="return validerpersonne(this,document)"');
 					htp.formhidden ('vnumpersonne',vnumpersonne);
 					--Les bonnes valeurs dans les champs hidden sont indiquées après validation du formulaire (Cf. validerpersonne)
