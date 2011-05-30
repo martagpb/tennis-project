@@ -203,7 +203,6 @@ IS
 		htp.br;
 		htp.br;			
 		pq_ui_entrainement_entraineur.aff_entrainement_entraineur(vnumEntraineur);
-		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
@@ -309,7 +308,6 @@ IS
 		htp.br;
 		htp.br;
 		htp.anchor('pq_ui_entrainement_entraineur.manage_entrainement_entraineur', 'Retourner à la gestion des entrainements');
-		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
@@ -355,13 +353,13 @@ IS
 				htp.tableRowOpen;
 					htp.tableData('Libellé * :');	
 					htp.print('<td>');					
-					htp.formText('plibEntrainement',20);										
+					htp.formText('plibEntrainement',20,cattributes => 'maxlength="50"');										
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Nombre de places * :');	
 					htp.print('<td>');					
-					htp.formText('pnbPlaces',2);										
+					htp.formText('pnbPlaces',2,cattributes => 'maxlength="2"');										
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
@@ -441,13 +439,13 @@ IS
 				htp.tableRowOpen;
 					htp.tableData('Libellé * :');	
 					htp.print('<td>');	
-					htp.print('<INPUT TYPE="text" name="plibEntrainement" value="'||vlibEntrainement||'"> ');													
+					htp.print('<INPUT TYPE="text" name="plibEntrainement" maxlength="50" value="'||vlibEntrainement||'"> ');													
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Nombre de places * :');	
 					htp.print('<td>');	
-					htp.print('<INPUT TYPE="text" name="pnbPlaces" value="'||vnbPlaces||'"> ');													
+					htp.print('<INPUT TYPE="text" name="pnbPlaces" maxlength="2" value="'||vnbPlaces||'"> ');													
 					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
