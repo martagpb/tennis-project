@@ -253,7 +253,7 @@ PROCEDURE aff_header
 					htp.anchor('#', 'Entrainement');
 					htp.ulistOpen(cattributes => 'class="niveau2"');
 						htp.listItem;
-							htp.anchor('#', 'Mes entrainements');
+							htp.anchor('pq_ui_entrainement_entraineur.manage_entrainement_entraineur', 'Mes entrainements');
 						htp.print('</li>');
 						htp.listItem;
 							htp.anchor('#', 'Souscrire');
