@@ -686,6 +686,14 @@ INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (5,19);
 INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (6,20);
 
 
+-- -----------------------------------------------------------------------------
+--       TABLES : ETRE_ASSOCIE
+-- -----------------------------------------------------------------------------
+/* En attente des insertion dans la table OCCUPER */
+
+--INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE) VALUES ();
+
+
 --Validation des insertions des données
 COMMIT;	 
 
