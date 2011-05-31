@@ -110,25 +110,88 @@ function validerTerrain(form,document){
 /*Fonction permettant de valider la création d'un entrainement*/
 function validerEntrainement(form,document){
 
-	libEntrainement = form.vlibEntrainement.value; // On récupère : code, nature et libelle
-	nbPlace= form.vnbPlaces.value;
-	dateDebut=vdateDebut.value;
-	date_fin=vdateFin.value;
-	dateDebutMonth=vdateFin.value;
-	dateDebutDay=vdateDebutDay.value;
-	dateDebutYear=vdateDebutYear.value;
-	dateFinDay=vdateFinDay.value;
-	dateFinMonth=vdateFinMonth.value;
-	dateFinYear=vdateFinYear.value;
+	//On récupère le libellé, le nombre de places et les dates de début de fin
+	libEntrainement = form.vlibEntrainement.value; 
+	nbPlaces = form.vnbPlaces.value;	  // nombre sous la forme : nn
+	dateDebutDay=vdateDebutDay.value;     // nombre sous la forme : jj
+	dateDebutMonth=vdateDebutMonth.value; // nombre sous la forme : mm
+	dateDebutYear=vdateDebutYear.value;   // nombre sous la forme : aaaa
+	dateFinDay=vdateFinDay.value;		  // nombre sous la forme : jj
+	dateFinMonth=vdateFinMonth.value;     // nombre sous la forme : mm
+	dateFinYear=vdateFinYear.value;		  // nombre sous la forme : aaaa
 	
+	//On vérifie que les informations du formulaire ont été saisies ou sélectionnées
 	if(  
 	     libEntrainement == null 
-	   ||  libEntrainement == "" 
+	 ||  libEntrainement == "" 
 	){
-		alert("Veuillez remplir le champ libellé");
+		alert("Veuillez indiquer un libellé pour l'entrainement.");
+		document.getElementById("vlibEntrainementError").innerHTML ="Le libellé pour l'entrainement est obligatoire.";	
 		return false;
 	}
-	//
+	//Si toutes les informations obligatoires ont été saisies
+	else{	
+	
+		document.getElementById("vlibEntrainementError").innerHTML ="";	
+		//On vérifie la validité des dates sélectionnées (Existent-elles ?)
+		
+		//Construction de la date de début de l'entrainement
+		var dateDebutEntrainement = new Date (dateDebutYear,(dateDebutMonth-1),dateDebutDay);		
+		var dateDebutEntrainementValide = false;
+		
+		//Vérification de la validité de la date de début de l'entrainement
+		if( 
+		   (dateDebutEntrainement.getDate()     == dateDebutDay) 
+		&& (dateDebutEntrainement.getMonth()+1  == dateDebutMonth) 
+		&& (dateDebutEntrainement.getFullYear() == dateDebutYear)
+		){
+			dateDebutEntrainementValide = true;
+			document.getElementById("vDateDebutEntrainementError").innerHTML ="";	
+		}else{
+			document.getElementById("vDateDebutEntrainementError").innerHTML ="La date de début de l'entrainement n'est pas une date valide.";		
+		}
+		
+		//Construction de la date de fin de l'entrainement
+		var dateFinEntrainement = new Date (dateFinYear,(dateFinMonth-1),dateFinDay);		
+		var dateFinEntrainementValide = false;
+		
+		//Vérification de la validité de la date de fin de l'entrainement
+		if( 
+		   (dateFinEntrainement.getDate()     == dateFinDay) 
+		&& (dateFinEntrainement.getMonth()+1  == dateFinMonth) 
+		&& (dateFinEntrainement.getFullYear() == dateFinYear)
+		){
+			dateFinEntrainementValide = true;
+			document.getElementById("vDateFinEntrainementError").innerHTML ="";
+		}else{
+			document.getElementById("vDateFinEntrainementError").innerHTML ="La date de fin de l'entrainement n'est pas une date valide.";
+		}
+						
+		//Si l'une ou les deux dates sont invalides alors on affiche les messages d'erreurs
+		if(dateDebutEntrainementValide==false || dateFinEntrainementValide==false ){
+			return false;
+		}
+		//Sinon, si les deux dates sont valides on vérifie que la cohérence des dates
+		//En effet, la date de début doit être inférieure ou égale à la date de fin
+		else{
+			//On compare les deux dates en récupérant le nombre de millisecondes écoulés depuis le 1er janvier 1970 pour chacune des deux dates
+			var difference = dateDebutEntrainement.getTime() - dateFinEntrainement.getTime();
+			
+			//Si la différence est supérieure à 0 c'est que l'heure de début est supérieure à l'heure de fin du créneau
+			if(difference > 0){
+				document.getElementById("vDateDebutEntrainementError").innerHTML ="La date de début doit être inférieure ou égale à la date de fin.";
+				document.getElementById("vDateFinEntrainementError").innerHTML ="La date de fin doit être supérieure ou égale à la date de début.";
+				return false;
+			}
+			//Sinon, si la différence est négative ou égale à 0 alors les dates sont cohérentes. 
+			//On met donc à jour les champs "hidden" du formulaire qui vont contenir les dates de début de de fin de l'entrainement
+			else{
+				var separateur = "/";		
+				document.getElementById("idVdateDebut").value = dateDebutDay+separateur+dateDebutMonth+separateur+dateDebutYear;
+				document.getElementById("idVdateFin").value = dateFinDay+separateur+dateFinMonth+separateur+dateFinYear;					
+			}
+		}		
+	}
 	return true;
 }
 
@@ -151,7 +214,7 @@ function validerCreneau(form,document){
 	   ||  minuteFinCreneau == null 
 	   ||  minuteFinCreneau == "" 
 	){		
-		alert("Veuillez remplir tous les champs obligatoires");
+		alert("Veuillez remplir tous les champs obligatoires.");
 		return false;
 	}else{
 		//Création de deux dates fictives pour comparer facilement le début et la fin du créneau
@@ -163,7 +226,7 @@ function validerCreneau(form,document){
 		var dateDebutCreneau = new Date ( year, month, day , heureDebutCreneau, minuteDebutCreneau, second );
 		var dateFinCreneau = new Date ( year, month, day , heureFinCreneau, minuteFinCreneau, second );
 		
-		//On comparaison les deux dates en récupérant le nombre de millisecondes écoulés depuis le 1er janvier 1970 pour chacune des deux dates
+		//On compare les deux dates en récupérant le nombre de millisecondes écoulés depuis le 1er janvier 1970 pour chacune des deux dates
 		var difference = dateDebutCreneau.getTime() - dateFinCreneau.getTime();
 		
 		//Si la différence est supérieure ou égale à 0 c'est que l'heure de début est supérieure à l'heure de fin du créneau
