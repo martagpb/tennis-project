@@ -44,8 +44,8 @@ start 608_create_pqi_ui_terrain.sql
 start 608_create_pqb_ui_terrain.sql
 start 612_create_pqi_ui_entrainement.sql
 start 612_create_pqb_ui_entrainement.sql
-start 613_create_pqb_ui_entrainement_entraineur.sql
 start 613_create_pqi_ui_entrainement_entraineur.sql
+start 613_create_pqb_ui_entrainement_entraineur.sql
 start 614_create_pqi_ui_abonnement.sql
 start 614_create_pqb_ui_abonnement.sql
 start 620_create_pqi_ui_create_account.sql
