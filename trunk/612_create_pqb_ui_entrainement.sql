@@ -403,8 +403,8 @@ IS
 		END IF;
         pq_ui_commun.aff_header;
 			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_add_entrainement', 'POST', cattributes => 'onSubmit="return validerEntrainement(this,document)"');				
-				htp.formhidden ('vdateDebut','');
-				htp.formhidden ('vdateFin','');
+				htp.formhidden ('vdateDebut','01/01/1970', cattributes => 'id="idVdateDebut"');
+				htp.formhidden ('vdateFin','01/01/1970', cattributes => 'id="idVdateFin"');
 				htp.br;
 				htp.print('Création d''un nouvel entrainement');
 				htp.br;
@@ -439,12 +439,13 @@ IS
 					htp.tableData('Libellé * :');	
 					htp.print('<td>');					
 					htp.formText('vlibEntrainement',20,cattributes => 'maxlength="50"');										
-					htp.print('</td>');						
+					htp.print('</td>');	
+					htp.tableData('',cattributes => 'id="vlibEntrainementError" class="error"');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Nombre de places * :');	
 					htp.print('<td>');
-					htp.print('<select id="vnbPlaces">');								
+					htp.print('<select name="vnbPlaces" id="vnbPlaces">');								
 					FOR currentPlace in 1..99 loop	
 						htp.print('<option value="'||currentPlace||'">'||currentPlace||'</option>');								
 					END LOOP; 																				
@@ -469,7 +470,8 @@ IS
 						htp.print('<option value="'||currentDebutYear||'">'||currentDebutYear||'</option>');								
 					END LOOP; 																				
 					htp.print('</select>');	
-					htp.print('</td>');						
+					htp.print('</td>');		
+					htp.tableData('',cattributes => 'id="vDateDebutEntrainementError" class="error"');							
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Date de fin * :');	
@@ -489,7 +491,8 @@ IS
 						htp.print('<option value="'||currentFinYear||'">'||currentFinYear||'</option>');								
 					END LOOP; 																				
 					htp.print('</select>');	
-					htp.print('</td>');						
+					htp.print('</td>');		
+					htp.tableData('',cattributes => 'id="vDateFinEntrainementError" class="error"');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('');
