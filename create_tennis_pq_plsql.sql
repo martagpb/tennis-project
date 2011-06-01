@@ -36,6 +36,7 @@ start 510_create_pqb_ui_commun.sql
 start 600_create_pqi_ui_login.sql
 start 600_create_pqb_ui_login.sql
 start 602_create_pqi_ui_codification.sql
+start 602_create_pqb_ui_codification.sql
 start 604_create_pqi_ui_creneau.sql
 start 604_create_pqb_ui_creneau.sql
 start 702_create_pqi_db_codification.sql
