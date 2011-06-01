@@ -278,6 +278,9 @@ PROCEDURE aff_header
 						htp.listItem;
 							htp.anchor('pq_ui_entrainement.manage_entrainement', 'Gestion des entrainements');
 						htp.print('</li>');
+						htp.listItem;
+							htp.anchor('pq_ui_codification.manage_codification_with_menu', 'Gestion des codifications');
+						htp.print('</li>');
 					htp.ulistClose;
 				htp.print('</li>');
 				htp.listItem;
