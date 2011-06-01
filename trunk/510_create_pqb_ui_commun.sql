@@ -264,9 +264,6 @@ PROCEDURE aff_header
 					htp.anchor('#', 'Mon compte');
 				htp.print('</li>');
 				htp.listItem;
-					htp.anchor('#', 'Informations');
-				htp.print('</li>');
-				htp.listItem;
 					htp.anchor('#', 'Administration');
 					htp.ulistOpen(cattributes => 'class="niveau2"');
 						htp.listItem;
@@ -280,6 +277,9 @@ PROCEDURE aff_header
 						htp.print('</li>');
 						htp.listItem;
 							htp.anchor('pq_ui_codification.manage_codification_with_menu', 'Gestion des codifications');
+						htp.print('</li>');
+						htp.listItem;
+							htp.anchor('pq_ui_abonnement.manage_abonnements', 'Gestion des abonnements');
 						htp.print('</li>');
 					htp.ulistClose;
 				htp.print('</li>');
