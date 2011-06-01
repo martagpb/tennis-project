@@ -12,10 +12,17 @@
 
 CREATE OR REPLACE PACKAGE pq_ui_codification
 IS
+	--Permet d'afficher toutes les codifications et les actions possibles de gestion (avec le menu)
+	PROCEDURE manage_codification_with_menu;
+
+	--Permet d'afficher toutes les codifications et les actions possibles de gestion (sans le menu)
+	PROCEDURE manage_codification;
+
 	--Permet d’afficher une codification existante
 	PROCEDURE dis_codification(
 	  vcode IN CHAR
-	, vnature IN VARCHAR2);
+	, vnature IN VARCHAR2
+	, vlibelle IN VARCHAR2);
 	
 	-- Exécute la procédure d'ajout d'une codification et gère les erreurs éventuelles
 	PROCEDURE exec_add_codification(
@@ -37,7 +44,8 @@ IS
 	-- Exécute la procédure d’affichage des codifications et gère les erreurs
 	PROCEDURE exec_dis_codification(
 	  vcode IN CHAR
-	, vnature IN VARCHAR2);
+	, vnature IN VARCHAR2
+	, vlibelle IN VARCHAR2);
 	
 	-- Affiche le formulaire permettant la saisie d’une nouvelle codification
 	PROCEDURE form_add_codification;
