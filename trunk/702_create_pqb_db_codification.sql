@@ -11,7 +11,7 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_db_codification
-AS
+IS
 	--Permet d’ajouter une codification		
 	PROCEDURE add_codification(
 	  vcode IN CHAR
@@ -48,7 +48,7 @@ AS
 		END IF;
 		UPDATE CODIFICATION
 		SET
-			LIBELLE = vnature
+			LIBELLE = vlibelle
 		WHERE
 			CODE   = vcode
 		AND NATURE = vnature;
