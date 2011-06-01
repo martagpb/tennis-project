@@ -54,9 +54,9 @@ IS
 				htp.tableRowOpen;
 				htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);	
 				htp.tabledata(currentEntrainement.LIB_ENTRAINEMENT);
-				htp.tabledata(htf.anchor('pq_ui_entrainement_entraineur.exec_dis_entrainement_entr?pnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
-				htp.tabledata(htf.anchor('pq_ui_entrainement_entraineur.form_upd_entrainement_entr?pnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Mise à jour'));
-				htp.tabledata(htf.anchor('pq_ui_entrainement_entraineur.exec_del_entrainement_entr?pnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				htp.tabledata(htf.anchor('pq_ui_entrainement_entraineur.exec_dis_entrainement_entr?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
+				htp.tabledata(htf.anchor('pq_ui_entrainement_entraineur.form_upd_entrainement_entr?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Mise à jour'));
+				htp.tabledata(htf.anchor('pq_ui_entrainement_entraineur.exec_del_entrainement_entr?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
 				htp.tableRowClose;	
 			end loop;
 		htp.tableClose;
@@ -81,6 +81,8 @@ IS
 		target_cookie := OWA_COOKIE.get('numpersonne');
 		vnumEntraineur:=TO_NUMBER(target_cookie.vals(1));
 		aff_entrainement_entraineur(vnumEntraineur);
+		htp.br; 
+		htp.br;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
@@ -91,7 +93,7 @@ IS
 	
 	-- Exécute la procédure d’affichage des entrainements et gère les erreurs éventuelles
 	PROCEDURE exec_dis_entrainement_entr(
-	  pnumEntrainement IN NUMBER)
+	  vnumEntrainement IN NUMBER)
 	IS		
 		PERMISSION_DENIED EXCEPTION;
 		perm BOOLEAN;
@@ -102,7 +104,7 @@ IS
 		END IF;
         pq_ui_commun.aff_header;
 		htp.br;				
-		pq_ui_entrainement_entraineur.dis_entrainement_entr(pnumEntrainement);	
+		pq_ui_entrainement_entraineur.dis_entrainement_entr(vnumEntrainement);	
 		htp.br;		
 		pq_ui_commun.aff_footer;
 	EXCEPTION
@@ -114,12 +116,12 @@ IS
 	
 	-- Exécute la procédure d'ajout d'un entrainement et gère les erreurs éventuelles.
 	PROCEDURE exec_add_entrainement_entr(
-	  pnumEntraineur IN NUMBER
-	, pcodeNiveau IN CHAR
-	, plibEntrainement IN VARCHAR2
-	, pnbPlaces IN NUMBER
-	, pdateDebut IN VARCHAR2
-	, pdateFin IN VARCHAR2)
+	  vnumEntraineur IN NUMBER
+	, vcodeNiveau IN CHAR
+	, vlibEntrainement IN VARCHAR2
+	, vnbPlaces IN NUMBER
+	, vdateDebut IN VARCHAR2
+	, vdateFin IN VARCHAR2)
 	IS
 		sequenceNumEntrainement NUMBER(6);
 		perm BOOLEAN;
@@ -130,7 +132,7 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
         pq_ui_commun.aff_header;
-		pq_db_entrainement.add_entrainement(pnumEntraineur,pcodeNiveau,plibEntrainement,pnbPlaces,to_date(pdateDebut, 'dd/mm/yy'),to_date(pdateFin, 'dd/mm/yy'));
+		pq_db_entrainement.add_entrainement(vnumEntraineur,vcodeNiveau,vlibEntrainement,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'));
 		htp.br;
 		htp.print('L''entrainement a été créé avec succès');
 		htp.br;
@@ -148,10 +150,10 @@ IS
 	
 	-- Exécute la procédure de mise à jour d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_upd_entrainement_entr(
-	  pnumEntrainement IN NUMBER
-	, pcodeNiveau IN CHAR
-	, plibEntrainement IN VARCHAR2
-	, pnbPlaces IN NUMBER)
+	  vnumEntrainement IN NUMBER
+	, vcodeNiveau IN CHAR
+	, vlibEntrainement IN VARCHAR2
+	, vnbPlaces IN NUMBER)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -165,9 +167,9 @@ IS
 		END IF;
 		target_cookie := OWA_COOKIE.get('numpersonne');
 		vnumEntraineur:=TO_NUMBER(target_cookie.vals(1));
-		pq_db_entrainement.upd_entrainement(pnumEntrainement,vnumEntraineur,pcodeNiveau,plibEntrainement,pnbPlaces);
+		pq_db_entrainement.upd_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vlibEntrainement,vnbPlaces);
 		htp.br;
-		htp.print('L''entrainement n° '|| pnumEntrainement || ' a été modifié avec succès.');
+		htp.print('L''entrainement n° '|| vnumEntrainement || ' a été modifié avec succès.');
 		htp.br();
 		htp.br();
 		pq_ui_entrainement_entraineur.aff_entrainement_entraineur(vnumEntraineur);
@@ -182,7 +184,7 @@ IS
 
 	-- Exécute la procédure de suppression d'un entrainement et gère les erreurs éventuelles
 	PROCEDURE exec_del_entrainement_entr(
-	  pnumEntrainement IN NUMBER)
+	  vnumEntrainement IN NUMBER)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -197,12 +199,14 @@ IS
 		vnumEntraineur:=TO_NUMBER(target_cookie.vals(1));
         pq_ui_commun.aff_header;
 		--supprimer l'entrainement
-		pq_db_entrainement.del_entrainement(pnumEntrainement);
+		pq_db_entrainement.del_entrainement(vnumEntrainement);
 		htp.br;
-		htp.print('L''entrainement n° '|| pnumEntrainement || ' a été supprimé avec succès.');
+		htp.print('L''entrainement n° '|| vnumEntrainement || ' a été supprimé avec succès.');
 		htp.br;
 		htp.br;			
 		pq_ui_entrainement_entraineur.aff_entrainement_entraineur(vnumEntraineur);
+		htp.br;
+		htp.br;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
@@ -213,7 +217,7 @@ IS
 	--Permet d’afficher les informations d'un entrainement de l'entraineur
 	
 	PROCEDURE dis_entrainement_entr(
-	  pnumEntrainement IN NUMBER)
+	  vnumEntrainement IN NUMBER)
 	IS
 		vcodeNiveau ENTRAINEMENT.CODE_NIVEAU%TYPE;
 		vnbplaces ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE;
@@ -222,7 +226,7 @@ IS
 		vlibEntrainement ENTRAINEMENT.LIB_ENTRAINEMENT%TYPE;
 		
 		vnbSeance NUMBER (3);
-		CURSOR listSeance IS SELECT NUM_JOUR,HEURE_DEBUT_CRENEAU,NUM_TERRAIN FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=pnumEntrainement ORDER BY NUM_JOUR;
+		CURSOR listSeance IS SELECT NUM_JOUR,HEURE_DEBUT_CRENEAU,NUM_TERRAIN FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=vnumEntrainement ORDER BY NUM_JOUR;
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -233,14 +237,14 @@ IS
 
 		SELECT LIB_ENTRAINEMENT,CODE_NIVEAU,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT 
 		INTO vlibEntrainement,vcodeNiveau,vnbplaces,vdateDebut,vdateFin
-		FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = pnumEntrainement;
+		FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
 		
-		SELECT COUNT(*) INTO vnbSeance FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=pnumEntrainement;
+		SELECT COUNT(*) INTO vnbSeance FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=vnumEntrainement;
 		htp.br;	
 		htp.print('Affichage des informations d''un entrainement');
 		htp.br;
 		htp.br;						
-		htp.print('Desription de l''entrainement numéro '|| pnumEntrainement || ' : '||vlibEntrainement);
+		htp.print('Description de l''entrainement numéro '|| vnumEntrainement || ' : '||vlibEntrainement);
 		htp.br;
 		htp.print('L''entrainement s''adresse aux joueurs possèdant au moins le niveau : '|| vcodeNiveau || '.');
 		htp.br;
@@ -293,7 +297,7 @@ IS
 				end if;
 				htp.print(' à ' || currentSeance.HEURE_DEBUT_CRENEAU || ' sur le terrain numéro ' || currentSeance.NUM_TERRAIN || '.' );	
 				htp.tabledata(htf.anchor('pq_ui_avoir_lieu.exec_del_avoir_lieu?vnumJour='||currentSeance.NUM_JOUR||'&'||'vheureDebutCreneau='||
-				currentSeance.HEURE_DEBUT_CRENEAU||'&'||'vnumTerrain='||currentSeance.NUM_TERRAIN||'&'||'vnumEntrainement='||pnumEntrainement 
+				currentSeance.HEURE_DEBUT_CRENEAU||'&'||'vnumTerrain='||currentSeance.NUM_TERRAIN||'&'||'vnumEntrainement='||vnumEntrainement 
 				||'&'||'vretourEntraineur=1','Supprimer',cattributes => 'onClick="return confirmerChoix(this,document)"'));
 				htp.print('</td>');
 				htp.tableRowClose;
@@ -304,10 +308,11 @@ IS
 		htp.tableClose;
 		htp.br;
 		htp.br;
-		htp.anchor('pq_ui_avoir_lieu.form_add_avoir_lieu?vnumEntrainement='||pnumEntrainement||'&'||'vretourEntraineur=1', 'Ajouter une séance');	
+		htp.anchor('pq_ui_avoir_lieu.form_add_avoir_lieu?vnumEntrainement='||vnumEntrainement||'&'||'vretourEntraineur=1', 'Ajouter une séance');	
 		htp.br;
 		htp.br;
 		htp.anchor('pq_ui_entrainement_entraineur.manage_entrainement_entraineur', 'Retourner à la gestion des entrainements');
+		htp.br; 
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
@@ -321,6 +326,15 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		target_cookie OWA_COOKIE.cookie;
 		num_entraineur NUMBER(5);
+		currentPlace NUMBER(2) := 0;
+		currentYearStart NUMBER(4) := to_number(to_char(sysdate,'YYYY'));
+		currentYearEnd NUMBER(4) := to_number(to_char(sysdate,'YYYY'))+10;
+		currentDebutDay NUMBER(2) := 0;
+		currentDebutMonth NUMBER(2) := 0;
+		currentDebutYear NUMBER(4) := 0;
+		currentFinDay NUMBER(2) := 0;
+		currentFinMonth NUMBER(2) := 0;
+		currentFinYear NUMBER(4) := 0;
 	BEGIN
         pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
@@ -329,7 +343,9 @@ IS
         pq_ui_commun.aff_header;	
 		target_cookie := OWA_COOKIE.get('numpersonne');
 		num_entraineur:=TO_NUMBER(target_cookie.vals(1));
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement_entraineur.exec_add_entrainement_entr', 'POST', cattributes => 'onSubmit="return test(this,document)"');				
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement_entraineur.exec_add_entrainement_entr', 'POST', cattributes => 'onSubmit="return validerEntrainement(this,document)"');				
+				htp.formhidden ('vdateDebut','01/01/1970', cattributes => 'id="idVdateDebut"');
+				htp.formhidden ('vdateFin','01/01/1970', cattributes => 'id="idVdateFin"');
 				htp.br;
 				htp.print('Création d''un nouvel entrainement');
 				htp.br;
@@ -338,12 +354,12 @@ IS
 				htp.br;
 				htp.tableOpen;
 				htp.br;				
-				htp.formhidden('pnumEntraineur',num_entraineur);
+				htp.formhidden('vnumEntraineur',num_entraineur);
 				htp.tableRowOpen;
 				htp.tableData('Niveau * :');
 					--Forme une liste déroulante avec tous les niveaux de la table codification								
 					htp.print('<td>');
-					htp.print('<select name="pcodeNiveau" id="pcodeNiveau">');		
+					htp.print('<select name="vcodeNiveau" id="vcodeNiveau">');		
 					for currentNiveau in niveaulist loop
 							htp.print('<option value="'||currentNiveau.CODE||'">'||currentNiveau.CODE||'</option>');
 					end loop;
@@ -353,27 +369,61 @@ IS
 				htp.tableRowOpen;
 					htp.tableData('Libellé * :');	
 					htp.print('<td>');					
-					htp.formText('plibEntrainement',20,cattributes => 'maxlength="50"');										
-					htp.print('</td>');						
+					htp.formText('vlibEntrainement',20,cattributes => 'maxlength="50"');										
+					htp.print('</td>');	
+					htp.tableData('',cattributes => 'id="vlibEntrainementError" class="error"');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Nombre de places * :');	
-					htp.print('<td>');					
-					htp.formText('pnbPlaces',2,cattributes => 'maxlength="2"');										
-					htp.print('</td>');						
+					htp.print('<td>');
+					htp.print('<select name="vnbPlaces" id="vnbPlaces">');								
+					FOR currentPlace in 1..99 loop	
+						htp.print('<option value="'||currentPlace||'">'||currentPlace||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('</td>');
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Date de début * :');	
-					htp.print('<td>');					
-					htp.formText('pdateDebut',8);
-					htp.print('date sous le forme "22/01/10"');
-					htp.print('</td>');						
+					htp.print('<td>');	
+					htp.print('<select id="vdateDebutDay">');								
+					FOR currentDebutDay in 1..31 loop	
+						htp.print('<option value="'||currentDebutDay||'">'||currentDebutDay||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="vdateDebutMonth">');								
+					FOR currentDebutMonth in 1..12 loop	
+						htp.print('<option value="'||currentDebutMonth||'">'||currentDebutMonth||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="vdateDebutYear">');								
+					FOR currentDebutYear in currentYearStart..currentYearEnd loop	
+						htp.print('<option value="'||currentDebutYear||'">'||currentDebutYear||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('</td>');		
+					htp.tableData('',cattributes => 'id="vDateDebutEntrainementError" class="error"');							
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Date de fin * :');	
-					htp.print('<td>');					
-					htp.formText('pdateFin',8);										
-					htp.print('</td>');						
+					htp.print('<td>');	
+					htp.print('<select id="vdateFinDay">');								
+					FOR currentFinDay in 1..31 loop	
+						htp.print('<option value="'||currentFinDay||'">'||currentFinDay||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="vdateFinMonth">');								
+					FOR currentFinMonth in 1..12 loop	
+						htp.print('<option value="'||currentFinMonth||'">'||currentFinMonth||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="vdateFinYear">');								
+					FOR currentFinYear in currentYearStart..currentYearEnd loop	
+						htp.print('<option value="'||currentFinYear||'">'||currentFinYear||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('</td>');		
+					htp.tableData('',cattributes => 'id="vDateFinEntrainementError" class="error"');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('');
@@ -383,6 +433,8 @@ IS
 			htp.formClose;
 			htp.br;
 			htp.anchor('pq_ui_entrainement_entraineur.manage_entrainement_entraineur', 'Retourner à la gestion des entrainements');
+			htp.br; 
+			htp.br;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
@@ -391,7 +443,7 @@ IS
 	
 	-- Affiche le formulaire de saisie permettant la modification d’un entrainement existant	
 	PROCEDURE form_upd_entrainement_entr(
-	  pnumEntrainement IN NUMBER)
+	  vnumEntrainement IN NUMBER)
 	IS
 		vcodeNiveau ENTRAINEMENT.CODE_NIVEAU%TYPE;
 		vnbplaces ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE;
@@ -400,6 +452,7 @@ IS
 		CURSOR niveaulist IS SELECT CODE FROM CODIFICATION WHERE NATURE = 'Classement';
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
+		currentPlace NUMBER(2) := 0;
 	BEGIN
         pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
@@ -409,12 +462,12 @@ IS
 		
 		SELECT CODE_NIVEAU,LIB_ENTRAINEMENT,NB_PLACE_ENTRAINEMENT
 		INTO vcodeNiveau,vlibEntrainement,vnbplaces
-		FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = pnumEntrainement;
+		FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
 		
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement_entraineur.exec_upd_entrainement_entr', 'POST');				
-				htp.formhidden ('pnumEntrainement',pnumEntrainement);
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement_entraineur.exec_upd_entrainement_entr', 'POST', cattributes => 'onSubmit="return validerUpdEntrainement(this,document)"');				
+				htp.formhidden ('vnumEntrainement',vnumEntrainement);
 				htp.br;
-				htp.print('Mise à jour de l''entrainement numéro ' || pnumEntrainement);
+				htp.print('Mise à jour de l''entrainement numéro ' || vnumEntrainement);
 				htp.br;
 				htp.br;
 				htp.print('Les champs marqués d''une étoile sont obligatoires.');
@@ -424,7 +477,7 @@ IS
 				htp.tableData('Niveau * :');	
 					--Forme une liste déroulante avec tous les niveaux de la table codification								
 					htp.print('<td>');
-					htp.print('<select name="pcodeNiveau" id="pcodeNiveau">');		
+					htp.print('<select name="vcodeNiveau" id="vcodeNiveau">');		
 					for currentNiveau in niveaulist loop
 						if(currentNiveau.CODE=vcodeNiveau)
 						then
@@ -439,14 +492,24 @@ IS
 				htp.tableRowOpen;
 					htp.tableData('Libellé * :');	
 					htp.print('<td>');	
-					htp.print('<INPUT TYPE="text" name="plibEntrainement" maxlength="50" value="'||vlibEntrainement||'"> ');													
-					htp.print('</td>');						
+					htp.print('<INPUT TYPE="text" name="vlibEntrainement" maxlength="50" value="'||vlibEntrainement||'"> ');													
+					htp.print('</td>');	
+					htp.tableData('',cattributes => 'id="vlibEntrainementError" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Nombre de places * :');	
-					htp.print('<td>');	
-					htp.print('<INPUT TYPE="text" name="pnbPlaces" maxlength="2" value="'||vnbPlaces||'"> ');													
-					htp.print('</td>');						
+					htp.print('<td>');
+					htp.print('<select name="vnbPlaces" id="vnbPlaces">');								
+					FOR currentPlace in 1..99 loop	
+						if(currentPlace=vnbPlaces)
+						then
+							htp.print('<option selected value="'||currentPlace||'">'||currentPlace||'</option>');	
+						else
+							htp.print('<option value="'||currentPlace||'">'||currentPlace||'</option>');
+						end if;
+					END LOOP;																			
+					htp.print('</select>');	
+					htp.print('</td>');
 				htp.tableRowClose;
 				htp.tableRowOpen;
 				htp.tableData('');
@@ -456,6 +519,8 @@ IS
 			htp.formClose;
 			htp.br;
 			htp.anchor('pq_ui_entrainement_entraineur.manage_entrainement_entraineur', 'Retourner à la gestion des entrainements');
+			htp.br; 
+			htp.br;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
