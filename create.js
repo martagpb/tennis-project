@@ -195,6 +195,25 @@ function validerEntrainement(form,document){
 	return true;
 }
 
+/*Fonction permettant de valider la mise à jour d'un entrainement*/
+function validerUpdEntrainement(form,document){
+
+	//On récupère le libellé, le nombre de places et les dates de début de fin
+	libEntrainement = form.vlibEntrainement.value; 
+	nbPlaces = form.vnbPlaces.value;	  // nombre sous la forme : nn
+	
+	//On vérifie que les informations du formulaire ont été saisies ou sélectionnées
+	if(  
+	     libEntrainement == null 
+	 ||  libEntrainement == "" 
+	){
+		alert("Veuillez indiquer un libellé pour l'entrainement.");
+		document.getElementById("vlibEntrainementError").innerHTML ="Le libellé pour l'entrainement est obligatoire.";	
+		return false;
+	}
+	return true;
+}
+
 /*Fonction permettant de valider la création d'un créneau*/
 function validerCreneau(form,document){
   
