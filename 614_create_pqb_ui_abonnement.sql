@@ -121,7 +121,7 @@ AS
 		htp.br;					
 		htp.print('L''abonnement n° '|| vnumAbonnement || ' concerne le joueur '|| vnomPersonne || ' depuis '|| vdateDebut || ' et pendant '|| vduree ||' mois.');
 		
-		htp.tableOpen;
+		htp.tableOpen('',cattributes => 'class="tableau"');
 			htp.tableheader('Mensualité');
 			htp.tableheader('Nombre heures');
 			for currentMensualite in listeMens(vnumAbonnement) loop
