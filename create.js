@@ -260,7 +260,7 @@ function validerMAJCreneau(form,document){
 	   ||  heureDebutCreneau == "" 
 	   ||  minuteDebutCreneau == null 
 	   ||  minuteDebutCreneau == "" 	   	  
-	   ||  heureFinCreneau == "" 	   	   
+	   ||  heureFinCreneau == null	   	   
 	   ||  heureFinCreneau == "" 
 	   ||  minuteFinCreneau == null 
 	   ||  minuteFinCreneau == "" 
@@ -292,5 +292,28 @@ function validerMAJCreneau(form,document){
 		}
 	}
 	//On retroune vrai si le créneau est valide
+	return true;
+}
+
+/*Fonction permettant de valider l'ajout d'une nouvelle codification*/
+function validerCodification(form,document){
+  
+  //Récupération des heures et minutes de début de fin du créneau
+  code  = form.vcode.value;
+  nature = form.vnature.value;
+  libelle    = form.vlibelle.value;
+    
+  if(  
+	       code == null 
+	   ||  code == "" 
+	   ||  nature == null 
+	   ||  nature == "" 	
+	){		
+		alert("Veuillez remplir tous les champs obligatoires.");
+		document.getElementById("vCodeError").innerHTML ="Le code est obligatoire.";
+		document.getElementById("vNatureError").innerHTML ="La nature est obligatoire.";
+		return false;
+	}
+	//On retroune vrai si la codification est valide
 	return true;
 }
