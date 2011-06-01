@@ -222,71 +222,71 @@ BEGIN
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,
 	PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('AG','ROLE','30/4','Classement','Longoria','Josianne','Jlongo',crypted_password,'0688455389','Josianne.Longoria@gmail.fr','20 grande rue','25000','Besançon',1);
+	VALUES('AG','ROLE','30/4','Classement','Longoria','Josianne','Jlongo',crypted_password,'0688455389','Josianne.Longoria@gmail.fr','20 grande rue','25000','Besançon',2);
 	--Personne n°2
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ADMIN','ROLE','15/4','Classement','Ayew','André','AAyew',crypted_password,'0688952389','André.Ayew@gmail.fr','21 rue des muriers','25000','Besançon',1);
+	VALUES('EMP','ROLE','15/4','Classement','Ayew','André','AAyew',crypted_password,'0688952389','André.Ayew@gmail.fr','21 rue des muriers','25000','Besançon',2);
 	--Personne n°3
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','30/1','Classement','Boudebouz','Ryad','Rboud',crypted_password,'0688642389','Ryad.Boduebouz@gmail.fr','1 rue des sommeliers','25000','Besançon',1);
+	VALUES('EMP','ROLE','30/1','Classement','Boudebouz','Ryad','Rboud',crypted_password,'0688642389','Ryad.Boduebouz@gmail.fr','1 rue des sommeliers','25000','Besançon',2);
 
 	--Personnes qui sont uniquement employés
 	--Personne n°4
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','NC','Classement','Gameiro','Kévin','Kgame',crypted_password,'0685842389','Kevin.Gameiro@gmail.fr','5 rue de la route de lorient','25000','Besançon',1);
+	VALUES('EMP','ROLE','NC','Classement','Gameiro','Kévin','Kgame',crypted_password,'0685842389','Kevin.Gameiro@gmail.fr','5 rue de la route de lorient','25000','Besançon',2);
 	--Personne n°5
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','NC','Classement','Drogba','Didier','Ddrog',crypted_password,'0658842389','Didier.Drogba@gmail.fr','8 avenue de chelsea','25000','Besançon',1);
+	VALUES('EMP','ROLE','NC','Classement','Drogba','Didier','Ddrog',crypted_password,'0658842389','Didier.Drogba@gmail.fr','8 avenue de chelsea','25000','Besançon',2);
 	--Personne n°6
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','NC','Classement','Kalou','Salomon','SKale',crypted_password,'0658842389','Salomon.kalou@gmail.fr','5 avenue de la laurencie','25000','Besançon',1);
+	VALUES('EMP','ROLE','NC','Classement','Kalou','Salomon','SKale',crypted_password,'0658842389','Salomon.kalou@gmail.fr','5 avenue de la laurencie','25000','Besançon',2);
 	--Personne n°7
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','NC','Classement','Pedretti','Benoit','Bpedr',crypted_password,'0696842389','Benoi.pedretti@gmail.fr','45 rue de l''abbé deschamp','25000','Besançon',1);
+	VALUES('EMP','ROLE','NC','Classement','Pedretti','Benoit','Bpedr',crypted_password,'0696842389','Benoi.pedretti@gmail.fr','45 rue de l''abbé deschamp','25000','Besançon',2);
 
 	--Entraineurs
 	--Personne n°8
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','15/3','Classement','Martin','Marvin','MMart',crypted_password,'0688452389','Marvin.Martin@gmail.fr','52 rue des acacias','25000','Besançon',1);
+	VALUES('ENT','ROLE','15/3','Classement','Martin','Marvin','MMart',crypted_password,'0688452389','Marvin.Martin@gmail.fr','52 rue des acacias','25000','Besançon',2);
 	--Personne n°9
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','15/1','Classement','Perquis','Damien','Dperq',crypted_password,'0658452389','Damien.Perquis@gmail.fr','21 rue du muguet','25000','Besançon',1);
+	VALUES('ENT','ROLE','15/1','Classement','Perquis','Damien','Dperq',crypted_password,'0658452389','Damien.Perquis@gmail.fr','21 rue du muguet','25000','Besançon',2);
 	--Personne n°10
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','4/6','Classement','Dalmat','Stéphane','Sdalm',crypted_password,'0658845389','Stéphane.Dalmat@gmail.fr','56 rue de renne','25000','Besançon',1);
+	VALUES('ENT','ROLE','4/6','Classement','Dalmat','Stéphane','Sdalm',crypted_password,'0658845389','Stéphane.Dalmat@gmail.fr','56 rue de renne','25000','Besançon',2);
 	--Personne n°11
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','1erSe','Classement','Zidane','Zinedine','Zizou',crypted_password,'0600001230','Zinedine.Zidane@gmail.fr','98 rue des dieux','25000','Besançon',3);
+	VALUES('ENT','ROLE','1erSe','Classement','Zidane','Zinedine','Zizou',crypted_password,'0600001230','Zinedine.Zidane@gmail.fr','98 rue des dieux','25000','Besançon',2);
 	--Personne n°12
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','1/6','Classement','Blanc','Laurent','Lblan',crypted_password,'0684563695','Laurent.Blanc@gmail.fr','2 rue de la croatie','25000','Besançon',1);
+	VALUES('ENT','ROLE','1/6','Classement','Blanc','Laurent','Lblan',crypted_password,'0684563695','Laurent.Blanc@gmail.fr','2 rue de la croatie','25000','Besançon',2);
 	--Personne n°13
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','15','Classement','Petit','Emmanuel','Epeti',crypted_password,'0684555695','Emmanuel.Petit@gmail.fr','3 rue du brésil','25000','Besançon',1);
+	VALUES('ENT','ROLE','15','Classement','Petit','Emmanuel','Epeti',crypted_password,'0684555695','Emmanuel.Petit@gmail.fr','3 rue du brésil','25000','Besançon',2);
 
 	--Joueurs adhérents
 	--Personne n°14
@@ -322,11 +322,30 @@ BEGIN
 	--Personne n°21
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','30','Classement','Hamilton','Lewis','Lhami',crypted_password,'0658544589','Lewis.Hamilton@gmail.fr','25 grande rue','25000','Besançon','V',2);
+	VALUES('J','ROLE','30','Classement','Hamilton','Lewis','Lhami',crypted_password,'0658544589','Lewis.Hamilton@gmail.fr','25 grande rue','25000','Besançon','V',1);
 	--Personne n°22
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','15/5','Classement','Webber','Mark','Mwebb',crypted_password,'0658545749','Mark.Webber@gmail.fr','2 grande rue','25000','Besançon','V',3);
+	VALUES('J','ROLE','15/5','Classement','Webber','Mark','Mwebb',crypted_password,'0658545749','Mark.Webber@gmail.fr','2 grande rue','25000','Besançon','V',1);
+	
+	--Administrateurs
+	--Personne n°23
+	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
+	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
+	VALUES('ADMIN','ROLE','NC','Classement','Gonzalves','Julien','jgonzalv',crypted_password,'0670917957','julien.gonzalves@gmail.fr','1 rue des fleurs','71700','Tournus','A',3);
+	--Personne n°24
+	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
+	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
+	VALUES('ADMIN','ROLE','NC','Classement','Leviste','Matthieu','mleviste',crypted_password,'0670917958','matthieu.leviste@gmail.fr','2 rue des fleurs','25000','Besançon','A',3);
+	--Personne n°25
+	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
+	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
+	VALUES('ADMIN','ROLE','NC','Classement','Joly','Renaud','rjoly',crypted_password,'0670917959','renaud.joly@gmail.fr','3 rue des fleurs','21000','Dijon','A',3);
+	--Personne n°26
+	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
+	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
+	VALUES('ADMIN','ROLE','NC','Classement','Invernizzi','David','dinverni',crypted_password,'0670917960','david.invernizzi@gmail.fr','4 rue des fleurs','90000','90000','A',3);
+	
 END;
 /
 
