@@ -11,18 +11,18 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE pq_ui_avoir_lieu
-IS
-	--renvoi les terrains disponible pour une heure et un jour donné
-	PROCEDURE exec_test_dipo_avoir_lieu(
-	  vnumJourTest IN NUMBER
-	 ,vheureDebutCreneauTest IN CHAR
-	 ,vnumEntrainementTest IN NUMBER
+IS		 
+	-- Affiche le formulaire de choix du terrain
+	PROCEDURE aff_add_avoir_lieu(
+	  vnumEntrainement IN NUMBER
+	 ,vnumJour IN NUMBER
+	 ,vheureDebutCreneau IN CHAR
 	 ,vretourEntraineur IN NUMBER);
-	 
+
 	-- Exécute la procédure d'ajout d'une séance d'un entrainement et gère les erreurs éventuelles.
 	PROCEDURE exec_add_avoir_lieu(
 	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
+	, vheureDebutCreneau IN CHAR 
 	, vnumTerrain IN NUMBER
 	, vnumEntrainement IN NUMBER
 	, vretourEntraineur IN NUMBER);
