@@ -83,6 +83,8 @@ IS
 		END IF;
         pq_ui_commun.aff_header;
 		aff_entrainement;
+		htp.br; 
+		htp.br;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
@@ -141,6 +143,9 @@ IS
 				htp.br;
 				htp.br;
 				htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements actuels');
+				htp.br; 
+				htp.br; 
+				htp.br;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
@@ -257,6 +262,8 @@ IS
 		htp.br;
 		htp.br;			
 		pq_ui_entrainement.aff_entrainement;
+		htp.br;
+		htp.br;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
@@ -313,56 +320,54 @@ IS
 		htp.br;
 		htp.print('Séances   : ');
 		htp.tableOpen;
-		if(vnbSeance=0)
-		then
-			htp.tableRowOpen;
-			htp.print('<td>');
-			htp.print('L''entrainement n''a pas encore de séance.');
-			htp.print('</td>');
-			htp.tableRowClose;
-		else
-			for currentSeance in listSeance loop
+			if(vnbSeance=0)
+			then
 				htp.tableRowOpen;
 				htp.print('<td>');
-				htp.print('   *   ' || 'Le ');
-				if(currentSeance.NUM_JOUR=1)
-				then
-					htp.print('lundi ');
-				end if;
-				if(currentSeance.NUM_JOUR=2)
-				then
-					htp.print('mardi ');
-				end if;
-				if(currentSeance.NUM_JOUR=3)
-				then
-					htp.print('mercredi ');
-				end if;
-				if(currentSeance.NUM_JOUR=4)
-				then
-					htp.print('jeudi ');
-				end if;
-				if(currentSeance.NUM_JOUR=5)
-				then
-					htp.print('vendredi ');
-				end if;
-				if(currentSeance.NUM_JOUR=6)
-				then
-					htp.print('samedi ');
-				end if;
-				if(currentSeance.NUM_JOUR=7)
-				then
-					htp.print('dimanche ');
-				end if;
-				htp.print(' à ' || currentSeance.HEURE_DEBUT_CRENEAU || ' sur le terrain numéro ' || currentSeance.NUM_TERRAIN || '.' );	
-				htp.tabledata(htf.anchor('pq_ui_avoir_lieu.exec_del_avoir_lieu?vnumJour='||currentSeance.NUM_JOUR||'&'||'vheureDebutCreneau='||
-				currentSeance.HEURE_DEBUT_CRENEAU||'&'||'vnumTerrain='||currentSeance.NUM_TERRAIN||'&'||'vnumEntrainement='||vnumEntrainement
-				||'&'||'vretourEntraineur=0', 'Supprimer',cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				htp.print('L''entrainement n''a pas encore de séance.');
 				htp.print('</td>');
 				htp.tableRowClose;
-				htp.br;
-			end loop;
-		end if;
-		htp.br;	
+			else
+				for currentSeance in listSeance loop
+					htp.tableRowOpen;
+					htp.print('<td>');
+					htp.print('   *   ' || 'Le ');
+					if(currentSeance.NUM_JOUR=1)
+					then
+						htp.print('lundi ');
+					end if;
+					if(currentSeance.NUM_JOUR=2)
+					then
+						htp.print('mardi ');
+					end if;
+					if(currentSeance.NUM_JOUR=3)
+					then
+						htp.print('mercredi ');
+					end if;
+					if(currentSeance.NUM_JOUR=4)
+					then
+						htp.print('jeudi ');
+					end if;
+					if(currentSeance.NUM_JOUR=5)
+					then
+						htp.print('vendredi ');
+					end if;
+					if(currentSeance.NUM_JOUR=6)
+					then
+						htp.print('samedi ');
+					end if;
+					if(currentSeance.NUM_JOUR=7)
+					then
+						htp.print('dimanche ');
+					end if;
+					htp.print(' à ' || currentSeance.HEURE_DEBUT_CRENEAU || ' sur le terrain numéro ' || currentSeance.NUM_TERRAIN || '.' );	
+					htp.tabledata(htf.anchor('pq_ui_avoir_lieu.exec_del_avoir_lieu?vnumJour='||currentSeance.NUM_JOUR||'&'||'vheureDebutCreneau='||
+					currentSeance.HEURE_DEBUT_CRENEAU||'&'||'vnumTerrain='||currentSeance.NUM_TERRAIN||'&'||'vnumEntrainement='||vnumEntrainement
+					||'&'||'vretourEntraineur=0', 'Supprimer',cattributes => 'onClick="return confirmerChoix(this,document)"'));
+					htp.print('</td>');
+					htp.tableRowClose;
+				end loop;
+			end if;
 		htp.tableClose;
 		htp.br;
 		htp.br;
@@ -375,6 +380,8 @@ IS
 		else
 			htp.anchor('pq_ui_entrainement.manage_historique_entrainement', 'Retourner à la gestion des entrainements');
 		end if;
+		htp.br;
+		htp.br;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
@@ -502,6 +509,8 @@ IS
 			htp.formClose;
 			htp.br;
 			htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');
+			htp.br; 
+			htp.br; 
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
@@ -519,6 +528,7 @@ IS
 		
 		CURSOR entraineurlist IS SELECT NUM_PERSONNE,NOM_PERSONNE,PRENOM_PERSONNE FROM PERSONNE WHERE CODE_STATUT_EMPLOYE='ENT';
 		CURSOR niveaulist IS SELECT CODE FROM CODIFICATION WHERE NATURE = 'Classement';
+		currentPlace NUMBER(2) := 0;
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -532,7 +542,7 @@ IS
 		INTO vnumEntraineur,vcodeNiveau,vlibEntrainement,vnbplaces
 		FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
 		
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_upd_entrainement', 'POST');				
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_upd_entrainement', 'POST', cattributes => 'onSubmit="return validerUpdEntrainement(this,document)"');				
 				htp.formhidden ('vnumEntrainement',vnumEntrainement);
 				htp.br;
 				htp.print('Mise à jour de l''entrainement numéro ' || vnumEntrainement);
@@ -578,13 +588,23 @@ IS
 					htp.tableData('Libellé * :');	
 					htp.print('<td>');	
 					htp.print('<INPUT TYPE="text" name="vlibEntrainement" maxlength="50" value="'||vlibEntrainement||'"> ');													
-					htp.print('</td>');						
+					htp.print('</td>');		
+					htp.tableData('',cattributes => 'id="vlibEntrainementError" class="error"');					
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Nombre de places * :');	
-					htp.print('<td>');	
-					htp.print('<INPUT TYPE="text" name="vnbPlaces" maxlength="2" value="'||vnbPlaces||'"> ');													
-					htp.print('</td>');						
+					htp.print('<td>');
+					htp.print('<select name="vnbPlaces" id="vnbPlaces">');								
+					FOR currentPlace in 1..99 loop	
+						if(currentPlace=vnbPlaces)
+						then
+							htp.print('<option selected value="'||currentPlace||'">'||currentPlace||'</option>');	
+						else
+							htp.print('<option value="'||currentPlace||'">'||currentPlace||'</option>');
+						end if;
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('</td>');
 				htp.tableRowClose;
 				htp.tableRowOpen;
 				htp.tableData('');
@@ -594,6 +614,8 @@ IS
 			htp.formClose;
 			htp.br;
 			htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements');
+			htp.br; 
+			htp.br;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
