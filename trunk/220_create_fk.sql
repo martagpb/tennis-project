@@ -19,6 +19,11 @@
 -- -----------------------------------------------------------------------------
 
 
+ALTER TABLE FACTURE ADD (
+     CONSTRAINT FK_FACTURE_PERSONNE
+          FOREIGN KEY (NUM_PERSONNE)
+               REFERENCES PERSONNE (NUM_PERSONNE))   ;
+
 ALTER TABLE TERRAIN ADD (
      CONSTRAINT FK_TERRAIN_CODIFICATION
           FOREIGN KEY (NATURE_SURFACE, CODE_SURFACE)
