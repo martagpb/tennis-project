@@ -281,6 +281,9 @@ PROCEDURE aff_header
 						htp.listItem;
 							htp.anchor('pq_ui_abonnement.manage_abonnements', 'Gestion des abonnements');
 						htp.print('</li>');
+						htp.listItem;
+							htp.anchor('pq_ui_facture.manage_factures', 'Gestion des factures');
+						htp.print('</li>');
 					htp.ulistClose;
 				htp.print('</li>');
 				htp.listItem;
