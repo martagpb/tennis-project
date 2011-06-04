@@ -63,9 +63,10 @@ IS
 		INTO vnomPersonne,vprenomPersonne,vlogin,vMDP,vemail,vtel,vadresse,vcp,vville
 		FROM PERSONNE WHERE NUM_PERSONNE = vnumPersonne;
 		
-		vpassword := DBMS_OBFUSCATION_TOOLKIT.des3decrypt(input_string => vMDP,
-													       key_string => 'tennispro222222222222222222'
-													     );
+		dbms_obfuscation_toolkit.desdecrypt(input_string => vMDP, 
+										key_string => 'tennispro', 
+										decrypted_string  => vpassword );
+
 		htp.br;	
 		htp.print('Information de votre compte : ');
 		htp.br;
@@ -172,6 +173,7 @@ IS
 		perm BOOLEAN;
 		target_cookie OWA_COOKIE.cookie;
 		vnumPersonne NUMBER(5);
+		vpassword VARCHAR(200);
 	BEGIN	
         pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
@@ -187,6 +189,10 @@ IS
 		
 		pq_ui_commun.aff_header;
 		
+		dbms_obfuscation_toolkit.desdecrypt(input_string => vMDP, 
+								key_string => 'tennispro', 
+								decrypted_string  => vpassword );
+										
 		htp.br;
 		htp.print('Mise à jour de votre compte');
 		htp.br;
@@ -215,7 +221,7 @@ IS
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Mot de passe * :', cattributes => 'class="enteteFormulaire"');
-					htp.tableData('<INPUT TYPE="text" id="password" name="password" maxlength="40" value="'||vMDP||'"> ');
+					htp.tableData('<INPUT TYPE="text" id="password" name="password" maxlength="40" value="'||vpassword||'"> ');
 					htp.tableData('',cattributes => 'id="passwordText" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
