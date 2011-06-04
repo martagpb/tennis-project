@@ -72,7 +72,7 @@ IS
 	, vnumSeance IN NUMBER)
 	IS 
 	BEGIN
-				UPDATE OCCUPER
+		UPDATE OCCUPER
 		SET
 				NUM_FACTURE = vnumFacture
 		       ,NUM_JOUEUR = vnumJoueur  
