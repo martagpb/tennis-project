@@ -175,7 +175,7 @@ PROCEDURE aff_header
 					htp.ulistClose;
 				htp.print('</li>');
 				htp.listItem;
-					htp.anchor('#', 'Mon compte');
+					htp.anchor('pq_ui_account.exec_dis_account', 'Mon compte');
 				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Informations');
@@ -218,7 +218,7 @@ PROCEDURE aff_header
 					htp.ulistClose;
 				htp.print('</li>');
 				htp.listItem;
-					htp.anchor('#', 'Mon compte');
+					htp.anchor('pq_ui_account.exec_dis_account', 'Mon compte');
 				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Informations');
@@ -261,7 +261,7 @@ PROCEDURE aff_header
 					htp.ulistClose;
 				htp.print('</li>');
 				htp.listItem;
-					htp.anchor('#', 'Mon compte');
+					htp.anchor('pq_ui_account.exec_dis_account', 'Mon compte');
 				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Administration');
