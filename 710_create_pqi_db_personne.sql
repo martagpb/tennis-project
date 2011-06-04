@@ -16,6 +16,7 @@ AS
 	PROCEDURE getStatutJoueur(numPersonne IN NUMBER, statut OUT VARCHAR2 );
 	PROCEDURE getNum(login IN VARCHAR, numPersonne OUT NUMBER);
 	PROCEDURE createPersonne ( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,phone IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2) ;
+	PROCEDURE updPersonne( vnumPersonne IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,phone IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2);
 END PA_PERSONNE;
 /
 
