@@ -442,59 +442,120 @@ VALUES('21h00','22h00');
 --Fin des créneaux de la table CRENEAU
 
 -- -----------------------------------------------------------------------------
+--       TABLE : OCCUPER
+-- -----------------------------------------------------------------------------
+
+--Fonction permettant d'ajouter les occupations associées à une séance
+create or replace procedure add_occupation_seance(
+	  vheureDebutCreneau IN CHAR
+	, vnumTerrain IN NUMBER
+	, vnumJour IN NUMBER
+	, vnumEntrainement IN NUMBER)
+IS
+	vdateDebut Date;
+	vdateFin Date;
+	vincrementDate Date;
+	vnumJourDebut NUMBER(1);
+	vnumSeance NUMBER(3);
+BEGIN
+	select date_debut_entrainement into vdateDebut from entrainement where num_entrainement=vnumEntrainement;
+	select date_fin_entrainement into vdateFin from entrainement where num_entrainement=vnumEntrainement;
+	select to_char(vdateDebut,'D') into vnumJourDebut from entrainement where num_entrainement=vnumEntrainement;
+		
+	if(vnumjour>=vnumJourDebut)
+	then
+		vincrementDate:=vdateDebut+(vnumjour-vnumJourDebut);
+	else
+		vincrementDate:=vdateDebut+(7-vnumJourDebut+vnumJour);
+	end if;
+	WHILE trunc(vincrementDate) <= trunc(vdateFin)
+	LOOP
+		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_ENTRAINEMENT,NUM_SEANCE)
+		VALUES(vheureDebutCreneau,vnumTerrain,vincrementDate,vnumEntrainement,vnumSeance);
+		vincrementDate:=vincrementDate+7;
+		vnumSeance:=vnumSeance+1;
+	END LOOP;
+END add_occupation_seance;
+/ 
+--Fin de la fonction permettant d'ajouter les occupations associées à une séance
+
+-- -----------------------------------------------------------------------------
 --       TABLE : AVOIR_LIEU
 -- -----------------------------------------------------------------------------
 
---Début des enregistrements de la table AVOIR_LIEU
---entrainements de 1 à 18 terrain de 1 a 21 créneau de '07h00' à '21h00' num jour de 1 à 7
+--Début des enregistrements de la table AVOIR_LIEU et appel de la fonction ajoutant les occupations
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('19h00',1,1,1); 
+execute add_occupation_seance('19h00',1,1,1); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('19h00',1,3,1); 
+execute add_occupation_seance('19h00',1,3,1); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('14h00',1,6,1); 
+execute add_occupation_seance('14h00',1,6,1); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('20h00',2,2,2); 
+execute add_occupation_seance('20h00',2,2,2); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('16h00',3,4,3); 
+execute add_occupation_seance('16h00',3,4,3); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('15h00',4,5,4); 
+execute add_occupation_seance('15h00',4,5,4); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('20h00',4,2,4); 
+execute add_occupation_seance('20h00',4,2,4); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('16h00',5,3,5); 
+execute add_occupation_seance('16h00',5,3,5); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('18h00',6,1,6); 
+execute add_occupation_seance('18h00',6,1,6); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('10h00',7,6,7); 
+execute add_occupation_seance('10h00',7,6,7); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('11h00',8,6,8); 
+execute add_occupation_seance('11h00',8,6,8); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('09h00',9,6,9); 
+execute add_occupation_seance('09h00',9,6,9); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('15h00',10,6,10); 
+execute add_occupation_seance('15h00',10,6,10); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('20h00',11,2,11); 
+execute add_occupation_seance('20h00',11,2,11); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('20h00',12,4,12); 
+execute add_occupation_seance('20h00',12,4,12); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('14h00',13,5,13); 
+execute add_occupation_seance('14h00',13,5,13); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('16h00',14,1,14); 
+execute add_occupation_seance('16h00',14,1,14); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('20h00',15,2,15); 
+execute add_occupation_seance('20h00',15,2,15); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('20h00',15,4,15); 
+execute add_occupation_seance('20h00',15,4,15); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('14h00',16,4,16); 
+execute add_occupation_seance('14h00',16,4,16); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('16h00',17,4,17); 
+execute add_occupation_seance('16h00',17,4,17); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('18h00',17,4,17); 
+execute add_occupation_seance('18h00',17,4,17); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('19h00',18,1,18); 
+execute add_occupation_seance('19h00',18,1,18); 
 INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT)
 VALUES('20h00',18,5,18); 
+execute add_occupation_seance('20h00',18,5,18); 
 
 --Fin des enregistrements de la table AVOIR_LIEU
 
