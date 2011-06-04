@@ -59,5 +59,39 @@ AS
 		COMMIT; 
 	END; 
 	
+	PROCEDURE updPersonne(
+		vnumPersonne IN NUMBER, 
+		lastname IN VARCHAR2,  
+		firstname IN VARCHAR2,
+		login IN VARCHAR2,
+		password IN VARCHAR2,
+		mail IN VARCHAR2,
+		phone IN VARCHAR2,
+		street IN VARCHAR2,
+		postal IN VARCHAR2,
+		city IN VARCHAR2)
+	IS 
+		crypted_password VARCHAR2(255);
+	BEGIN 
+		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
+										key_string => 'tennispro', 
+										encrypted_string => crypted_password );
+		UPDATE PERSONNE
+		SET
+				NOM_PERSONNE = lastname
+		       ,PRENOM_PERSONNE = firstname
+			   ,LOGIN_PERSONNE = login
+			   ,MDP_PERSONNE = crypted_password
+			   ,TEL_PERSONNE = phone
+			   ,EMAIL_PERSONNE = mail
+			   ,NUM_RUE_PERSONNE = street
+			   ,CP_PERSONNE = postal
+			   ,VILLE_PERSONNE = city
+			   
+		WHERE
+				NUM_PERSONNE = vnumPersonne;
+		COMMIT; 
+	END;
+	
 END PA_PERSONNE;
 /
