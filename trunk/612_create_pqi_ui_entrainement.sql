@@ -26,6 +26,7 @@ IS
 	PROCEDURE exec_add_entrainement(
 	  vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vnatureNiveau IN CHAR
 	, vlibEntrainement IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN VARCHAR2
@@ -36,6 +37,7 @@ IS
 	  vnumEntrainement IN NUMBER
 	, vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vnatureNiveau IN CHAR
 	, vlibEntrainement IN VARCHAR2
 	, vnbPlaces IN NUMBER);
 	
