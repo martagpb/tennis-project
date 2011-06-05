@@ -56,6 +56,20 @@ img {
     width: 80px;
 }
 
+/*Titre de niveau 1*/
+.titre_niveau_1 {
+    font-size: 14px;
+    text-decoration: underline;
+    font-weight: bold;
+    color: black;
+}
+
+/*Message de confirmation de réussite*/
+.success {
+    color: green;
+    font-weight: bold;
+}
+
 /*Message d'erreur*/
 .error {
      color: red;
@@ -65,6 +79,11 @@ img {
 }
 
 /*Gestion des tableaux */
+
+.enteteFormulaire {
+    text-align: right;
+}
+
 
 table { /* Le tableau en lui-même */
      margin: auto;  				/* On centre le tableau */
