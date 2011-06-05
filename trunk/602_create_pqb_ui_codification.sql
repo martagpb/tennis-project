@@ -11,7 +11,7 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_codification
-AS
+IS 
 	--Permet d'afficher toutes les codifications et les actions possibles de gestion (avec le menu)
 	PROCEDURE manage_codification_with_menu
 	IS		
@@ -41,11 +41,12 @@ AS
           , COD.NATURE 
           , COD.LIBELLE 
 		FROM 
-			CODIFICATION COD
-		ORDER BY 
-			1
-		  , 2
-		  , 3;
+			CODIFICATION COD;
+		
+		codificationUsedByTerrain NUMBER(5):= 0; 
+		codificationUsedByPersonne NUMBER(5):= 0; 
+		codificationUsedByEntrainement NUMBER(5):= 0; 
+		
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -53,8 +54,10 @@ AS
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
-		htp.br;				
-		htp.print('Gestion des codifications' || ' (' || htf.anchor('pq_ui_codification.manage_codification_with_menu','Actualiser')|| ')' );
+		htp.br;	
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Gestion des codifications');
+		htp.print('</div>');		
 		htp.br;	
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_codification.form_add_codification','Ajouter une codification'));
@@ -71,8 +74,46 @@ AS
 				htp.tabledata(currentCodification.NATURE);
 				htp.tabledata(currentCodification.LIBELLE);					
 				htp.tabledata(htf.anchor('pq_ui_codification.dis_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE||'&'||'vlibelle='||currentCodification.LIBELLE,'Informations'));
-				htp.tabledata(htf.anchor('pq_ui_codification.form_upd_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE||'&'||'vlibelle='||currentCodification.LIBELLE,'Mise à jour'));
-				htp.tabledata(htf.anchor('pq_ui_codification.exec_del_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				
+				--Permet de déterminer si une codification est utilisé pour un terrain	
+				SELECT 
+					COUNT(*) INTO codificationUsedByTerrain
+				FROM 
+					TERRAIN 
+				WHERE 
+					CODE_SURFACE = currentCodification.CODE 
+				AND NATURE_SURFACE = currentCodification.NATURE;
+				
+				--Permet de déterminer si une codification est utilisé pour une personne	
+				SELECT 
+					COUNT(*) INTO codificationUsedByPersonne
+				FROM 
+					PERSONNE 
+				WHERE 
+					(CODE_STATUT_EMPLOYE = currentCodification.CODE 
+					AND NATURE_STATUT_EMPLOYE = currentCodification.NATURE)
+				OR
+					(CODE_NIVEAU = currentCodification.CODE 
+					AND NATURE_NIVEAU = currentCodification.NATURE);
+					
+				--Permet de déterminer si une codification est utilisé pour un terrain	
+				SELECT 
+					COUNT(*) INTO codificationUsedByEntrainement
+				FROM 
+					ENTRAINEMENT 
+				WHERE 
+					CODE_NIVEAU = currentCodification.CODE 
+				AND NATURE_NIVEAU = currentCodification.NATURE;
+					
+				--On autorise la mise à jour et la suppression d'une codification seulement dans le cas où elle n'est pas utilisée
+				if (codificationUsedByTerrain = 0 and codificationUsedByPersonne = 0 and codificationUsedByEntrainement = 0) then
+					htp.tabledata(htf.anchor('pq_ui_codification.form_upd_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE||'&'||'vlibelle='||currentCodification.LIBELLE,'Mise à jour'));
+					htp.tabledata(htf.anchor('pq_ui_codification.exec_del_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				else
+					htp.tabledata('Non autorisée');
+					htp.tabledata('Non autorisée');
+				end if;		
+				
 				htp.tableRowClose;
 			end loop;	
 		htp.tableClose;
@@ -98,7 +139,9 @@ AS
 		END IF;
 		pq_ui_commun.aff_header;
 				htp.br;	
-				htp.print('Affichage des informations d''une codification' || ' (' || htf.anchor('pq_ui_codification.dis_codification?vcode='||vcode||'&'||'vnature='||vnature,'Actualiser')|| ')' );
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Affichage des informations d''une codification');
+				htp.print('</div>');
 				htp.br;
 				htp.br;					
 				htp.tableOpen('',cattributes => 'class="tableau"');
@@ -136,7 +179,9 @@ AS
 		pq_ui_commun.aff_header;
 				htp.br;
 				pq_db_codification.add_codification(vcode,vnature,vlibelle);
-				htp.print('La codification qui s''intitule '|| vlibelle || ' et qui est du type '|| vnature || ' a été ajoutée avec succès.');
+				htp.print('<div class="success"> ');
+					htp.print('La codification qui s''intitule '|| vlibelle || ' et qui est du type '|| vnature || ' a été ajoutée avec succès.');
+				htp.print('</div>');				
 				htp.br;
 				htp.br;			
 				pq_ui_codification.manage_codification;
@@ -168,7 +213,9 @@ AS
 		    pq_ui_commun.aff_header;
 				htp.br;				
 				pq_db_codification.upd_codification(vcode,vnature,vlibelle);
-				htp.print('La codification qui s''intitule '|| vlibelle || ' et qui est du type '|| vnature || ' a été mise à jour avec succès.');
+				htp.print('<div class="success"> ');
+					htp.print('La codification qui s''intitule '|| vlibelle || ' et qui est du type '|| vnature || ' a été mise à jour avec succès.');
+				htp.print('</div>');					
 				htp.br;
 				htp.br;			
 				pq_ui_codification.manage_codification;
@@ -195,7 +242,9 @@ AS
 		pq_ui_commun.aff_header;
 				htp.br;	
 				pq_db_codification.del_codification(vcode,vnature);
-				htp.print('La codification qui avait le code '|| vcode || ' et qui était du type '|| vnature || ' a été supprimée avec succès.');
+				htp.print('<div class="success"> ');
+					htp.print('La codification qui avait le code '|| vcode || ' et qui était du type '|| vnature || ' a été supprimée avec succès.');
+				htp.print('</div>');				
 				htp.br;
 				htp.br;			
 				pq_ui_codification.manage_codification;
@@ -245,13 +294,15 @@ AS
 		END IF;
 		pq_ui_commun.aff_header;
 				htp.br;
-				htp.print('Création d''une nouvelle codification');
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Création d''une nouvelle codification');
+				htp.print('</div>');				
 				htp.br;
 				htp.br;
 				htp.print('Les champs marqués d''une étoile sont obligatoires.');
 				htp.br;
 				htp.br;
-				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_codification.exec_add_codification', 'GET', cattributes => 'onSubmit="return validerCodification(this,document)"');
+				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_codification.exec_add_codification', 'POST', cattributes => 'onSubmit="return validerCodification(this,document)"');
 				htp.tableOpen;
 					htp.tableheader('');
 					htp.tableheader('');
@@ -309,10 +360,12 @@ AS
 		END IF;
 		pq_ui_commun.aff_header;
 				htp.br;
-				htp.print('Mise à jour d''une codification');
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Mise à jour d''une codification');
+				htp.print('</div>');					
 				htp.br;
 				htp.br;
-				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_codification.exec_upd_codification', 'GET', cattributes => 'onSubmit="return validerCodification(this,document)"');
+				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_codification.exec_upd_codification', 'POST', cattributes => 'onSubmit="return validerCodification(this,document)"');
 				htp.formhidden ('vcode',vcode);
 				htp.formhidden ('vnature',vnature);
 				htp.tableOpen;
