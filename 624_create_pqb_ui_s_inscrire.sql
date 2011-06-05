@@ -9,9 +9,9 @@
 --      Auteur : Gonzalves / Invernizzi / Joly / Leviste
 --      Date de dernière modification : 29/05/2011
 -- -----------------------------------------------------------------------------
-create or replace
-PACKAGE BODY pq_ui_s_inscrire
-AS 
+
+CREATE OR REPLACE PACKAGE BODY pq_ui_s_inscrire
+IS 
 
 	PROCEDURE manage_inscriptions(vnumEntrainement IN NUMBER)
 	AS
@@ -54,8 +54,10 @@ AS
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
-		htp.br;				
-		htp.print('Liste des joueurs inscris pour l''entrainement n°' || vnumEntrainement);
+		htp.br;
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Liste des joueurs inscris pour l''entrainement n°' || vnumEntrainement);
+		htp.print('</div>');			
 		htp.br;	
 		htp.br;	
 			htp.print(htf.anchor('pq_ui_s_inscrire.form_add_inscription?vnumEntrainement=' || vnumEntrainement,'Inscrire un joueur'));
@@ -95,7 +97,9 @@ AS
         pq_ui_commun.aff_header;
 		pq_db_s_inscrire.del_inscription(vnumEntrainement,vnumPersonne);
 		htp.br;
-		htp.print('Le joueur n° '|| vnumPersonne || ' a été désinscrit de l''entrainement n°' || vnumEntrainement || ' avec succès.');
+		htp.print('<div class="success"> ');
+				htp.print('Le joueur n° '|| vnumPersonne || ' a été désinscrit de l''entrainement n°' || vnumEntrainement || ' avec succès.');
+		htp.print('</div>');		
 		htp.br;
 		htp.br;			
 		pq_ui_s_inscrire.dis_inscriptions(vnumEntrainement);
@@ -131,8 +135,10 @@ AS
 			RAISE PERMISSION_DENIED;
 		END IF;
         pq_ui_commun.aff_header;
-		htp.br;				
-		htp.print('Liste des joueurs disponibles pour l''entrainement n°' || vnumEntrainement);
+		htp.br;		
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Liste des joueurs disponibles pour l''entrainement n°' || vnumEntrainement);
+		htp.print('</div>');				
 		htp.br;	
 		htp.br;	
 		htp.tableOpen('',cattributes => 'class="tableau"');
@@ -165,7 +171,9 @@ AS
 		pq_ui_commun.aff_header;
 		pq_db_s_inscrire.add_inscription(vnumEntrainement,vnumPersonne);
 		htp.br;
-		htp.print('Le joueur n° '|| vnumPersonne || ' a été inscrit de l''entrainement n°' || vnumEntrainement || ' avec succès.');
+		htp.print('<div class="success"> ');
+			htp.print('Le joueur n° '|| vnumPersonne || ' a été inscrit de l''entrainement n°' || vnumEntrainement || ' avec succès.');
+		htp.print('</div>');		
 		htp.br;
 		htp.br;			
 		pq_ui_s_inscrire.dis_inscriptions(vnumEntrainement);
