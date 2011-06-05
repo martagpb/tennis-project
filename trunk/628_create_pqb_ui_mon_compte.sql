@@ -147,7 +147,7 @@ IS
 		
         pq_ui_commun.aff_header;
 		htp.br;				
-		PA_PERSONNE.updPersonne(vnumPersonne,lastname,firstname,login,password,mail,tel,adresse,cp,ville);	
+		--pq_ui_personne.updPersonne(vnumPersonne,lastname,firstname,login,password,mail,tel,adresse,cp,ville);	
 		htp.br;		
 		pq_ui_account.dis_account;
 		pq_ui_commun.aff_footer;
