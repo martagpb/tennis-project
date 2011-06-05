@@ -63,9 +63,9 @@ IS
 	-- Affiche le formulaire permettant la saisie d’une nouvelle personne
 	/*PROCEDURE form_add_personne;*/
 	
-	-- Affiche le formulaire de saisie permettant la modification d’une personne existante
-	/*PROCEDURE form_upd_personne(
-	  vnumPersonne IN NUMBER);*/
-		
+	/*-- Affiche le formulaire de saisie permettant la modification d’une personne existante
+	PROCEDURE form_upd_personne(
+	  vnumPersonne IN NUMBER);
+	*/
 END pq_ui_personne;
 /
