@@ -27,8 +27,10 @@ IS
 			F.NUM_FACTURE;
 			
 	BEGIN
-		htp.br;			
-		htp.print('Gestion des factures' );
+		htp.br;		
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Gestion des factures' );
+		htp.print('</div>');		
 		htp.br;	
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_facture.form_add_facture','Ajouter une facture'));
@@ -161,8 +163,9 @@ IS
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
-			
-			htp.print('Ajout de facture');
+			htp.print('<div class="titre_niveau_1">');
+				htp.print('Ajout de facture');
+			htp.print('</div>');				
 			htp.br;
 			htp.br;
 			htp.print('Les champs marqués d''une étoile sont obligatoires.');
@@ -239,7 +242,9 @@ IS
 			
 			htp.br;
 			pq_db_facture.add_facture(vdate,vmontant,vdatePaiement, vnumPersonne);
-			htp.print('La facture a été ajoutée avec succès.');
+			htp.print('<div class="success"> ');
+				htp.print('La facture a été ajoutée avec succès.');
+			htp.print('</div>');				
 			htp.br;
 			htp.br;			
 			liste_factures;
