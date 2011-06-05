@@ -1,20 +1,19 @@
 -- -----------------------------------------------------------------------------
---         Création de la structure de la base de données
+--                Installation complète du projet
 --                      Oracle Version 10g
 --                        (29/05/2011)
 -- -----------------------------------------------------------------------------
 --      Nom de la base : Tennis
 --      Projet : Tennis_V1.24
 --      Auteur : Gonzalves / Invernizzi / Joly / Leviste
---      Date de dernière modification : 29/05/2011
+--      Date de dernière modification : 04/06/2011
 -- -----------------------------------------------------------------------------
 
 connect tennis/tennis
 set define off
-start 200_create_table.sql
-start 205_create_table_partitionnement.sql
-start 215_create_table_iot.sql
-start 210_create_pk.sql
-start 220_create_fk.sql
-start 240_create_sequence.sql
-start 250_create_trigger.sql
+--start instal_compte.sql (Commentaire à supprimer dès que la suppression des "TABLESPSACES" fonctionnent correctement).
+start drop_structure.sql
+start create_structure.sql
+start create_index.sql
+start insert_data.sql
+start create_tennis_pq_plsql.sql
