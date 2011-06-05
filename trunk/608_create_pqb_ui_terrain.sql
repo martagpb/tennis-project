@@ -11,7 +11,7 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_terrain
-AS
+IS 
 
 	--Permet d'afficher tous les terrains et les actions possibles de gestion avec le menu
 	PROCEDURE manage_terrains_with_menu
@@ -33,7 +33,7 @@ AS
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des terrains');
 	END manage_terrains_with_menu;	
 				
-	--Permet d'afficher tous les terrains et les actions possibles de gestion (sans le menu)
+--Permet d'afficher tous les terrains et les actions possibles de gestion (sans le menu)
 	PROCEDURE manage_terrains
 	IS		
 		-- On stocke dans un curseur la liste de tous les terrains existants
@@ -47,6 +47,10 @@ AS
 			TERRAIN TER
 		ORDER BY 
 			1;
+			
+		terrainUtilisePourEntrainement NUMBER(5):= 0;  
+		terrainUtilisePourReservation  NUMBER(5):= 0; 
+		
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -55,14 +59,15 @@ AS
 			RAISE PERMISSION_DENIED;
 		END IF;
 		htp.br;	
-		htp.print('Gestion des terrains' || ' (' || htf.anchor('pq_ui_terrain.manage_terrains_with_menu','Actualiser')|| ')' );
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Gestion des terrains');
+		htp.print('</div>');			
 		htp.br;	
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_terrain.form_add_terrain','Ajouter un terrain'));
 		htp.br;	
-		htp.br;		
-		htp.formOpen('',cattributes => 'class="tableau"');	
-			htp.tableOpen;
+		htp.br;			
+		htp.tableOpen('',cattributes => 'class="tableau"');
 			htp.tableheader('N° du terrain');
 			htp.tableheader('Libellé surface');
 			htp.tableheader('Actif');
@@ -74,14 +79,37 @@ AS
 				htp.tabledata(currentTerrain.NUM_TERRAIN);
 				--On récupère le libellé du terrain à partir du code et de la nature
 				htp.tabledata(pq_db_codification.get_libelle(currentTerrain.CODE_SURFACE,currentTerrain.NATURE_SURFACE));
-				htp.tabledata(pq_ui_param_commun.dis_number_to_yes_or_not(currentTerrain.ACTIF));							
+				htp.tabledata(pq_ui_param_commun.dis_number_to_yes_or_not(currentTerrain.ACTIF));					
 				htp.tabledata(htf.anchor('pq_ui_terrain.dis_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Informations'));
-				htp.tabledata(htf.anchor('pq_ui_terrain.form_upd_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Mise à jour'));
-				htp.tabledata(htf.anchor('pq_ui_terrain.exec_del_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+								
+				--Permet de déterminer si un terrain est utilisé pour un entrainement				
+				SELECT 
+					COUNT(*) INTO terrainUtilisePourEntrainement
+				FROM 
+					AVOIR_LIEU 
+				WHERE 
+					NUM_TERRAIN = currentTerrain.NUM_TERRAIN;
+					
+				--Permet de déterminer si un terrain est utilisé pour une réservation (autre qu'un entrainement)		
+				SELECT 
+					COUNT(*) INTO terrainUtilisePourReservation
+				FROM 
+					OCCUPER 
+				WHERE 
+					NUM_TERRAIN = currentTerrain.NUM_TERRAIN;	
+					
+				--On autorise la mise à jour et la suppression d'un terrain seulement dans le cas où il n'est pas utilisé
+				if (terrainUtilisePourEntrainement = 0 and terrainUtilisePourReservation = 0) then
+					htp.tabledata(htf.anchor('pq_ui_terrain.form_upd_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Mise à jour'));
+					htp.tabledata(htf.anchor('pq_ui_terrain.exec_del_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				else
+					htp.tabledata('Non autorisée');
+					htp.tabledata('Non autorisée');
+				end if;						
+				
 				htp.tableRowClose;
 			end loop;	
-			htp.tableClose;
-		htp.formClose;			
+		htp.tableClose;			
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
@@ -105,7 +133,9 @@ AS
 		END IF;
 		pq_ui_commun.aff_header;
 			htp.br;	
-			htp.print('Affichage des informations d''un terrain' || ' (' || htf.anchor('pq_ui_terrain.dis_terrain?vnumTerrain='||vnumTerrain||'&'||'vcodeSurface='||vcodeSurface||'&'||'vnatureSurface='||vnatureSurface||'&'||'vactif='||vactif,'Actualiser')|| ')' );
+			htp.print('<div class="titre_niveau_1">');
+				htp.print('Affichage des informations d''un terrain');
+			htp.print('</div>');				
 			htp.br;
 			htp.br;					
 			htp.tableopen;		
@@ -148,7 +178,9 @@ AS
 		pq_ui_commun.aff_header;
 			htp.br;
 			pq_db_terrain.add_terrain(vcodeSurface,vnatureSurface,vactif);
-			htp.print('Le terrain a été ajouté avec succès.');
+			htp.print('<div class="success"> ');
+				htp.print('Le terrain a été ajouté avec succès.');
+			htp.print('</div>');	
 			htp.br;
 			htp.br;			
 			pq_ui_terrain.manage_terrains;
@@ -176,7 +208,9 @@ AS
 		END IF;
 		pq_ui_commun.aff_header;				
 			pq_db_terrain.upd_terrain(vnumTerrain,vcodeSurface,vnatureSurface,vactif);
-			htp.print('Le terrain n° '|| vnumTerrain || ' a été mis à jour avec succès.');
+			htp.print('<div class="success"> ');
+				htp.print('Le terrain n° '|| vnumTerrain || ' a été mis à jour avec succès.');
+			htp.print('</div>');	
 			htp.br;
 			htp.br;			
 			pq_ui_terrain.manage_terrains;
@@ -201,7 +235,9 @@ AS
 		END IF;
 		pq_ui_commun.aff_header;		
 			pq_db_terrain.del_terrain(vnumTerrain);
-			htp.print('Le terrain n° '|| vnumTerrain || ' a été supprimé avec succès.');
+			htp.print('<div class="success"> ');
+				htp.print('Le terrain n° '|| vnumTerrain || ' a été supprimé avec succès.');
+			htp.print('</div>');
 			htp.br;
 			htp.br;			
 			pq_ui_terrain.manage_terrains;
@@ -267,7 +303,9 @@ AS
 				htp.formhidden ('vnatureSurface','DefaultValue', cattributes => 'id="idVnatureSurface"');
 				htp.tableOpen;
 				htp.br;
-				htp.print('Création d''un nouveau terrain' || ' (' || htf.anchor('pq_ui_terrain.form_add_terrain','Actualiser')|| ')' );
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Création d''un nouveau terrain');
+				htp.print('</div>');				
 				htp.br;
 				htp.br;
 				htp.print('Les champs marqués d''une étoile sont obligatoires.');
@@ -278,9 +316,10 @@ AS
 					--Forme une liste déroulante avec tous les libellés de surface à partir de la table CODIFICATION									
 					htp.print('<td>');
 						htp.print('<select id="vlibelleSurface">');						
-						FOR currentLibelle in listLibelleCodification loop
-							--On transmet le code, la nature et le libellé
-							htp.print('<option value="'||currentLibelle.CODE||'*'||currentLibelle.NATURE||'*'||currentLibelle.LIBELLE||'">'||currentLibelle.LIBELLE||'</option>');
+						FOR currentLibelle in listLibelleCodification loop							
+							--L'utilisateur peut sélectionner le libellé dans la liste déroulante
+							--Cependat, on transmet le code et la nature après validation
+							htp.print('<option value="'||currentLibelle.CODE||'*'||currentLibelle.NATURE||'">'||currentLibelle.LIBELLE||'</option>');
 						END LOOP; 																				
 						htp.print('</select>');										
 					htp.print('</td>');						
