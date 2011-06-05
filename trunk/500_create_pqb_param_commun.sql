@@ -11,7 +11,7 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_param_commun
-AS
+IS
 		
 	-- Fonction permettant de retourner le chemin complet du répertoire CSS
 	FUNCTION get_rep_css
@@ -55,6 +55,6 @@ AS
 		END CASE;
 		RETURN response;
 	END;
-	
+		
 END pq_ui_param_commun;
 /
