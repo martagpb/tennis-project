@@ -1,5 +1,5 @@
  -- -----------------------------------------------------------------------------
---           		Désinstallation du projet Tennis
+--            Suppression de tous les packages du projet Tennis
 --                      Oracle Version 10g
 --                        (26/5/2011)
 -- -----------------------------------------------------------------------------
@@ -9,11 +9,7 @@
 --      Date de dernière modification : 26/05/2011
 -- -----------------------------------------------------------------------------
 
-
-
-connect nomprojet/nomprojet
+connect tennis/tennis
 set define off
-Start 280_drop_sequence.sql
-Start 290_drop_table_cascade.sql
-Start 291_purge_reyclebin.sql
--- drop package
+start 690_drop_pq_ui;
+start 790_drop_pq_db;

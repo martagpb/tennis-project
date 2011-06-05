@@ -1,6 +1,5 @@
 @echo ------------------------------- 
-@echo Désinstallation du projet Tennis
-@echo Projet realise par J.Gonzalves, D.Invernizzi, R.Joly, M.Leviste
+@echo Suppression de tous les packages du projet
 @echo ------------------------------- 
 
 set SQL_PATH=./
