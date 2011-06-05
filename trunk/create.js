@@ -37,7 +37,7 @@ function valider(form,document){
 		|| 	login== null
 		||	password== ""
 		|| 	password== null) {			
-		alert("Veuillez remplir tous les champs obligatoires");
+		alert("Veuillez remplir tous les champs obligatoires.");
 		return false;
 	}
 	else if(!verifiermail(mail)){
@@ -53,6 +53,57 @@ function valider(form,document){
 
 function verifiermail(mail) {
    return (mail.indexOf("@")>=0)&&(mail.indexOf(".")>=0);
+}
+
+/*Fonction permettant de valider la connexion d'une personne avec un compte existant */
+function validerConnexionCompteExistant(form,document){
+  
+   login=form.vlogin.value;
+   password=form.vpassword.value;
+   formulaireValide = false;
+   
+	if(	
+		(login == ""
+		|| 	login == null)
+		&&
+		(password == ""
+		|| 	password == null)) {			
+		alert("Veuillez remplir votre login ainsi que votre mot de passe.");		
+		document.getElementById("vloginError").innerHTML ="Le login est obligatoire.";
+		document.getElementById("vpasswordError").innerHTML ="Le mot de passe est obligatoire.";
+		return false;
+	}
+	else if(
+		(login != "" 
+		&& login != null)
+		&& 
+		(password == ""
+		|| 	password == null)){		
+		document.getElementById("vloginError").innerHTML ="";
+		document.getElementById("vpasswordError").innerHTML ="Le mot de passe est obligatoire.";
+		return false;
+	}else if(
+		(login == "" 
+		|| login == null)
+		&& 
+		(password != ""
+		&& password != null
+		&& password.length%8 != 0)){		
+		document.getElementById("vloginError").innerHTML ="Le login est obligatoire.";
+		document.getElementById("vpasswordError").innerHTML ="Le mot de passe doit avoir une taille multiple de 8.";
+		return false;
+	}else if(	
+		(login == ""
+		|| 	login == null)
+		&&
+		(password != ""
+		&& password != null
+		&& password.length%8 == 0)){				
+		document.getElementById("vloginError").innerHTML ="Le login est obligatoire.";
+		document.getElementById("vpasswordError").innerHTML ="";
+		return false;
+	}		
+   return true;
 }
 
 /*Fonction permettant de déterminer si un utilisateur confirmer son choix*/
@@ -74,7 +125,7 @@ function confirmerChoixLien(){
 /*Fonction permettant de valider la création d'un terrain*/
 function validerTerrain(form,document){
 
-	libelleSurface = form.vlibelleSurface.value; // On récupère : code, nature et libelle
+	libelleSurface = form.vlibelleSurface.value; // On récupère : code et nature
 	actif = form.vactif.value;
 	
 	if(  
@@ -87,7 +138,7 @@ function validerTerrain(form,document){
 		return false;
 	}else{		
 	
-		//On construit un tableau qui va contenir les 3 valeurs (code, nature et libelle)
+		//On construit un tableau qui va contenir les 2 valeurs (code et nature)
 		var codeNatureLibelleArray = new Array();
 		codeNatureLibelleArray = libelleSurface.split('*'); // On découpe la chaine
 		
@@ -95,13 +146,10 @@ function validerTerrain(form,document){
 		vCode = codeNatureLibelleArray[0];
 		//On extrait la nature
 		vNature = codeNatureLibelleArray[1];
-		//On peut extraire le libelle si besoin
-		//vLibelle = codeNatureLibelleArray[2];
 		
 		//On indique les bonnes valeurs dans les balises hidden qui correspondent à la nature et au code de la surface sélectionnée			
 		document.getElementById("idVcodeSurface").value = vCode;		
 		document.getElementById("idVnatureSurface").value = vNature;	
-		//document.getElementById("vlibelleSurface").value = vLibelle;
 	}
 		
 	return true;
@@ -188,7 +236,23 @@ function validerEntrainement(form,document){
 			else{
 				var separateur = "/";		
 				document.getElementById("idVdateDebut").value = dateDebutDay+separateur+dateDebutMonth+separateur+dateDebutYear;
-				document.getElementById("idVdateFin").value = dateFinDay+separateur+dateFinMonth+separateur+dateFinYear;					
+				document.getElementById("idVdateFin").value = dateFinDay+separateur+dateFinMonth+separateur+dateFinYear;		
+
+				//Il ne reste plus qu'à récupérer les valeurs du niveau (code et nature)
+				codeEtNatureNiveau = form.idVcodeEtNatureNiveau.value; // On récupère le code et la nature du niveau
+				
+				//Enfin, on construit un tableau qui va contenir ces 2 valeurs (code et nature du niveau)
+				var codeNatureArray = new Array();
+				codeNatureArray = codeEtNatureNiveau.split('*'); // On découpe la chaine
+						
+				//On extrait le code
+				vCode = codeNatureArray[0];
+				//On extrait la nature
+				vNature = codeNatureArray[1];
+												
+				//On indique les bonnes valeurs dans les balises hidden qui correspondent à la nature et au code du niveau sélectionné	
+				document.getElementById("idVcodeNiveau").value = vCode;		
+				document.getElementById("idVnatureNiveau").value = vNature;				
 			}
 		}		
 	}
@@ -210,6 +274,22 @@ function validerUpdEntrainement(form,document){
 		alert("Veuillez indiquer un libellé pour l'entrainement.");
 		document.getElementById("vlibEntrainementError").innerHTML ="Le libellé pour l'entrainement est obligatoire.";	
 		return false;
+	}else{
+		//Si le formulaire est correct alors on récupère les valeurs du niveau sélectionné (code et nature)
+		codeEtNatureNiveau = form.idVcodeEtNatureNiveau.value; // On récupère le code et la nature du niveau
+		
+		//Enfin, on construit un tableau qui va contenir ces 2 valeurs (code et nature du niveau)
+		var codeNatureArray = new Array();
+		codeNatureArray = codeEtNatureNiveau.split('*'); // On découpe la chaine
+				
+		//On extrait le code
+		vCode = codeNatureArray[0];
+		//On extrait la nature
+		vNature = codeNatureArray[1];
+										
+		//On indique les bonnes valeurs dans les balises hidden qui correspondent à la nature et au code du niveau sélectionné	
+		document.getElementById("idVcodeNiveau").value = vCode;		
+		document.getElementById("idVnatureNiveau").value = vNature;		
 	}
 	return true;
 }
