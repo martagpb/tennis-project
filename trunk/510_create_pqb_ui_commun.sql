@@ -1,6 +1,16 @@
-create or replace
-PACKAGE BODY pq_ui_commun
-AS
+-- -----------------------------------------------------------------------------
+--      Création du corps du package pq_ui_commun de la base de données pour
+--                      Oracle Version 10g
+--                        (10/5/2011)
+-- -----------------------------------------------------------------------------
+--      Nom de la base : Tennis
+--      Projet : Tennis
+--      Auteur : Gonzalves / Invernizzi / Joly / Leviste
+--      Date de dernière modification : 18/5/2011
+-- -----------------------------------------------------------------------------
+
+CREATE OR REPLACE PACKAGE BODY pq_ui_commun
+IS
 	---Procédure permettant d'afficher les détails d'une erreur d'oracle
 	PROCEDURE dis_error(
 	  vnumero in varchar2
@@ -56,90 +66,93 @@ AS
 		pq_ui_commun.aff_footer;
 	END;
 	
+	PROCEDURE aff_accueil
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+	BEGIN
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+			pq_ui_commun.aff_header;
+		htp.print('Accueil');
+		pq_ui_commun.aff_footer;
+	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			 pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+	END;
 
-
-PROCEDURE aff_accueil
-IS
-	perm BOOLEAN;
-	PERMISSION_DENIED EXCEPTION;
-BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
-	IF perm=false THEN
-		RAISE PERMISSION_DENIED;
-	END IF;
-        pq_ui_commun.aff_header;
-	htp.print('Accueil');
-	pq_ui_commun.aff_footer;
-EXCEPTION
-	WHEN PERMISSION_DENIED THEN
-		 pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
-END;
-
-PROCEDURE isAuthorized (niveauP IN NUMBER, permission OUT BOOLEAN)
-IS
-        niveauPersonne PERSONNE.NIVEAU_DROIT%TYPE;
-        unlog EXCEPTION;
-BEGIN
-	getNiveau(niveau => niveauPersonne);
-        IF niveauPersonne=-1 THEN
-          RAISE unlog;
-        END IF;
-	IF(niveauPersonne<niveauP) THEN
+	PROCEDURE isAuthorized (niveauP IN NUMBER, permission OUT BOOLEAN)
+	IS
+			niveauPersonne PERSONNE.NIVEAU_DROIT%TYPE;
+			unlog EXCEPTION;
+	BEGIN
+		getNiveau(niveau => niveauPersonne);
+			IF niveauPersonne=-1 THEN
+			  RAISE unlog;
+			END IF;
+		IF(niveauPersonne<niveauP) THEN
+				permission:=false;
+		ELSE
+				permission:=true;
+		END IF;
+	EXCEPTION
+		WHEN unlog THEN
 			permission:=false;
-	ELSE
-			permission:=true;
-	END IF;
-EXCEPTION
-	WHEN unlog THEN
-		permission:=false;
-        pq_ui_login.LOGIN;
+			pq_ui_login.LOGIN;
 
-END;
+	END;
 
-PROCEDURE getNiveau(niveau OUT PERSONNE.NIVEAU_DROIT%TYPE)
-IS
-    target_cookie OWA_COOKIE.cookie;
-BEGIN
-	target_cookie := OWA_COOKIE.get('numpersonne');
-	SELECT
-		NIVEAU_DROIT INTO niveau
-	FROM
-		PERSONNE
-	WHERE
-		NUM_PERSONNE=TO_NUMBER(target_cookie.vals(1));
-EXCEPTION
-	WHEN others THEN
-       niveau:=-1;
-END;
-                
-
-PROCEDURE aff_header
+	PROCEDURE getNiveau(niveau OUT PERSONNE.NIVEAU_DROIT%TYPE)
+	IS
+		target_cookie OWA_COOKIE.cookie;
+	BEGIN
+		target_cookie := OWA_COOKIE.get('numpersonne');
+		SELECT
+			NIVEAU_DROIT INTO niveau
+		FROM
+			PERSONNE
+		WHERE
+			NUM_PERSONNE=TO_NUMBER(target_cookie.vals(1));
+	EXCEPTION
+		WHEN others THEN
+		   niveau:=-1;
+	END;
+               
+	--Procédure permettant d'afficher le header ainsi que le menu tout en prenant en compte le niveau de la personne qui se connecte
+	PROCEDURE aff_header
+	IS
+		niveauP NUMBER;
+		UNLOG EXCEPTION;
+	BEGIN
+		getNiveau(niveau => niveauP);
+		IF niveauP=-1 THEN
+		  RAISE UNLOG;
+		END IF;		
+		pq_ui_commun.header;
+		pq_ui_commun.aff_menu(niveauP);
+		htp.div(cattributes => 'id="corps"');
+        EXCEPTION
+              WHEN UNLOG THEN
+                  pq_ui_login.LOGIN;
+	END;
+	
+	--Procédure permettant simplement d'afficher le header (css, javascript et image).
+	PROCEDURE header
 	IS
 		rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
 		rep_js VARCHAR2(255) := pq_ui_param_commun.get_rep_js;
 		rep_img VARCHAR2(255) := pq_ui_param_commun.get_rep_img;
-                niveauP NUMBER;
-                UNLOG EXCEPTION;
-	BEGIN
-                getNiveau(niveau => niveauP);
-                IF niveauP=-1 THEN
-                  RAISE UNLOG;
-                END IF;
+	BEGIN		
 		htp.htmlOpen;
 			htp.headOpen;
 				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />');
 				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>');
 			htp.headClose;
 			htp.bodyOpen;
-			--logo
-			htp.print('<img title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.jpg">');
-			pq_ui_commun.aff_menu(niveauP);
-			htp.div(cattributes => 'id="corps"');
-        EXCEPTION
-              WHEN UNLOG THEN
-                  pq_ui_login.LOGIN;
+			htp.print('<img title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.jpg">');	
 	END;
-
 
 	PROCEDURE aff_menu(niveau IN NUMBER)
 	IS
