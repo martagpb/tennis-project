@@ -11,7 +11,7 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_personne
-AS
+IS
 	--Permet d'afficher toutes les personnes et les actions possibles de gestion avec le menu
 	PROCEDURE manage_personnes
 	IS
@@ -47,8 +47,10 @@ AS
 			PERSONNE PER
 		ORDER BY 
 			1;
-	BEGIN		
-		htp.print('Gestion des personnes' || ' (' || htf.anchor('pq_ui_personne.manage_personnes_with_menu','Actualiser')|| ')' );
+	BEGIN	
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Gestion des personnes');
+		htp.print('</div>');	
 		htp.br;	
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_personne.form_add_personne','Ajouter un personne'));
@@ -135,7 +137,9 @@ AS
 		FROM PERSONNE
 		WHERE NUM_PERSONNE=vnumpersonne;
 		pq_ui_commun.aff_header;
-			htp.print('Affichage des informations de la personne n°' || vnumpersonne);
+			htp.print('<div class="titre_niveau_1">');
+				htp.print('Affichage des informations de la personne n°' || vnumpersonne);
+			htp.print('</div>');			
 			htp.br;
 			htp.br;					
 			htp.tableopen('',cattributes => 'class="tableau"');	
@@ -185,7 +189,9 @@ AS
 			htp.br;
 			htp.br;
 			htp.br;
-			htp.print('Liste des réservations liées à cette personne :');
+			htp.print('<div class="titre_niveau_1">');
+				htp.print('Liste des réservations liées à cette personne :');
+			htp.print('</div>');			
 			htp.br;
 			htp.br;	
 			htp.tableOpen('',cattributes => 'class="tableau"');
@@ -205,7 +211,9 @@ AS
 			htp.br;
 			htp.br;
 			IF currentPersonne.STATUT_JOUEUR='A' THEN
-				htp.print('Liste des entrainements suivis par cette personne :');
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Liste des entrainements suivis par cette personne :');
+				htp.print('</div>');				
 			htp.br;
 			htp.br;	
 			htp.tableOpen('',cattributes => 'class="tableau"');
@@ -236,7 +244,9 @@ AS
 		pq_ui_commun.aff_header;
 			htp.br;
 			pq_db_personne.add_personne(vcodeSurface,vnatureSurface,vactif);
-			htp.print('Le personne a été ajouté avec succès.');
+			htp.print('<div class="success"> ');
+				htp.print('Le personne a été ajouté avec succès.');
+			htp.print('</div>');			
 			htp.br;
 			htp.br;			
 			pq_ui_personne.manage_personnes;
@@ -256,7 +266,9 @@ AS
 	BEGIN
 		pq_ui_commun.aff_header;				
 			pq_db_personne.upd_personne(vnumpersonne,vcodeSurface,vnatureSurface,vactif);
-			htp.print('Le personne n° '|| vnumpersonne || ' a été mis à jour avec succès.');
+			htp.print('<div class="success"> ');
+				htp.print('Le personne n° '|| vnumpersonne || ' a été mis à jour avec succès.');
+			htp.print('</div>');				
 			htp.br;
 			htp.br;			
 			pq_ui_personne.manage_personnes;
@@ -273,7 +285,9 @@ AS
 	BEGIN
 		pq_ui_commun.aff_header;		
 			pq_db_personne.del_personne(vnumpersonne);
-			htp.print('Le personne n° '|| vnumpersonne || ' a été supprimé avec succès.');
+			htp.print('<div class="success"> ');
+				htp.print('Le personne n° '|| vnumpersonne || ' a été supprimé avec succès.');
+			htp.print('</div>');				
 			htp.br;
 			htp.br;			
 			pq_ui_personne.manage_personnes;
