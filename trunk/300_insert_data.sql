@@ -61,64 +61,60 @@ VALUES('AUTTM','Surface','Tuiles modulables');
 
 --Début des codifications des niveaux pour les tables PERSONNE et ENTRAINEMENT
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('NC','Classement','Echelon de 4ème série. Capital de 0 point.');
+VALUES('1','NC','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('40','Classement','Echelon de 4ème série. Capital de 2 points.');
+VALUES('2','40','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('30/5','Classement','Echelon de 4ème série. Capital de 5 points.');
+VALUES('3','30/5','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('30/4','Classement','Echelon de 4ème série. Capital de 10 points.');
+VALUES('4','30/4','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('30/3','Classement','Echelon de 4ème série. Capital de 20 points.');
+VALUES('5','30/3','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('30/2','Classement','Echelon de 4ème série. Capital de 30 points.');
+VALUES('6','30/2','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('30/1','Classement','Echelon de 4ème série. Capital de 50 points.');
+VALUES('7','30/1','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('30','Classement','Echelon de 3ème série. Capital de 80 points.');
+VALUES('8','30','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('15/5','Classement','Echelon de 3ème série. Capital de 120 points.');
+VALUES('9','15/5','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('15/4','Classement','Echelon de 3ème série. Capital de 160 points.');
+VALUES('10','15/4','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('15/3','Classement','Echelon de 3ème série. Capital de 200 points.');
+VALUES('11','15/3','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('15/2','Classement','Echelon de 3ème série. Capital de 240 points.');
+VALUES('12','15/2','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('15/1','Classement','Echelon de 3ème série. Capital de 280 points.');
+VALUES('13','15/1','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('15','Classement','Echelon de 2ème série. Capital de 330 points.');
+VALUES('14','15','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('5/6','Classement','Echelon de 2ème série. Capital de 370 points.');
+VALUES('15','5/6','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('4/6','Classement','Echelon de 2ème série. Capital de 410 points.');
+VALUES('16','4/6','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('3/6','Classement','Echelon de 2ème série. Capital de 450 points.');
+VALUES('17','3/6','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('2/6','Classement','Echelon de 2ème série. Capital de 490 points.');
+VALUES('18','2/6','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('1/6','Classement','Echelon de 2ème série. Capital de 530 points.');
+VALUES('19','1/6','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('0','Classement','Echelon de 2ème série. Capital de 570 points.');
+VALUES('20','0','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('-2/6','Classement','Echelon de 2ème série -. Capital de 620 points.');
+VALUES('21','-2/6','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('-4/6','Classement','Echelon de 2ème série -. Capital de 660 points.');
+VALUES('22','-4/6','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('-15','Classement','Echelon de 2ème série -. Capital de 700 points.');
+VALUES('22','-15','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('-30','Classement','Echelon de 2ème série -. Capital de 740 points.');
+VALUES('23','-30','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('Promo','Classement','Echelon promotion. Capital de 780 points.');
+VALUES('24','Promotion','Classement');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('1erSe','Classement','Echelon de 1ère série. Capital de 840 points.');
+VALUES('25','1ère Série','Classement');
 --Fin des codifications des niveaux pour les tables PERSONNE et ENTRAINEMENT
 
 --Début des codifications des statuts pour la table PERSONNE
-INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('U','ROLE','Utilisateur');
-INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
-VALUES('J','ROLE','Joueur');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
 VALUES('V','ROLE','Visiteur');
 INSERT INTO CODIFICATION(CODE,NATURE,LIBELLE)
@@ -222,129 +218,129 @@ BEGIN
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,
 	PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('AG','ROLE','30/4','Classement','Longoria','Josianne','Jlongo',crypted_password,'0688455389','Josianne.Longoria@gmail.fr','20 grande rue','25000','Besançon',2);
+	VALUES('AG','ROLE','4','30/4','Longoria','Josianne','Jlongo',crypted_password,'0688455389','Josianne.Longoria@gmail.fr','20 grande rue','25000','Besançon',2);
 	--Personne n°2
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','15/4','Classement','Ayew','André','AAyew',crypted_password,'0688952389','André.Ayew@gmail.fr','21 rue des muriers','25000','Besançon',2);
+	VALUES('EMP','ROLE','10','15/4','Ayew','André','AAyew',crypted_password,'0688952389','André.Ayew@gmail.fr','21 rue des muriers','25000','Besançon',2);
 	--Personne n°3
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','30/1','Classement','Boudebouz','Ryad','Rboud',crypted_password,'0688642389','Ryad.Boduebouz@gmail.fr','1 rue des sommeliers','25000','Besançon',2);
+	VALUES('EMP','ROLE','7','30/1','Boudebouz','Ryad','Rboud',crypted_password,'0688642389','Ryad.Boduebouz@gmail.fr','1 rue des sommeliers','25000','Besançon',2);
 
 	--Personnes qui sont uniquement employés
 	--Personne n°4
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','NC','Classement','Gameiro','Kévin','Kgame',crypted_password,'0685842389','Kevin.Gameiro@gmail.fr','5 rue de la route de lorient','25000','Besançon',2);
+	VALUES('EMP','ROLE','1','NC','Gameiro','Kévin','Kgame',crypted_password,'0685842389','Kevin.Gameiro@gmail.fr','5 rue de la route de lorient','25000','Besançon',2);
 	--Personne n°5
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','NC','Classement','Drogba','Didier','Ddrog',crypted_password,'0658842389','Didier.Drogba@gmail.fr','8 avenue de chelsea','25000','Besançon',2);
+	VALUES('EMP','ROLE','1','NC','Drogba','Didier','Ddrog',crypted_password,'0658842389','Didier.Drogba@gmail.fr','8 avenue de chelsea','25000','Besançon',2);
 	--Personne n°6
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','NC','Classement','Kalou','Salomon','SKale',crypted_password,'0658842389','Salomon.kalou@gmail.fr','5 avenue de la laurencie','25000','Besançon',2);
+	VALUES('EMP','ROLE','1','NC','Kalou','Salomon','SKale',crypted_password,'0658842389','Salomon.kalou@gmail.fr','5 avenue de la laurencie','25000','Besançon',2);
 	--Personne n°7
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('EMP','ROLE','NC','Classement','Pedretti','Benoit','Bpedr',crypted_password,'0696842389','Benoi.pedretti@gmail.fr','45 rue de l''abbé deschamp','25000','Besançon',2);
+	VALUES('EMP','ROLE','1','NC','Pedretti','Benoit','Bpedr',crypted_password,'0696842389','Benoi.pedretti@gmail.fr','45 rue de l''abbé deschamp','25000','Besançon',2);
 
 	--Entraineurs
 	--Personne n°8
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','15/3','Classement','Martin','Marvin','MMart',crypted_password,'0688452389','Marvin.Martin@gmail.fr','52 rue des acacias','25000','Besançon',2);
+	VALUES('ENT','ROLE','11','15/3','Martin','Marvin','MMart',crypted_password,'0688452389','Marvin.Martin@gmail.fr','52 rue des acacias','25000','Besançon',2);
 	--Personne n°9
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','15/1','Classement','Perquis','Damien','Dperq',crypted_password,'0658452389','Damien.Perquis@gmail.fr','21 rue du muguet','25000','Besançon',2);
+	VALUES('ENT','ROLE','13','15/1','Perquis','Damien','Dperq',crypted_password,'0658452389','Damien.Perquis@gmail.fr','21 rue du muguet','25000','Besançon',2);
 	--Personne n°10
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','4/6','Classement','Dalmat','Stéphane','Sdalm',crypted_password,'0658845389','Stéphane.Dalmat@gmail.fr','56 rue de renne','25000','Besançon',2);
+	VALUES('ENT','ROLE','16','4/6','Dalmat','Stéphane','Sdalm',crypted_password,'0658845389','Stéphane.Dalmat@gmail.fr','56 rue de renne','25000','Besançon',2);
 	--Personne n°11
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','1erSe','Classement','Zidane','Zinedine','Zizou',crypted_password,'0600001230','Zinedine.Zidane@gmail.fr','98 rue des dieux','25000','Besançon',2);
+	VALUES('ENT','ROLE','25','1ère Série','Zidane','Zinedine','Zizou',crypted_password,'0600001230','Zinedine.Zidane@gmail.fr','98 rue des dieux','25000','Besançon',2);
 	--Personne n°12
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','1/6','Classement','Blanc','Laurent','Lblan',crypted_password,'0684563695','Laurent.Blanc@gmail.fr','2 rue de la croatie','25000','Besançon',2);
+	VALUES('ENT','ROLE','19','1/6','Blanc','Laurent','Lblan',crypted_password,'0684563695','Laurent.Blanc@gmail.fr','2 rue de la croatie','25000','Besançon',2);
 	--Personne n°13
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,
 	NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,
 	CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-	VALUES('ENT','ROLE','15','Classement','Petit','Emmanuel','Epeti',crypted_password,'0684555695','Emmanuel.Petit@gmail.fr','3 rue du brésil','25000','Besançon',2);
+	VALUES('ENT','ROLE','14','15','Petit','Emmanuel','Epeti',crypted_password,'0684555695','Emmanuel.Petit@gmail.fr','3 rue du brésil','25000','Besançon',2);
 
 	--Joueurs adhérents
 	--Personne n°14
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','30/4','Classement','Mouloud','Jean-guy','Jmoul',crypted_password,'0688565389','Jean-guy.Mouloud@gmail.fr','6 rue des glacis','25000','Besançon','A',1);
+	VALUES('AD','ROLE','4','30/4','Mouloud','Jean-guy','Jmoul',crypted_password,'0688565389','Jean-guy.Mouloud@gmail.fr','6 rue des glacis','25000','Besançon','A',1);
 	--Personne n°15
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','15/4','Classement','Richert','Teddy','Trich',crypted_password,'0658565389','Teddy.Richert@gmail.fr','8 avenue des gardiens','25000','Besançon','A',1);
+	VALUES('AD','ROLE','10','15/4','Richert','Teddy','Trich',crypted_password,'0658565389','Teddy.Richert@gmail.fr','8 avenue des gardiens','25000','Besançon','A',1);
 	--Personne n°16
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','15/3','Classement','Duplus','Stéphane','Dstep',crypted_password,'0658595389','Stephane.duplus@gmail.fr','58 rue de la défense','25000','Besançon','A',1);
+	VALUES('AD','ROLE','11','15/3','Duplus','Stéphane','Dstep',crypted_password,'0658595389','Stephane.duplus@gmail.fr','58 rue de la défense','25000','Besançon','A',1);
 	--Personne n°17
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','15/2','Classement','Anin','Kévin','Akevi',crypted_password,'0658595579','Kevin.Anin@gmail.fr','4 rue rouge','25000','Besançon','A',1);
+	VALUES('AD','ROLE','12','15/2','Anin','Kévin','Akevi',crypted_password,'0658595579','Kevin.Anin@gmail.fr','4 rue rouge','25000','Besançon','A',1);
 	--Personne n°18
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','15/1','Classement','Maïga','Modibo','MMaig',crypted_password,'0658545579','Mobido.Maïga@gmail.fr','56 grande rue','25000','Besançon','A',1);
+	VALUES('AD','ROLE','13','15/1','Maïga','Modibo','MMaig',crypted_password,'0658545579','Mobido.Maïga@gmail.fr','56 grande rue','25000','Besançon','A',1);
 
 	--Joueurs visiteurs
 	--Personne n°19
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','NC','Classement','Loeb','Sebastien','Sloeb',crypted_password,'0674545579','Sebastien.Loeb@gmail.fr','3 rue armand peugeot','25000','Besançon','V',1);
+	VALUES('V','ROLE','1','NC','Loeb','Sebastien','Sloeb',crypted_password,'0674545579','Sebastien.Loeb@gmail.fr','3 rue armand peugeot','25000','Besançon','V',1);
 	--Personne n°20
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','30/5','Classement','Vettel','Sebastien','Svett',crypted_password,'0658545549','Sebastien.Vettel@gmail.fr','1 rue des champions','25000','Besançon','V',1);
+	VALUES('V','ROLE','3','30/5','Vettel','Sebastien','Svett',crypted_password,'0658545549','Sebastien.Vettel@gmail.fr','1 rue des champions','25000','Besançon','V',1);
 	--Personne n°21
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','30','Classement','Hamilton','Lewis','Lhami',crypted_password,'0658544589','Lewis.Hamilton@gmail.fr','25 grande rue','25000','Besançon','V',1);
+	VALUES('V','ROLE','8','30','Hamilton','Lewis','Lhami',crypted_password,'0658544589','Lewis.Hamilton@gmail.fr','25 grande rue','25000','Besançon','V',1);
 	--Personne n°22
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('J','ROLE','15/5','Classement','Webber','Mark','Mwebb',crypted_password,'0658545749','Mark.Webber@gmail.fr','2 grande rue','25000','Besançon','V',1);
+	VALUES('V','ROLE','9','15/5','Webber','Mark','Mwebb',crypted_password,'0658545749','Mark.Webber@gmail.fr','2 grande rue','25000','Besançon','V',1);
 	
 	--Administrateurs
 	--Personne n°23
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('ADMIN','ROLE','NC','Classement','Gonzalves','Julien','jgonzalv',crypted_password,'0670917957','julien.gonzalves@gmail.fr','1 rue des fleurs','71700','Tournus','A',3);
+	VALUES('ADMIN','ROLE','1','NC','Gonzalves','Julien','jgonzalv',crypted_password,'0670917957','julien.gonzalves@gmail.fr','1 rue des fleurs','71700','Tournus','A',3);
 	--Personne n°24
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('ADMIN','ROLE','NC','Classement','Leviste','Matthieu','mleviste',crypted_password,'0670917958','matthieu.leviste@gmail.fr','2 rue des fleurs','25000','Besançon','A',3);
+	VALUES('ADMIN','ROLE','1','NC','Leviste','Matthieu','mleviste',crypted_password,'0670917958','matthieu.leviste@gmail.fr','2 rue des fleurs','25000','Besançon','A',3);
 	--Personne n°25
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('ADMIN','ROLE','NC','Classement','Joly','Renaud','rjoly',crypted_password,'0670917959','renaud.joly@gmail.fr','3 rue des fleurs','21000','Dijon','A',3);
+	VALUES('ADMIN','ROLE','1','NC','Joly','Renaud','rjoly',crypted_password,'0670917959','renaud.joly@gmail.fr','3 rue des fleurs','21000','Dijon','A',3);
 	--Personne n°26
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
-	VALUES('ADMIN','ROLE','NC','Classement','Invernizzi','David','dinverni',crypted_password,'0670917960','david.invernizzi@gmail.fr','4 rue des fleurs','90000','90000','A',3);
+	VALUES('ADMIN','ROLE','1','NC','Invernizzi','David','dinverni',crypted_password,'0670917960','david.invernizzi@gmail.fr','4 rue des fleurs','90000','90000','A',3);
 	
 END;
 /
@@ -359,45 +355,45 @@ END;
 
 --Entrainements récurrents des débutants, avec l'entraineur n°8
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 1', 8, '30/5', 'Classement', 8, '01/09/2011', '30/06/2012');
+VALUES ('Entrainement 1', 8, '3','30/5', 8, '01/09/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 2', 8, '30/4', 'Classement', 6, '01/09/2011', '30/06/2012');
+VALUES ('Entrainement 2', 8, '4','30/4', 6, '01/09/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 3', 8, '30/3', 'Classement', 4, '01/09/2011', '30/06/2012');
+VALUES ('Entrainement 3', 8, '5','30/3', 4, '01/09/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 4', 8, '30/2', 'Classement', 4, '01/09/2011', '30/06/2012');
+VALUES ('Entrainement 4', 8, '6','30/2', 4, '01/09/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 5', 8, '30/1', 'Classement', 4, '01/09/2011', '30/06/2012');
+VALUES ('Entrainement 5', 8, '7','30/1', 4, '01/09/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 6', 8, '30', 'Classement', 4, '01/09/2011', '30/06/2012');
+VALUES ('Entrainement 6', 8, '8','30', 4, '01/09/2011', '30/06/2012');
 
 --Entrainements récurrents des confirmés, avec l'entraineur n°10
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 7', 10, '15/5', 'Classement', 8, '01/10/2011', '31/05/2012');
+VALUES ('Entrainement 7', 10, '9','15/5', 8, '01/10/2011', '31/05/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 8', 10, '15/4', 'Classement', 4, '01/10/2011', '31/05/2012');
+VALUES ('Entrainement 8', 10, '10','15/4', 4, '01/10/2011', '31/05/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 9', 10, '15/3', 'Classement', 4, '01/10/2011', '31/05/2012');
+VALUES ('Entrainement 9', 10, '11','15/3', 4, '01/10/2011', '31/05/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 10', 10, '15/2', 'Classement', 4, '01/10/2011', '31/05/2012');
+VALUES ('Entrainement 10', 10, '12','15/2', 4, '01/10/2011', '31/05/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 11', 10, '15/1', 'Classement', 4, '01/10/2011', '31/05/2012');
+VALUES ('Entrainement 11', 10, '13','15/1', 4, '01/10/2011', '31/05/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 12', 10, '15', 'Classement', 4, '01/10/2011', '31/05/2012');
+VALUES ('Entrainement 12', 10, '14','15', 4, '01/10/2011', '31/05/2012');
 
 --Entrainements non récurrents des experts, avec l'entraineur n°11
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 13', 11, '5/6', 'Classement', 8, '01/08/2011', '30/06/2012');
+VALUES ('Entrainement 13', 11, '15','5/6', 8, '01/08/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 14', 11, '4/6', 'Classement', 4, '01/08/2011', '30/06/2012');
+VALUES ('Entrainement 14', 11, '16','4/6', 4, '01/08/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 15', 11, '3/6', 'Classement', 4, '01/08/2011', '30/06/2012');
+VALUES ('Entrainement 15', 11, '17','3/6', 4, '01/08/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 16', 11, '2/6', 'Classement', 4, '01/08/2011', '30/06/2012');
+VALUES ('Entrainement 16', 11, '18','2/6', 4, '01/08/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 17', 11, '1/6', 'Classement', 4, '01/08/2011', '30/06/2012');
+VALUES ('Entrainement 17', 11, '19','1/6', 4, '01/08/2011', '30/06/2012');
 INSERT INTO ENTRAINEMENT (LIB_ENTRAINEMENT, NUM_ENTRAINEUR, CODE_NIVEAU, NATURE_NIVEAU, NB_PLACE_ENTRAINEMENT, DATE_DEBUT_ENTRAINEMENT, DATE_FIN_ENTRAINEMENT)
-VALUES ('Entrainement 18', 11, '1/6', 'Classement', 4, '01/08/2011', '30/06/2012');
+VALUES ('Entrainement 18', 11, '20','0', 4, '01/08/2011', '30/06/2012');
 
 --Fin des entrainements de la table ENTRAINEMENT
 
@@ -781,12 +777,11 @@ VALUES(8, to_date('02/2012','MM/YYYY'));
 --       TABLE : S_INSCRIRE
 -- -----------------------------------------------------------------------------
 
-/*INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (8,17);
-INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (2,16);
-INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (9,18);
-INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (5,22);
-INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (6,21);*/
-
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (8,14);  -- OK : entrainement n°8  (15/4), personne adhérente n°14 (15)   ==> niveau supérieur (ok) et statut adhérent   (ok)
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (11,18); -- OK : entrainement n°11 (15/1), personne adhérente n°18 (15/1) ==> niveau égal      (ok) et statut adhérent   (ok)
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (10,16); -- KO : entrainement n°10 (15/2), personne adhérente n°16 (15/3) ==> niveau inférieur (ko) mais statut adhérent (ok)
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (7,22);  -- KO : entrainement n°7  (15/5), personne adhérente n°22 (15/5) ==> niveau égal      (ko) mais statut visiteur (ko)
+INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (5,19);  -- KO : entrainement n°5  (30/1), personne adhérente n°19 (NC)   ==> niveau inférieur (ko) et statut visiteur   (ko)
 
 -- -----------------------------------------------------------------------------
 --       TABLE : ETRE_ASSOCIE
@@ -799,13 +794,16 @@ INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (6,21);*/
 -- -----------------------------------------------------------------------------
 --       TABLE : FACTURE (et réservations correspondantes)
 -- -----------------------------------------------------------------------------
-INSERT INTO FACTURE(NUM_PERSONNE, DATE_FACTURE, MONTANT_FACTURE, DATE_PAIEMENT) VALUES(20, to_date('02/03/2011','DD/MM/YYYY'), 10, to_date('02/03/2011','DD/MM/YYYY'));
+INSERT INTO FACTURE(NUM_PERSONNE, DATE_FACTURE, MONTANT_FACTURE, DATE_PAIEMENT) 
+	VALUES(20, to_date('02/03/2011','DD/MM/YYYY'), 10, to_date('02/03/2011','DD/MM/YYYY'));
 INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU, NUM_TERRAIN, DATE_OCCUPATION, NUM_FACTURE, NUM_JOUEUR)
 	VALUES('10h00', 5, to_date('20/03/2011','DD/MM/YYYY'), 1, 20);
-INSERT INTO FACTURE(NUM_PERSONNE, DATE_FACTURE, MONTANT_FACTURE, DATE_PAIEMENT) VALUES(22, to_date('16/03/2011','DD/MM/YYYY'), 10, to_date('16/03/2011','DD/MM/YYYY'));
+INSERT INTO FACTURE(NUM_PERSONNE, DATE_FACTURE, MONTANT_FACTURE, DATE_PAIEMENT) 
+	VALUES(22, to_date('16/03/2011','DD/MM/YYYY'), 10, to_date('16/03/2011','DD/MM/YYYY'));
 INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU, NUM_TERRAIN, DATE_OCCUPATION, NUM_FACTURE, NUM_JOUEUR)
 	VALUES('15h00', 5, to_date('30/03/2011','DD/MM/YYYY'), 2, 22);
-INSERT INTO FACTURE(NUM_PERSONNE, DATE_FACTURE, MONTANT_FACTURE, DATE_PAIEMENT) VALUES(21, to_date('23/03/2011','DD/MM/YYYY'), 30, to_date('23/03/2011','DD/MM/YYYY'));
+INSERT INTO FACTURE(NUM_PERSONNE, DATE_FACTURE, MONTANT_FACTURE, DATE_PAIEMENT) 
+	VALUES(21, to_date('23/03/2011','DD/MM/YYYY'), 30, to_date('23/03/2011','DD/MM/YYYY'));
 INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU, NUM_TERRAIN, DATE_OCCUPATION, NUM_FACTURE, NUM_JOUEUR)
 	VALUES('18h00', 8, to_date('30/03/2011','DD/MM/YYYY'), 3, 21);
 INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU, NUM_TERRAIN, DATE_OCCUPATION, NUM_FACTURE, NUM_JOUEUR)
