@@ -11,7 +11,7 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_abonnement
-AS
+IS 
 	--Permet d'afficher tous les créneaux et les actions possibles de gestion (avec le menu)
 	PROCEDURE manage_abonnements
 	IS		
@@ -35,15 +35,16 @@ AS
 		
 		pq_ui_commun.aff_header;
 		
-		htp.br;				
-		htp.print('Gestion des abonnements');
+		htp.br;	
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Gestion des abonnements');
+		htp.print('</div>');		
 		htp.br;	
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_abonnement.form_add_abonnement','Ajouter un abonnement'));
 		htp.br;	
 		htp.br;	
-		htp.formOpen('',cattributes => 'class="tableau"');
-			htp.tableOpen;
+		htp.tableOpen('',cattributes => 'class="tableau"');
 			htp.tableheader('N° abonnement');
 			htp.tableheader('Nom joueur');
 			htp.tableheader('Date début');
@@ -62,9 +63,7 @@ AS
 				htp.tabledata(htf.anchor('exec_del_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
 				htp.tableRowClose;
 			end loop;	
-			htp.tableClose;
-		htp.formClose;
-		
+		htp.tableClose;		
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
@@ -115,8 +114,10 @@ AS
 		WHERE
 			A.NUM_ABONNEMENT = vnumAbonnement;
 			
-		htp.br;	
-		htp.print('Affichage des informations d''un abonnement' );
+		htp.br;
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Affichage des informations d''un abonnement' );
+		htp.print('</div>');		
 		htp.br;
 		htp.br;					
 		htp.print('L''abonnement n° '|| vnumAbonnement || ' concerne le joueur '|| vnomPersonne || ' depuis '|| vdateDebut || ' et pendant '|| vduree ||' mois.');
@@ -172,7 +173,9 @@ AS
 		pq_ui_commun.aff_header;
 		
 		htp.br;
-		htp.print('Création d''un nouvel abonnement' || ' (' || htf.anchor('pq_ui_abonnement.form_add_abonnement','Actualiser')|| ')' );
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Création d''un nouvel abonnement' );
+		htp.print('</div>');		
 		htp.br;
 		htp.br;
 		htp.print('Les champs marqués d''une étoile sont obligatoires.');
@@ -239,7 +242,9 @@ AS
 		
 		htp.br;
 		pq_db_abonnement.add_abonnement(vnumJoueur,vdateDebut,vduree);
-		htp.print('L''abonnement a été ajouté avec succès.');
+		htp.print('<div class="success"> ');
+			htp.print('L''abonnement a été ajouté avec succès.');
+		htp.print('</div>');	
 		htp.br;
 		htp.br;			
 		pq_ui_abonnement.manage_abonnements;
@@ -263,7 +268,9 @@ AS
 		pq_ui_commun.aff_header(3);
 				htp.br;				
 				pq_db_creneau.upd_creneau(vheureDebutCreneau,vheureFinCreneau);
-				htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été mis à jour avec succès.');
+				htp.print('<div class="success"> ');
+					htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été mis à jour avec succès.');
+				htp.print('</div>');
 				htp.br;
 				htp.br;			
 				pq_ui_creneau.manage_creneaux;
@@ -281,8 +288,10 @@ AS
 		pq_ui_commun.aff_header(3);
 				htp.br;	
 				pq_db_creneau.del_creneau(vheureDebutCreneau);
-				htp.print('Le créneau qui commençait à '|| vheureDebutCreneau || ' a été supprimé avec succès.');
-				htp.br;
+				htp.print('</div>');
+					htp.print('Le créneau qui commençait à '|| vheureDebutCreneau || ' a été supprimé avec succès.');
+				htp.print('</div>');
+				tp.br;
 				htp.br;			
 				pq_ui_creneau.manage_creneaux;
 		pq_ui_commun.aff_footer;
@@ -318,13 +327,15 @@ AS
 	BEGIN
 		pq_ui_commun.aff_header(3);
 				htp.br;
-				htp.print('Création d''un nouveau créneau' || ' (' || htf.anchor('pq_ui_creneau.form_add_creneau','Actualiser')|| ')' );
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Création d''un nouveau créneau' );
+				htp.print('</div>');
 				htp.br;
 				htp.br;
 				htp.print('Les champs marqués d''une étoile sont obligatoires.');
 				htp.br;
 				htp.br;
-				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_add_creneau', 'GET', cattributes => 'onSubmit="return validerCreneau(this,document)"');
+				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_add_creneau', 'POST', cattributes => 'onSubmit="return validerCreneau(this,document)"');
 					--Ces deux champs sont mis à jour après la validation et la vérification du formulaire
 					htp.formhidden ('vheureDebutCreneau','00h00', cattributes => 'id="idVheureDebutCreneau"');
 					htp.formhidden ('vheureFinCreneau','00h00', cattributes => 'id="idVheureFinCreneau"');
@@ -429,7 +440,7 @@ AS
 				htp.print('Mise à jour d''un créneau' || ' (' || htf.anchor('pq_ui_creneau.form_upd_creneau?vheureDebutCreneau='||vheureDebutCreneau||'&'||'vheureFinCreneau='||vheureFinCreneau,'Actualiser')|| ')' );
 				htp.br;
 				htp.br;
-				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_upd_creneau', 'GET', cattributes => 'onSubmit="return validerMAJCreneau(this,document)"');
+				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_upd_creneau', 'POST', cattributes => 'onSubmit="return validerMAJCreneau(this,document)"');
 					htp.formhidden ('vheureDebutCreneau',vheureDebutCreneau);
 					htp.formhidden ('vheureFinCreneau','00h00', cattributes => 'id="idVheureFinCreneau"');
 					htp.tableOpen;
