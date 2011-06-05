@@ -7,17 +7,17 @@
 --      Nom de la base : Tennis
 --      Projet : Tennis_V1.24
 --      Auteur : Gonzalves / Invernizzi / Joly / Leviste
---      Date de dernière modification : 14/05/2011
+--      Date de dernière modification : 04/06/2011
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_db_avoir_lieu
 IS
 	--Permet d’ajouter une occurence
 	PROCEDURE add_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER
+	  vnumJour IN AVOIR_LIEU.NUM_JOUR%TYPE
+	, vheureDebutCreneau IN AVOIR_LIEU.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN AVOIR_LIEU.NUM_TERRAIN%TYPE
+	, vnumEntrainement IN AVOIR_LIEU.NUM_ENTRAINEMENT%TYPE
 	, vexception IN OUT NUMBER)
 	IS
 	BEGIN
@@ -25,7 +25,7 @@ IS
 		VALUES(vnumJour,vheureDebutCreneau,vnumTerrain,vnumEntrainement);
 		COMMIT;
 		vexception:=0;
-		--pas de commit ici, commit après l'ajout des occupations
+		--Il n'y a pas de commit ici car il s'effectue après l'ajout des occupations
 	EXCEPTION
 		WHEN OTHERS THEN
 			ROLLBACK;
@@ -34,14 +34,14 @@ IS
 	
 	--Permet d'ajouter les occupations associées à une séance
 	PROCEDURE add_occupation_seance(
-		  vnumJour IN NUMBER
-		, vheureDebutCreneau IN CHAR 
-		, vnumTerrain IN NUMBER
-		, vnumEntrainement IN NUMBER
-		, vexception IN OUT NUMBER)
+	  vnumJour IN AVOIR_LIEU.NUM_JOUR%TYPE
+	, vheureDebutCreneau IN AVOIR_LIEU.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN AVOIR_LIEU.NUM_TERRAIN%TYPE
+	, vnumEntrainement IN AVOIR_LIEU.NUM_ENTRAINEMENT%TYPE
+	, vexception IN OUT NUMBER)
 	IS
-		vdateDebut Date;
-		vdateFin Date;
+		vdateDebut ENTRAINEMENT.DATE_DEBUT_ENTRAINEMENT%TYPE;
+		vdateFin ENTRAINEMENT.DATE_FIN_ENTRAINEMENT%TYPE;
 		vincrementDate Date;
 		vnumJourDebut NUMBER(1);
 		vnumSeance NUMBER(3);
@@ -72,9 +72,9 @@ IS
 	
 	--Permet de supprimer une occurence
 	PROCEDURE del_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER)
+	  vnumJour IN AVOIR_LIEU.NUM_JOUR%TYPE
+	, vheureDebutCreneau IN AVOIR_LIEU.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN AVOIR_LIEU.NUM_TERRAIN%TYPE)
 	IS
 	BEGIN
 		DELETE FROM AVOIR_LIEU
@@ -90,10 +90,3 @@ IS
 	
 END pq_db_avoir_lieu;
 /
-
-
-
-
-
-
-

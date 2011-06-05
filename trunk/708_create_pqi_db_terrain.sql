@@ -14,20 +14,20 @@ CREATE OR REPLACE PACKAGE pq_db_terrain
 IS
 	--Permet d’ajouter un terrain
 	PROCEDURE add_terrain(
-	  vcodeSurface IN CHAR
-	, vnatureSurface IN VARCHAR2
-	, vactif IN NUMBER);
+	vcodeSurface IN TERRAIN.CODE_SURFACE%TYPE
+	, vnatureSurface IN TERRAIN.NATURE_SURFACE%TYPE
+	, vactif IN TERRAIN.ACTIF%TYPE);
 	
 	--Permet de modifier un terrain existant
 	PROCEDURE upd_terrain(
-	  vnumTerrain IN NUMBER
-	, vcodeSurface IN CHAR
-	, vnatureSurface IN VARCHAR2
-	, vactif IN NUMBER);
+	  vnumTerrain IN TERRAIN.NUM_TERRAIN%TYPE
+	, vcodeSurface IN TERRAIN.CODE_SURFACE%TYPE
+	, vnatureSurface IN TERRAIN.NATURE_SURFACE%TYPE
+	, vactif IN TERRAIN.ACTIF%TYPE);
 	
 	--Permet de supprimer un terrain existant
 	PROCEDURE del_terrain(
-	  vnumTerrain IN NUMBER);
+	  vnumTerrain IN TERRAIN.NUM_TERRAIN%TYPE);
 	
 END pq_db_terrain;
 /

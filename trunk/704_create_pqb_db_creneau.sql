@@ -7,15 +7,15 @@
 --      Nom de la base : Tennis
 --      Projet : Tennis_V1.24
 --      Auteur : Gonzalves / Invernizzi / Joly / Leviste
---      Date de dernière modification : 18/05/2011
+--      Date de dernière modification : 04/06/2011
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_db_creneau
-AS
+IS
 	--Permet d’ajouter un créneau	
 	PROCEDURE add_creneau(
-	  vheureDebutCreneau IN CHAR
-	, vheureFinCreneau IN CHAR) 
+	  vheureDebutCreneau IN CRENEAU.HEURE_DEBUT_CRENEAU%TYPE
+	, vheureFinCreneau IN CRENEAU.HEURE_FIN_CRENEAU%TYPE) 
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -34,8 +34,8 @@ AS
 	
 	--Permet de modifier un créneau existant
 	PROCEDURE upd_creneau(
-	  vheureDebutCreneau IN CHAR
-	, vheureFinCreneau   IN CHAR) 
+	  vheureDebutCreneau IN CRENEAU.HEURE_DEBUT_CRENEAU%TYPE
+	, vheureFinCreneau IN CRENEAU.HEURE_FIN_CRENEAU%TYPE)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -58,7 +58,7 @@ AS
 	
 	--Permet de supprimer un créneau existant
 	PROCEDURE del_creneau(
-	  vheureDebutCreneau IN CHAR)
+	  vheureDebutCreneau IN CRENEAU.HEURE_DEBUT_CRENEAU%TYPE)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;

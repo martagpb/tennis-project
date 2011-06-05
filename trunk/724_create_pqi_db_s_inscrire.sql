@@ -13,15 +13,14 @@
 CREATE OR REPLACE PACKAGE pq_db_s_inscrire
 IS
 	--Permet d’ajouter une inscription
-	PROCEDURE add_inscription(
-	  vnumEntrainement IN NUMBER
-	, vnumPersonne IN NUMBER);
-	
+	PROCEDURE add_inscription( 
+		vnumEntrainement IN S_INSCRIRE.NUM_ENTRAINEMENT%TYPE
+	  , vnumPersonne IN S_INSCRIRE.NUM_PERSONNE%TYPE);	
 	
 	--Permet de supprimer une inscription existante
-	PROCEDURE del_inscription(
-	  vnumEntrainement IN NUMBER
-	, vnumPersonne IN NUMBER);
+	PROCEDURE del_inscription( 
+		vnumEntrainement IN S_INSCRIRE.NUM_ENTRAINEMENT%TYPE
+	  , vnumPersonne IN S_INSCRIRE.NUM_PERSONNE%TYPE);
 		
 END pq_db_s_inscrire;
 /

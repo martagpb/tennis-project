@@ -7,24 +7,24 @@
 --      Nom de la base : Tennis
 --      Projet : Tennis_V1.24
 --      Auteur : Gonzalves / Invernizzi / Joly / Leviste
---      Date de dernière modification : 14/05/2011
+--      Date de dernière modification : 04/06/2011
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_db_entrainement
 IS
 	--Permet d’ajouter un entrainement
 	PROCEDURE add_entrainement(
-	  vnumEntraineur IN NUMBER
-	, vcodeNiveau IN CHAR
-	, vlibEntrainement IN CHAR
-	, vnbPlaces IN NUMBER
-	, vdateDebut IN DATE
-	, vdateFin IN DATE)
+	  vnumEntraineur IN ENTRAINEMENT.NUM_ENTRAINEUR%TYPE
+	, vcodeNiveau IN ENTRAINEMENT.CODE_NIVEAU%TYPE
+	, vnatureNiveau IN ENTRAINEMENT.NATURE_NIVEAU%TYPE
+	, vlibEntrainement IN ENTRAINEMENT.LIB_ENTRAINEMENT%TYPE
+	, vnbPlaces IN ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE
+	, vdateDebut IN ENTRAINEMENT.DATE_DEBUT_ENTRAINEMENT%TYPE
+	, vdateFin IN ENTRAINEMENT.DATE_FIN_ENTRAINEMENT%TYPE)
 	IS
 	BEGIN
-		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,LIB_ENTRAINEMENT,NB_PLACE_ENTRAINEMENT,
-								  DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT)
-		VALUES (vnumEntraineur,vcodeNiveau,'Classement',vlibEntrainement,vnbPlaces,vdateDebut,vdateFin);
+		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,LIB_ENTRAINEMENT,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT)
+		VALUES (vnumEntraineur,vcodeNiveau,vnatureNiveau,vlibEntrainement,vnbPlaces,vdateDebut,vdateFin);
 		COMMIT;
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -33,19 +33,21 @@ IS
 	
 	--Permet de modifier un entrainement existant
 	PROCEDURE upd_entrainement(
-	  vnumEntrainement IN NUMBER
-	, vnumEntraineur IN NUMBER
-	, vcodeNiveau IN CHAR
-	, vlibEntrainement IN CHAR
-	, vnbPlaces IN NUMBER)
+	  vnumEntrainement IN ENTRAINEMENT.NUM_ENTRAINEMENT%TYPE
+	, vnumEntraineur IN ENTRAINEMENT.NUM_ENTRAINEUR%TYPE
+	, vcodeNiveau IN ENTRAINEMENT.CODE_NIVEAU%TYPE
+	, vnatureNiveau IN ENTRAINEMENT.NATURE_NIVEAU%TYPE
+	, vlibEntrainement IN ENTRAINEMENT.LIB_ENTRAINEMENT%TYPE
+	, vnbPlaces IN ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE)
 	IS
 	BEGIN
 		UPDATE ENTRAINEMENT
 		SET
 				NUM_ENTRAINEUR = vnumEntraineur
-			   ,CODE_NIVEAU = vcodeNiveau
-			   ,NB_PLACE_ENTRAINEMENT = vnbPlaces
-			   ,LIB_ENTRAINEMENT = vlibEntrainement
+			  , CODE_NIVEAU = vcodeNiveau
+			  , NATURE_NIVEAU = vnatureNiveau
+			  , NB_PLACE_ENTRAINEMENT = vnbPlaces
+			  , LIB_ENTRAINEMENT = vlibEntrainement
 		WHERE
 				NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;
@@ -56,7 +58,7 @@ IS
 	
 	--Permet de supprimer un entrainement existant
 	PROCEDURE del_entrainement(
-	  vnumEntrainement IN NUMBER)
+	  vnumEntrainement IN ENTRAINEMENT.NUM_ENTRAINEMENT%TYPE)
 	 IS
 		vdateDebut Date;
 	 BEGIN

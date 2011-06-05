@@ -14,25 +14,25 @@ CREATE OR REPLACE PACKAGE pq_db_avoir_lieu
 IS
 	--Permet d’ajouter une occurence
 	PROCEDURE add_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vnumEntrainement IN NUMBER
+	  vnumJour IN AVOIR_LIEU.NUM_JOUR%TYPE
+	, vheureDebutCreneau IN AVOIR_LIEU.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN AVOIR_LIEU.NUM_TERRAIN%TYPE
+	, vnumEntrainement IN AVOIR_LIEU.NUM_ENTRAINEMENT%TYPE
+	, vexception IN OUT NUMBER);
+				
+	--Permet d'ajouter les occupations associées à une séance
+	PROCEDURE add_occupation_seance(
+	  vnumJour IN AVOIR_LIEU.NUM_JOUR%TYPE
+	, vheureDebutCreneau IN AVOIR_LIEU.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN AVOIR_LIEU.NUM_TERRAIN%TYPE
+	, vnumEntrainement IN AVOIR_LIEU.NUM_ENTRAINEMENT%TYPE
 	, vexception IN OUT NUMBER);
 	
 	--Permet de supprimer une occurence
 	PROCEDURE del_avoir_lieu(
-	  vnumJour IN NUMBER
-	, vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER);
-		
-	--Permet d'ajouter les occupations associées à une séance
-	PROCEDURE add_occupation_seance(
-		  vnumJour IN NUMBER
-		, vheureDebutCreneau IN CHAR 
-		, vnumTerrain IN NUMBER
-		, vnumEntrainement IN NUMBER
-		, vexception IN OUT NUMBER);
+	  vnumJour IN AVOIR_LIEU.NUM_JOUR%TYPE
+	, vheureDebutCreneau IN AVOIR_LIEU.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN AVOIR_LIEU.NUM_TERRAIN%TYPE);
 	
 END pq_db_avoir_lieu;
 /

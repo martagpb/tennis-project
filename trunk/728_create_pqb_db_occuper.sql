@@ -14,11 +14,11 @@ CREATE OR REPLACE PACKAGE BODY pq_db_occuper
 IS
 	--Permet d’ajouter une réservation
 	PROCEDURE add_reservation(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE
-	, vnumFacture IN NUMBER
-	, vnumJoueur IN NUMBER)
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, vnumFacture IN OCCUPER.NUM_FACTURE%TYPE
+	, vnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE)
 	IS 
 	BEGIN
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_FACTURE,NUM_JOUEUR)
@@ -31,11 +31,11 @@ IS
 	
 	--Permet d’ajouter une séance
 	PROCEDURE add_seance(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE
-	, vnumEntrainement IN NUMBER
-	, vnumSeance IN NUMBER)
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, vnumEntrainement IN OCCUPER.NUM_ENTRAINEMENT%TYPE
+	, vnumSeance IN OCCUPER.NUM_SEANCE%TYPE)
 	IS 
 	BEGIN
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_ENTRAINEMENT,NUM_SEANCE)
@@ -48,9 +48,9 @@ IS
 	
 	--Permet d’ajouter une occupation simple (exemple : un entretien)
 	PROCEDURE add_occupation(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE)
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE)
 	IS 
 	BEGIN
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION)
@@ -63,13 +63,13 @@ IS
 	
 	--Permet de modifier une occupation existante
 	PROCEDURE upd_occupation(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE
-	, vnumFacture IN NUMBER
-	, vnumJoueur IN NUMBER
-	, vnumEntrainement IN NUMBER
-	, vnumSeance IN NUMBER)
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, vnumFacture IN OCCUPER.NUM_FACTURE%TYPE
+	, vnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE
+	, vnumEntrainement IN OCCUPER.NUM_ENTRAINEMENT%TYPE
+	, vnumSeance IN OCCUPER.NUM_SEANCE%TYPE)
 	IS 
 	BEGIN
 		UPDATE OCCUPER
@@ -90,9 +90,9 @@ IS
 	
 	--Permet de supprimer une occupation existante
 	PROCEDURE del_occupation(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE)
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE)
 	IS
 	BEGIN
 	  	DELETE FROM OCCUPER
@@ -108,10 +108,10 @@ IS
 	
 	--Permet de supprimer une séance au dessus d'une date date donnée
 	PROCEDURE del_seance(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE
-	, vnumEntrainement IN NUMBER)
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, vnumEntrainement IN OCCUPER.NUM_ENTRAINEMENT%TYPE)
 	IS
 	BEGIN
 		DELETE FROM OCCUPER

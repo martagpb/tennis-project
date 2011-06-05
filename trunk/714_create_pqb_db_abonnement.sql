@@ -11,7 +11,7 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_db_abonnement
-AS
+IS
 	--Permet d’ajouter un abonnement
 	PROCEDURE add_abonnement(
 	  pnumJoueur IN ABONNEMENT.NUM_JOUEUR%TYPE
