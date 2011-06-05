@@ -11,7 +11,7 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_creneau
-AS
+IS 
 	--Permet d'afficher tous les créneaux et les actions possibles de gestion (avec le menu)
 	PROCEDURE manage_creneaux_with_menu
 	IS		
@@ -35,6 +35,7 @@ AS
 	--Permet d'afficher tous les créneaux et les actions possibles de gestion (sans le menu)
 	PROCEDURE manage_creneaux
 	IS
+		--Permet de récupérer toutes les informations des créneaux en les stockant dans un curseur
 		CURSOR listCreneaux IS
 		SELECT 
 			CRE.HEURE_DEBUT_CRENEAU
@@ -43,7 +44,11 @@ AS
 			CRENEAU CRE
 		ORDER BY 
 			1
-		  , 2;
+		  , 2;		 	
+		  
+		creneauUtilisePourEntrainement NUMBER(5):= 0;  
+		creneauUtilisePourReservation  NUMBER(5):= 0; 
+		 
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -51,15 +56,16 @@ AS
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
-		htp.br;				
-		htp.print('Gestion des créneaux' || ' (' || htf.anchor('pq_ui_creneau.manage_creneaux_with_menu','Actualiser')|| ')' );
+		htp.br;		
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Gestion des créneaux');
+		htp.print('</div>');		
 		htp.br;	
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_creneau.form_add_creneau','Ajouter un créneau'));
 		htp.br;	
 		htp.br;	
-		htp.formOpen('',cattributes => 'class="tableau"');
-			htp.tableOpen;
+		htp.tableOpen('',cattributes => 'class="tableau"');
 			htp.tableheader('Heure de début');
 			htp.tableheader('Heure de fin');
 			htp.tableheader('Informations');
@@ -70,12 +76,34 @@ AS
 				htp.tabledata(currentCreneau.HEURE_DEBUT_CRENEAU);
 				htp.tabledata(currentCreneau.HEURE_FIN_CRENEAU);					
 				htp.tabledata(htf.anchor('pq_ui_creneau.dis_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU||'&'||'vheureFinCreneau='||currentCreneau.HEURE_FIN_CRENEAU,'Informations'));
-				htp.tabledata(htf.anchor('pq_ui_creneau.form_upd_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU||'&'||'vheureFinCreneau='||currentCreneau.HEURE_FIN_CRENEAU,'Mise à jour'));
-				htp.tabledata(htf.anchor('pq_ui_creneau.exec_del_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				
+				--Permet de déterminer si un créneau est utilisé pour un entrainement				
+				SELECT 
+					COUNT(*) INTO creneauUtilisePourEntrainement
+				FROM 
+					AVOIR_LIEU 
+				WHERE 
+					HEURE_DEBUT_CRENEAU = currentCreneau.HEURE_DEBUT_CRENEAU;
+					
+				--Permet de déterminer si un créneau est utilisé pour une réservation (autre qu'un entrainement)		
+				SELECT 
+					COUNT(*) INTO creneauUtilisePourReservation
+				FROM 
+					OCCUPER 
+				WHERE 
+					HEURE_DEBUT_CRENEAU = currentCreneau.HEURE_DEBUT_CRENEAU;
+					
+				--On autorise la mise à jour et la suppression d'un créneau seulement dans le cas où il n'est pas utilisé
+				if (creneauUtilisePourEntrainement = 0 and creneauUtilisePourReservation = 0) then
+					htp.tabledata(htf.anchor('pq_ui_creneau.form_upd_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU||'&'||'vheureFinCreneau='||currentCreneau.HEURE_FIN_CRENEAU,'Mise à jour'));
+					htp.tabledata(htf.anchor('pq_ui_creneau.exec_del_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				else
+					htp.tabledata('Non autorisée');
+					htp.tabledata('Non autorisée');
+				end if;							
 				htp.tableRowClose;
 			end loop;	
-			htp.tableClose;
-		htp.formClose;
+		htp.tableClose;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
@@ -97,7 +125,9 @@ AS
 		END IF;
 		pq_ui_commun.aff_header;
 				htp.br;	
-				htp.print('Affichage des informations d''un créneau' || ' (' || htf.anchor('pq_ui_creneau.dis_creneau?vheureDebutCreneau='||vheureDebutCreneau||'&'||'vheureFinCreneau='||vheureFinCreneau,'Actualiser')|| ')' );
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Affichage des informations d''un créneau');
+				htp.print('</div>');				
 				htp.br;
 				htp.br;					
 				htp.print('Le créneau commence à '|| vheureDebutCreneau || ' et se termine à '|| vheureFinCreneau || '.');
@@ -125,7 +155,9 @@ AS
 		pq_ui_commun.aff_header;
 				htp.br;
 				pq_db_creneau.add_creneau(vheureDebutCreneau,vheureFinCreneau);
-				htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été ajouté avec succès.');
+				htp.print('<div class="success"> ');
+					htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été ajouté avec succès.');
+				htp.print('</div>');				
 				htp.br;
 				htp.br;			
 				pq_ui_creneau.manage_creneaux;
@@ -153,9 +185,12 @@ AS
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
+			pq_ui_commun.aff_header;
 				htp.br;				
 				pq_db_creneau.upd_creneau(vheureDebutCreneau,vheureFinCreneau);
-				htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été mis à jour avec succès.');
+				htp.print('<div class="success"> ');
+					htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été mis à jour avec succès.');
+				htp.print('</div>');					
 				htp.br;
 				htp.br;			
 				pq_ui_creneau.manage_creneaux;
@@ -181,7 +216,9 @@ AS
 		pq_ui_commun.aff_header;
 				htp.br;	
 				pq_db_creneau.del_creneau(vheureDebutCreneau);
-				htp.print('Le créneau qui commençait à '|| vheureDebutCreneau || ' a été supprimé avec succès.');
+				htp.print('<div class="success"> ');
+					htp.print('Le créneau qui commençait à '|| vheureDebutCreneau || ' a été supprimé avec succès.');
+				htp.print('</div>');					
 				htp.br;
 				htp.br;			
 				pq_ui_creneau.manage_creneaux;
@@ -234,13 +271,15 @@ AS
 		END IF;
 		pq_ui_commun.aff_header;
 				htp.br;
-				htp.print('Création d''un nouveau créneau' || ' (' || htf.anchor('pq_ui_creneau.form_add_creneau','Actualiser')|| ')' );
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Création d''un nouveau créneau');
+				htp.print('</div>');					
 				htp.br;
 				htp.br;
 				htp.print('Les champs marqués d''une étoile sont obligatoires.');
 				htp.br;
 				htp.br;
-				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_add_creneau', 'GET', cattributes => 'onSubmit="return validerCreneau(this,document)"');
+				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_add_creneau', 'POST', cattributes => 'onSubmit="return validerCreneau(this,document)"');
 					--Ces deux champs sont mis à jour après la validation et la vérification du formulaire
 					htp.formhidden ('vheureDebutCreneau','00h00', cattributes => 'id="idVheureDebutCreneau"');
 					htp.formhidden ('vheureFinCreneau','00h00', cattributes => 'id="idVheureFinCreneau"');
@@ -350,28 +389,26 @@ AS
 		END IF;
 		pq_ui_commun.aff_header;
 				htp.br;
-				htp.print('Mise à jour d''un créneau' || ' (' || htf.anchor('pq_ui_creneau.form_upd_creneau?vheureDebutCreneau='||vheureDebutCreneau||'&'||'vheureFinCreneau='||vheureFinCreneau,'Actualiser')|| ')' );
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Mise à jour d''un créneau');
+				htp.print('</div>');					
 				htp.br;
 				htp.br;
 				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_creneau.exec_upd_creneau', 'GET', cattributes => 'onSubmit="return validerMAJCreneau(this,document)"');
 					htp.formhidden ('vheureDebutCreneau',vheureDebutCreneau);
 					htp.formhidden ('vheureFinCreneau','00h00', cattributes => 'id="idVheureFinCreneau"');
+					htp.print('<input type="hidden" id="vheureDebut" value="'||currentStartHour||'">');
+					htp.print('<input type="hidden" id="vminuteDebut" value="'||currentStartMinute||'">');
 					htp.tableOpen;
 					htp.tableheader('');
 					htp.tableheader('');
 					htp.tableheader('');					
 					htp.tableRowOpen;
 						htp.tableData('Heure de début * :', cattributes => 'class="enteteFormulaire"');
-						htp.print('<td>');
-							htp.print('<select id="vheureDebut">');								
-								htp.print('<option value="'||currentStartHour||'">'||currentStartHour||'</option>');																				
-							htp.print('</select>');		
-							htp.print(' Heure(s) ');
-							htp.print('<select id="vminuteDebut">');					
-								htp.print('<option value="'||currentStartMinute||'">'||currentStartMinute||'</option>');																								
-							htp.print('</select>');		
-							htp.print(' Minutes(s) ');							
-						htp.print('</td>');	
+						htp.print('<td>');								
+							htp.print(currentStartHour||' Heure(s) ');								
+							htp.print(currentStartMinute||' Minutes(s).');							
+						htp.print('</td>');						
 						htp.tableData('',cattributes => 'id="vheureDebutError" class="error"');						
 					htp.tableRowClose;		
 					htp.tableRowOpen;
@@ -412,7 +449,7 @@ AS
 								END IF;
 							END LOOP; 																				
 							htp.print('</select>');		
-							htp.print(' Minutes(s) ');						
+							htp.print(' Minutes(s).');						
 						htp.print('</td>');	
 						htp.tableData('',cattributes => 'id="vheureFinError" class="error"');							
 					htp.tableRowClose;
