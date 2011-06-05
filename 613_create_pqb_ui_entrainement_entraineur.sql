@@ -37,8 +37,10 @@ IS
 		
 		vnomEntraineur VARCHAR2(20);
 	BEGIN
-		htp.br;				
-		htp.print('Gestion des entrainements' || ' (' || htf.anchor('pq_ui_entrainement_entraineur.manage_entrainement_entraineur','Actualiser')|| ')' );
+		htp.br;		
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Gestion des entrainements');
+		htp.print('</div>');			
 		htp.br;
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_entrainement_entraineur.form_add_entrainement_entr','Ajouter un entrainement'));
@@ -118,6 +120,7 @@ IS
 	PROCEDURE exec_add_entrainement_entr(
 	  vnumEntraineur IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vnatureNiveau IN CHAR
 	, vlibEntrainement IN VARCHAR2
 	, vnbPlaces IN NUMBER
 	, vdateDebut IN VARCHAR2
@@ -132,9 +135,11 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
         pq_ui_commun.aff_header;
-		pq_db_entrainement.add_entrainement(vnumEntraineur,vcodeNiveau,vlibEntrainement,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'));
+		pq_db_entrainement.add_entrainement(vnumEntraineur,vcodeNiveau,vnatureNiveau,vlibEntrainement,vnbPlaces,to_date(vdateDebut, 'dd/mm/yy'),to_date(vdateFin, 'dd/mm/yy'));
 		htp.br;
-		htp.print('L''entrainement a été créé avec succès');
+		htp.print('<div class="success"> ');
+			htp.print('L''entrainement a été créé avec succès');
+		htp.print('</div>');			
 		htp.br;
 		htp.br;
 		SELECT SEQ_ENTRAINEMENT.currval INTO sequenceNumEntrainement FROM dual;
@@ -152,6 +157,7 @@ IS
 	PROCEDURE exec_upd_entrainement_entr(
 	  vnumEntrainement IN NUMBER
 	, vcodeNiveau IN CHAR
+	, vnatureNiveau IN CHAR
 	, vlibEntrainement IN VARCHAR2
 	, vnbPlaces IN NUMBER)
 	IS
@@ -167,9 +173,11 @@ IS
 		END IF;
 		target_cookie := OWA_COOKIE.get('numpersonne');
 		vnumEntraineur:=TO_NUMBER(target_cookie.vals(1));
-		pq_db_entrainement.upd_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vlibEntrainement,vnbPlaces);
+		pq_db_entrainement.upd_entrainement(vnumEntrainement,vnumEntraineur,vcodeNiveau,vnatureNiveau,vlibEntrainement,vnbPlaces);
 		htp.br;
-		htp.print('L''entrainement n° '|| vnumEntrainement || ' a été modifié avec succès.');
+		htp.print('<div class="success"> ');
+			htp.print('L''entrainement n° '|| vnumEntrainement || ' a été modifié avec succès.');
+		htp.print('</div>');		
 		htp.br();
 		htp.br();
 		pq_ui_entrainement_entraineur.aff_entrainement_entraineur(vnumEntraineur);
@@ -201,7 +209,9 @@ IS
 		--supprimer l'entrainement
 		pq_db_entrainement.del_entrainement(vnumEntrainement);
 		htp.br;
-		htp.print('L''entrainement n° '|| vnumEntrainement || ' a été supprimé avec succès.');
+		htp.print('<div class="success"> ');
+			htp.print('L''entrainement n° '|| vnumEntrainement || ' a été supprimé avec succès.');
+		htp.print('</div>');		
 		htp.br;
 		htp.br;			
 		pq_ui_entrainement_entraineur.aff_entrainement_entraineur(vnumEntraineur);
@@ -219,14 +229,24 @@ IS
 	PROCEDURE dis_entrainement_entr(
 	  vnumEntrainement IN NUMBER)
 	IS
-		vcodeNiveau ENTRAINEMENT.CODE_NIVEAU%TYPE;
+		vnatureNiveau ENTRAINEMENT.NATURE_NIVEAU%TYPE;
 		vnbplaces ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE;
 		vdateDebut ENTRAINEMENT.DATE_DEBUT_ENTRAINEMENT%TYPE;
 		vdateFin ENTRAINEMENT.DATE_FIN_ENTRAINEMENT%TYPE;
 		vlibEntrainement ENTRAINEMENT.LIB_ENTRAINEMENT%TYPE;
 		
 		vnbSeance NUMBER (3);
-		CURSOR listSeance IS SELECT NUM_JOUR,HEURE_DEBUT_CRENEAU,NUM_TERRAIN FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=vnumEntrainement ORDER BY NUM_JOUR;
+		CURSOR listSeance IS 
+		SELECT 
+			NUM_JOUR
+		  , HEURE_DEBUT_CRENEAU
+		  , NUM_TERRAIN 
+		FROM 
+			AVOIR_LIEU 
+		WHERE 
+			NUM_ENTRAINEMENT=vnumEntrainement 
+		ORDER BY 
+			NUM_JOUR;
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -235,18 +255,41 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
 
-		SELECT LIB_ENTRAINEMENT,CODE_NIVEAU,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT 
-		INTO vlibEntrainement,vcodeNiveau,vnbplaces,vdateDebut,vdateFin
-		FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
+		SELECT 
+			LIB_ENTRAINEMENT
+		  , NATURE_NIVEAU
+		  , NB_PLACE_ENTRAINEMENT
+		  , DATE_DEBUT_ENTRAINEMENT
+		  , DATE_FIN_ENTRAINEMENT 
+		INTO 
+			vlibEntrainement
+		  , vnatureNiveau
+		  , vnbplaces
+		  , vdateDebut
+		  , vdateFin
+		FROM 
+			ENTRAINEMENT
+		WHERE 
+			NUM_ENTRAINEMENT = vnumEntrainement;
 		
-		SELECT COUNT(*) INTO vnbSeance FROM AVOIR_LIEU WHERE NUM_ENTRAINEMENT=vnumEntrainement;
+		SELECT 
+			COUNT(*) 
+		INTO 
+			vnbSeance 
+		FROM 
+			AVOIR_LIEU 
+		WHERE 
+			NUM_ENTRAINEMENT=vnumEntrainement;
+			
 		htp.br;	
-		htp.print('Affichage des informations d''un entrainement');
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Affichage des informations d''un entrainement');
+		htp.print('</div>');			
 		htp.br;
 		htp.br;						
 		htp.print('Description de l''entrainement numéro '|| vnumEntrainement || ' : '||vlibEntrainement);
 		htp.br;
-		htp.print('L''entrainement s''adresse aux joueurs possèdant au moins le niveau : '|| vcodeNiveau || '.');
+		htp.print('L''entrainement s''adresse aux joueurs possèdant au moins le niveau : '|| vnatureNiveau || '.');
 		htp.br;
 		htp.print('Le nombre de places disponibles est de : '|| vnbPlaces || '.');
 		htp.br;
@@ -321,7 +364,17 @@ IS
 	-- Affiche le formulaire permettant la saisie d’un nouvel entrainement
 	PROCEDURE form_add_entrainement_entr
 	IS
-		CURSOR niveaulist IS SELECT CODE FROM CODIFICATION WHERE NATURE = 'Classement';
+		--On stocke les informations de nature et de code des niveaux dans le curseur niveauList		
+		CURSOR niveaulist 
+		IS 
+		SELECT 
+			C.NATURE
+		  , C.CODE
+		FROM 
+			CODIFICATION C
+		WHERE 
+			C.LIBELLE = 'Classement';
+			
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 		target_cookie OWA_COOKIE.cookie;
@@ -345,9 +398,13 @@ IS
 		num_entraineur:=TO_NUMBER(target_cookie.vals(1));
 			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement_entraineur.exec_add_entrainement_entr', 'POST', cattributes => 'onSubmit="return validerEntrainement(this,document)"');				
 				htp.formhidden ('vdateDebut','01/01/1970', cattributes => 'id="idVdateDebut"');
-				htp.formhidden ('vdateFin','01/01/1970', cattributes => 'id="idVdateFin"');
+				htp.formhidden ('vdateFin','01/01/1970', cattributes => 'id="idVdateFin"');		
+				htp.formhidden ('vnatureNiveau','NC', cattributes => 'id="idVnatureNiveau"');	
+				htp.formhidden ('vcodeNiveau','1', cattributes => 'id="idVcodeNiveau"');				
 				htp.br;
-				htp.print('Création d''un nouvel entrainement');
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Création d''un nouvel entrainement');
+				htp.print('</div>');				
 				htp.br;
 				htp.br;
 				htp.print('Les champs marqués d''une étoile sont obligatoires.');
@@ -359,9 +416,11 @@ IS
 				htp.tableData('Niveau * :');
 					--Forme une liste déroulante avec tous les niveaux de la table codification								
 					htp.print('<td>');
-					htp.print('<select name="vcodeNiveau" id="vcodeNiveau">');		
-					for currentNiveau in niveaulist loop
-							htp.print('<option value="'||currentNiveau.CODE||'">'||currentNiveau.CODE||'</option>');
+					htp.print('<select id="idVcodeEtNatureNiveau">');		
+					for currentNiveau in niveaulist loop			
+							--La valeur, qui sera envoyée à la fonction javascript, contiendra le code et la nature du niveau
+							--Cependant, l'utilisateur ne verra que la nature du niveau dans la liste déroulante
+							htp.print('<option value="'||currentNiveau.CODE||'*'||currentNiveau.NATURE||'">'||currentNiveau.NATURE||'</option>');
 					end loop;
 					htp.print('</select>');										
 					htp.print('</td>');							
@@ -447,9 +506,16 @@ IS
 	IS
 		vcodeNiveau ENTRAINEMENT.CODE_NIVEAU%TYPE;
 		vnbplaces ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE;
-		vlibEntrainement ENTRAINEMENT.LIB_ENTRAINEMENT%TYPE;
-		
-		CURSOR niveaulist IS SELECT CODE FROM CODIFICATION WHERE NATURE = 'Classement';
+		vlibEntrainement ENTRAINEMENT.LIB_ENTRAINEMENT%TYPE;		
+		CURSOR niveaulist 
+		IS 
+		SELECT 
+			C.CODE
+		  , C.NATURE
+		FROM 
+			CODIFICATION C
+		WHERE 
+			C.LIBELLE = 'Classement';
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 		currentPlace NUMBER(2) := 0;
@@ -466,28 +532,34 @@ IS
 		
 			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement_entraineur.exec_upd_entrainement_entr', 'POST', cattributes => 'onSubmit="return validerUpdEntrainement(this,document)"');				
 				htp.formhidden ('vnumEntrainement',vnumEntrainement);
+				htp.formhidden ('vnatureNiveau','NC', cattributes => 'id="idVnatureNiveau"');	
+				htp.formhidden ('vcodeNiveau','1', cattributes => 'id="idVcodeNiveau"');	
 				htp.br;
-				htp.print('Mise à jour de l''entrainement numéro ' || vnumEntrainement);
+				htp.print('<div class="titre_niveau_1">');
+					htp.print('Mise à jour de l''entrainement numéro ' || vnumEntrainement);
+				htp.print('</div>');				
 				htp.br;
 				htp.br;
 				htp.print('Les champs marqués d''une étoile sont obligatoires.');
 				htp.br;
 				htp.tableOpen;
 				htp.br;				
-				htp.tableData('Niveau * :');	
+				htp.tableData('Niveau * :');
 					--Forme une liste déroulante avec tous les niveaux de la table codification								
 					htp.print('<td>');
-					htp.print('<select name="vcodeNiveau" id="vcodeNiveau">');		
-					for currentNiveau in niveaulist loop
+					htp.print('<select id="idVcodeEtNatureNiveau">');		
+					for currentNiveau in niveaulist loop			
+						--La valeur, qui sera envoyée à la fonction javascript, contiendra le code et la nature du niveau
+						--Cependant, l'utilisateur ne verra que la nature du niveau dans la liste déroulante
 						if(currentNiveau.CODE=vcodeNiveau)
 						then
-							htp.print('<option selected value="'||currentNiveau.CODE||'">'||currentNiveau.CODE||'</option>');
+							htp.print('<option selected value="'||currentNiveau.CODE||'*'||currentNiveau.NATURE||'">'||currentNiveau.NATURE||'</option>');
 						else
-							htp.print('<option value="'||currentNiveau.CODE||'">'||currentNiveau.CODE||'</option>');
-						end if;
+							htp.print('<option value="'||currentNiveau.CODE||'*'||currentNiveau.NATURE||'">'||currentNiveau.NATURE||'</option>');
+						end if;							
 					end loop;
 					htp.print('</select>');										
-					htp.print('</td>');							
+					htp.print('</td>');						
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Libellé * :');	
