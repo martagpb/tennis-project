@@ -35,13 +35,17 @@ IS
 									T.NUM_TERRAIN = AL.NUM_TERRAIN
 									AND AL.NUM_JOUR = vnumJour
 									AND AL.HEURE_DEBUT_CRENEAU = vheureDebutCreneau)
+		-- Il faut que le terrain soit actif pour être considéré comme disponible
+		AND T.ACTIF = 1
 		ORDER BY 
 				T.NUM_TERRAIN;
 	BEGIN
 		pq_ui_commun.aff_header;
-		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_avoir_lieu.exec_add_avoir_lieu', 'GET');				
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_avoir_lieu.exec_add_avoir_lieu', 'POST');				
 			htp.br;
-			htp.print('Création d''une nouvelle séance');
+			htp.print('<div class="titre_niveau_1">');
+				htp.print('Création d''une nouvelle séance');
+			htp.print('</div>');			
 			htp.br;
 			htp.tableOpen;
 			htp.br;				
@@ -85,7 +89,7 @@ IS
 				htp.print('<td>');
 				htp.print('<select name="vnumTerrain" id="vnumTerrain">');		
 				for currentTerrain in listTerrainDispo loop
-						htp.print('<option value="'||currentTerrain.NUM_TERRAIN||'">'||currentTerrain.NUM_TERRAIN || ' surface : ' || currentTerrain.LIBELLE||'</option>');
+						htp.print('<option value="'||currentTerrain.NUM_TERRAIN||'">n°'||currentTerrain.NUM_TERRAIN || ', surface : ' || currentTerrain.LIBELLE||'</option>');
 				end loop;
 				htp.print('</select>');										
 				htp.print('</td>');	
@@ -141,7 +145,9 @@ IS
 			RAISE FAILED_CREATE_SEANCE;
 		end if;
 		htp.br;
-		htp.print('La séance a été ajoutée avec succès.');
+		htp.print('<div class="success"> ');
+			htp.print('La séance a été ajoutée avec succès.');
+		htp.print('</div>');		
 		htp.br;
 		if(vretourEntraineur=0) 
 		then
@@ -182,8 +188,10 @@ IS
 		htp.br;				
 		pq_db_avoir_lieu.del_avoir_lieu(vnumJour,vheureDebutCreneau,vnumTerrain);
 		--supprime les séances dont la date est > sysdate
-		pq_db_occuper.del_seance(vheureDebutCreneau,vnumTerrain,sysdate,vnumEntrainement);		
-		htp.print('La séance a été supprimée avec succès.');
+		pq_db_occuper.del_seance(vheureDebutCreneau,vnumTerrain,sysdate,vnumEntrainement);	
+		htp.print('<div class="success"> ');
+			htp.print('La séance a été supprimée avec succès.');
+		htp.print('</div>');	
 		htp.br;		
 		if(vretourEntraineur=0)
 		then
@@ -214,10 +222,12 @@ IS
 			RAISE PERMISSION_DENIED;
 		end if;
 		pq_ui_commun.aff_header;
-		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_avoir_lieu.aff_add_avoir_lieu', 'GET');				
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_avoir_lieu.aff_add_avoir_lieu', 'POST');				
 			htp.br;
 			htp.formhidden ('vnumEntrainement',vnumEntrainement);
-			htp.print('Création d''une nouvelle séance');
+			htp.print('<div class="titre_niveau_1">');
+				htp.print('Création d''une nouvelle séance');
+			htp.print('</div>');				
 			htp.br;
 			htp.tableOpen;
 			htp.br;				
