@@ -11,7 +11,7 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_db_facture
-AS
+IS
 	--Permet d’ajouter une facture
 	PROCEDURE add_facture(
 	  pdate IN FACTURE.DATE_FACTURE%TYPE
@@ -35,9 +35,9 @@ AS
 	BEGIN
 		UPDATE FACTURE
 		SET
-		    NUM_FACTURE   			= pnumFacture
-		  , DATE_FACTURE 			= pdate
-		  , MONTANT_FACTURE    = pmontant
+		    NUM_FACTURE   	= pnumFacture
+		  , DATE_FACTURE 	= pdate
+		  , MONTANT_FACTURE = pmontant
 		WHERE
 			NUM_FACTURE = pnumFacture;
 		COMMIT;
@@ -52,8 +52,8 @@ AS
 	BEGIN
 		UPDATE FACTURE
 		SET
-		    NUM_FACTURE   			= pnumFacture
-		  , MONTANT_FACTURE    = pmontant
+		    NUM_FACTURE   	= pnumFacture
+		  , MONTANT_FACTURE = pmontant
 		WHERE
 			NUM_FACTURE = pnumFacture;
 		COMMIT;

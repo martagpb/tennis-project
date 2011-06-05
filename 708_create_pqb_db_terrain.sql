@@ -11,12 +11,12 @@
 -- -----------------------------------------------------------------------------
 
 CREATE OR REPLACE PACKAGE BODY pq_db_terrain
-AS
+IS
 	--Permet d’ajouter un terrain
 	PROCEDURE add_terrain(
-	  vcodeSurface IN CHAR
-	, vnatureSurface IN VARCHAR2
-	, vactif IN NUMBER)
+	  vcodeSurface IN TERRAIN.CODE_SURFACE%TYPE
+	, vnatureSurface IN TERRAIN.NATURE_SURFACE%TYPE
+	, vactif IN TERRAIN.ACTIF%TYPE)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -35,10 +35,10 @@ AS
 	
 	--Permet de modifier un terrain existant
 	PROCEDURE upd_terrain(
-	  vnumTerrain IN NUMBER
-	, vcodeSurface IN CHAR
-	, vnatureSurface IN VARCHAR2
-	, vactif IN NUMBER)
+	  vnumTerrain IN TERRAIN.NUM_TERRAIN%TYPE
+	, vcodeSurface IN TERRAIN.CODE_SURFACE%TYPE
+	, vnatureSurface IN TERRAIN.NATURE_SURFACE%TYPE
+	, vactif IN TERRAIN.ACTIF%TYPE)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -62,7 +62,7 @@ AS
 	
 	--Permet de supprimer un terrain existant
 	PROCEDURE del_terrain(
-	  vnumTerrain IN NUMBER)
+	  vnumTerrain IN TERRAIN.NUM_TERRAIN%TYPE)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;

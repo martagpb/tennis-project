@@ -14,9 +14,9 @@ CREATE OR REPLACE PACKAGE BODY pq_db_codification
 IS
 	--Permet d’ajouter une codification		
 	PROCEDURE add_codification(
-	  vcode IN CHAR
-	, vnature IN VARCHAR2
-	, vlibelle IN VARCHAR2)
+	  vcode IN CODIFICATION.CODE%TYPE
+	, vnature IN CODIFICATION.NATURE%TYPE
+	, vlibelle IN CODIFICATION.LIBELLE%TYPE)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -35,9 +35,9 @@ IS
         
 	--Permet de modifier une codification existante
 	PROCEDURE upd_codification(
-	  vcode IN CHAR
-	, vnature IN VARCHAR2
-	, vlibelle IN VARCHAR2)
+	  vcode IN CODIFICATION.CODE%TYPE
+	, vnature IN CODIFICATION.NATURE%TYPE
+	, vlibelle IN CODIFICATION.LIBELLE%TYPE)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -60,8 +60,8 @@ IS
 	
 	--Permet de supprimer une codification existante
 	PROCEDURE del_codification(
-	  vcode IN CHAR
-	, vnature IN VARCHAR2)
+	  vcode IN CODIFICATION.CODE%TYPE
+	, vnature IN CODIFICATION.NATURE%TYPE)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -82,8 +82,8 @@ IS
 	
 	-- Fonction permettant de retourner le libellé d'une condification en indiquant le code et la nature de la codification
 	FUNCTION get_libelle(
-	  vcode IN CHAR
-	, vnature IN VARCHAR2)
+	  vcode IN CODIFICATION.CODE%TYPE
+	, vnature IN CODIFICATION.NATURE%TYPE)
 	RETURN VARCHAR2
 	IS
 		libelle VARCHAR2(255) := 'indéterminé';

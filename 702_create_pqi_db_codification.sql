@@ -14,25 +14,25 @@ CREATE OR REPLACE PACKAGE pq_db_codification
 IS
 	--Permet d’ajouter une codification
 	PROCEDURE add_codification(
-	  vcode IN CHAR
-	, vnature IN VARCHAR2
-	, vlibelle IN VARCHAR2);	
+	  vcode IN CODIFICATION.CODE%TYPE
+	, vnature IN CODIFICATION.NATURE%TYPE
+	, vlibelle IN CODIFICATION.LIBELLE%TYPE);	
 	
 	--Permet de modifier une codification existante
 	PROCEDURE upd_codification(
-	  vcode IN CHAR
-	, vnature IN VARCHAR2
-	, vlibelle IN VARCHAR2);	
+	  vcode IN CODIFICATION.CODE%TYPE
+	, vnature IN CODIFICATION.NATURE%TYPE
+	, vlibelle IN CODIFICATION.LIBELLE%TYPE);
 	
 	--Permet de supprimer une codification existante
 	PROCEDURE del_codification(
-	  vcode IN CHAR
-	, vnature IN VARCHAR2);
+	  vcode IN CODIFICATION.CODE%TYPE
+	, vnature IN CODIFICATION.NATURE%TYPE);
 	
 	-- Fonction permettant de retourner le libellé d'une condification en indiquant le code et la nature de la codification
 	FUNCTION get_libelle(
-	  vcode IN CHAR
-	, vnature IN VARCHAR2)
+	  vcode IN CODIFICATION.CODE%TYPE
+	, vnature IN CODIFICATION.NATURE%TYPE)
 	RETURN VARCHAR2;
 	
 END pq_db_codification;

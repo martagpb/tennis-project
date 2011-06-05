@@ -15,7 +15,9 @@ CREATE OR REPLACE PACKAGE BODY pq_db_s_inscrire
 IS
 
 	--Permet d’ajouter une inscription
-	PROCEDURE add_inscription( vnumEntrainement IN NUMBER, vnumPersonne IN NUMBER)
+	PROCEDURE add_inscription( 
+		vnumEntrainement IN S_INSCRIRE.NUM_ENTRAINEMENT%TYPE
+	  , vnumPersonne IN S_INSCRIRE.NUM_PERSONNE%TYPE)
 	IS
 		CURSOR listSeances IS
 		SELECT
@@ -32,14 +34,17 @@ IS
 	BEGIN
 	INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (vnumEntrainement,vnumPersonne);
 	for currentSeance in listSeances loop
-		INSERT INTO ETRE_ASSOCIE (NUM_PERSONNE,HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION) VALUES (vnumPersonne,currentSeance.HEURE_DEBUT_CRENEAU,currentSeance.NUM_TERRAIN,currentSeance.DATE_OCCUPATION);
+		INSERT INTO ETRE_ASSOCIE (NUM_PERSONNE,HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION) 
+		VALUES (vnumPersonne,currentSeance.HEURE_DEBUT_CRENEAU,currentSeance.NUM_TERRAIN,currentSeance.DATE_OCCUPATION);
 	END LOOP
 	COMMIT;
 	END add_inscription;
 	
 
 --Permet de supprimer une inscription existante
-	PROCEDURE del_inscription( vnumEntrainement IN NUMBER, vnumPersonne IN NUMBER)
+	PROCEDURE del_inscription( 
+		vnumEntrainement IN S_INSCRIRE.NUM_ENTRAINEMENT%TYPE
+	  , vnumPersonne IN S_INSCRIRE.NUM_PERSONNE%TYPE)
 	IS
 		CURSOR listSeances IS
 		SELECT
@@ -54,7 +59,9 @@ IS
 			OCC.DATE_OCCUPATION >= SYSDATE
 		ORDER BY 1;
 	BEGIN
-	DELETE FROM S_INSCRIRE WHERE NUM_ENTRAINEMENT=vnumEntrainement AND NUM_PERSONNE=vnumPersonne;
+	DELETE FROM S_INSCRIRE 
+	WHERE NUM_ENTRAINEMENT=vnumEntrainement 
+	AND NUM_PERSONNE=vnumPersonne;
 	for currentSeance in listSeances loop
 		DELETE FROM ETRE_ASSOCIE 
 		WHERE NUM_PERSONNE=vnumPersonne

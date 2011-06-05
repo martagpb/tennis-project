@@ -14,17 +14,17 @@ CREATE OR REPLACE PACKAGE pq_db_creneau
 IS
 	--Permet d’ajouter un créneau
 	PROCEDURE add_creneau(
-	  vheureDebutCreneau IN CHAR
-	, vheureFinCreneau IN CHAR);
+	  vheureDebutCreneau IN CRENEAU.HEURE_DEBUT_CRENEAU%TYPE
+	, vheureFinCreneau IN CRENEAU.HEURE_FIN_CRENEAU%TYPE);
 	
 	--Permet de modifier un créneau existant
 	PROCEDURE upd_creneau(
-	  vheureDebutCreneau IN CHAR
-	, vheureFinCreneau IN CHAR);
+	  vheureDebutCreneau IN CRENEAU.HEURE_DEBUT_CRENEAU%TYPE
+	, vheureFinCreneau IN CRENEAU.HEURE_FIN_CRENEAU%TYPE);
 	
 	--Permet de supprimer un créneau existant
 	PROCEDURE del_creneau(
-	  vheureDebutCreneau IN CHAR);
+	  vheureDebutCreneau IN CRENEAU.HEURE_DEBUT_CRENEAU%TYPE);
 	
 END pq_db_creneau;
 /

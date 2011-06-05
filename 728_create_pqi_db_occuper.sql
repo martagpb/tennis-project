@@ -14,48 +14,48 @@ CREATE OR REPLACE PACKAGE pq_db_occuper
 IS
 	--Permet d’ajouter une réservation
 	PROCEDURE add_reservation(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE
-	, vnumFacture IN NUMBER
-	, vnumJoueur IN NUMBER);
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, vnumFacture IN OCCUPER.NUM_FACTURE%TYPE
+	, vnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE);
 	
 	--Permet d’ajouter une séance
 	PROCEDURE add_seance(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE
-	, vnumEntrainement IN NUMBER
-	, vnumSeance IN NUMBER);
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, vnumEntrainement IN OCCUPER.NUM_ENTRAINEMENT%TYPE
+	, vnumSeance IN OCCUPER.NUM_SEANCE%TYPE);
 	
 	--Permet d’ajouter une occupation simple
 	PROCEDURE add_occupation(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE);
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE);
 	
 	--Permet de modifier un entrainement existant
 	PROCEDURE upd_occupation(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE
-	, vnumFacture IN NUMBER
-	, vnumJoueur IN NUMBER
-	, vnumEntrainement IN NUMBER
-	, vnumSeance IN NUMBER);
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, vnumFacture IN OCCUPER.NUM_FACTURE%TYPE
+	, vnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE
+	, vnumEntrainement IN OCCUPER.NUM_ENTRAINEMENT%TYPE
+	, vnumSeance IN OCCUPER.NUM_SEANCE%TYPE);
 	
 	--Permet de supprimer une occupation existante
 	PROCEDURE del_occupation(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE);
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE);
 	
 	--Permet de supprimer une séance au dessus d'une date date donnée
 	PROCEDURE del_seance(
-	  vheureDebutCreneau IN CHAR
-	, vnumTerrain IN NUMBER
-	, vdateOccupation IN DATE
-	, vnumEntrainement IN NUMBER);
+	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, vnumEntrainement IN OCCUPER.NUM_ENTRAINEMENT%TYPE);
 		
 END pq_db_occuper;
 /

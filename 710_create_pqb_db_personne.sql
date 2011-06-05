@@ -9,10 +9,11 @@
 --      Date de dernière modification : 18/05/2011
 -- -----------------------------------------------------------------------------
 
-	
-CREATE OR REPLACE PACKAGE BODY PA_PERSONNE
-AS
-	PROCEDURE getStatutEmploye(numPersonne IN NUMBER, statut OUT VARCHAR2 )
+CREATE OR REPLACE PACKAGE BODY pq_db_personne
+IS
+	PROCEDURE getStatutEmploye(
+		numPersonne IN PERSONNE.NUM_PERSONNE%TYPE
+	  , statut OUT CODIFICATION.LIBELLE%TYPE)
 	IS
 	BEGIN
 		SELECT 
@@ -25,7 +26,9 @@ AS
 			PER.NUM_PERSONNE=numPersonne;
 	END;
 	
-	PROCEDURE getStatutJoueur(numPersonne IN NUMBER, statut OUT VARCHAR2 )
+	PROCEDURE getStatutJoueur(
+		numPersonne IN PERSONNE.NUM_PERSONNE%TYPE
+	  , statut OUT CODIFICATION.LIBELLE%TYPE)
 	IS
 	BEGIN
 		SELECT 
@@ -35,8 +38,10 @@ AS
 		WHERE
 			PER.NUM_PERSONNE=numPersonne;
 	END;
-	
-	PROCEDURE getNum(login IN VARCHAR, numPersonne OUT NUMBER)
+
+	PROCEDURE getNum(
+		login IN PERSONNE.LOGIN_PERSONNE%TYPE
+	  , numPersonne OUT PERSONNE.NUM_PERSONNE%TYPE)
 	IS
 	BEGIN
 		SELECT 
@@ -46,8 +51,17 @@ AS
 		WHERE
 			PER.LOGIN_PERSONNE=login;
 	END;
-	
-	PROCEDURE createPersonne( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,phone IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2)
+		
+	PROCEDURE createPersonne( 
+		lastname IN PERSONNE.NOM_PERSONNE%TYPE
+	 ,  firstname IN PERSONNE.PRENOM_PERSONNE%TYPE
+	 ,  login IN PERSONNE.LOGIN_PERSONNE%TYPE
+	 ,  password IN PERSONNE.MDP_PERSONNE%TYPE
+	 ,  mail IN PERSONNE.EMAIL_PERSONNE%TYPE
+	 ,  phone IN PERSONNE.TEL_PERSONNE%TYPE
+	 ,  street IN PERSONNE.NUM_RUE_PERSONNE%TYPE
+	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
+	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE)
 	IS 
 		crypted_password VARCHAR2(255);
 	BEGIN 
@@ -59,17 +73,17 @@ AS
 		COMMIT; 
 	END; 
 	
-	PROCEDURE updPersonne(
-		vnumPersonne IN NUMBER, 
-		lastname IN VARCHAR2,  
-		firstname IN VARCHAR2,
-		login IN VARCHAR2,
-		password IN VARCHAR2,
-		mail IN VARCHAR2,
-		phone IN VARCHAR2,
-		street IN VARCHAR2,
-		postal IN VARCHAR2,
-		city IN VARCHAR2)
+	 PROCEDURE updPersonne( 
+		vnumPersonne IN PERSONNE.NUM_PERSONNE%TYPE
+	 ,  lastname IN PERSONNE.NOM_PERSONNE%TYPE
+	 ,  firstname IN PERSONNE.PRENOM_PERSONNE%TYPE
+	 ,  login IN PERSONNE.LOGIN_PERSONNE%TYPE
+	 ,  password IN PERSONNE.MDP_PERSONNE%TYPE
+	 ,  mail IN PERSONNE.EMAIL_PERSONNE%TYPE
+	 ,  phone IN PERSONNE.TEL_PERSONNE%TYPE
+	 ,  street IN PERSONNE.NUM_RUE_PERSONNE%TYPE
+	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
+	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE)
 	IS 
 		crypted_password VARCHAR2(255);
 	BEGIN 
@@ -93,5 +107,6 @@ AS
 		COMMIT; 
 	END;
 	
-END PA_PERSONNE;
+	
+END pq_db_personne;
 /
