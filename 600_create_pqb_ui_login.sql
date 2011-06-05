@@ -1,5 +1,5 @@
 -- -----------------------------------------------------------------------------
---            Création ddu corps du package pq_ui_login de la base de données pour
+--  Création du corps du package pq_ui_login de la base de données pour
 --                      Oracle Version 10g
 --                        (10/5/2011)
 -- -----------------------------------------------------------------------------
@@ -11,48 +11,55 @@
   
  
 CREATE OR REPLACE PACKAGE BODY pq_ui_login
-AS 
+IS 
+
+	--Procédure permettant d'affiche le header simplifié (sans le menu) ainsi que les formulaires de connexion et de création de compte
 	PROCEDURE login IS 
-	rep_css VARCHAR2(255) := pq_ui_param_commun.get_rep_css;
-	rep_img VARCHAR2(255) := pq_ui_param_commun.get_rep_img;
 	BEGIN
-			htp.htmlOpen;
-			htp.headOpen;
-				htp.print('<link href="' || rep_css || 'style.css" rel="stylesheet" type="text/css" />');
-			htp.headClose;
-			htp.bodyOpen;
-			--logo
-			htp.print('<img title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.jpg">');
+		pq_ui_commun.header;
 			htp.div(cattributes => 'id="corps"');
-			htp.div(cattributes => 'id="login"');
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_login.check_login', 'POST');
-				htp.tableOpen;
-				htp.tableheader('');
-				htp.tableheader('');
-				htp.tableRowOpen;
-					htp.tableData('Identifiant :', cattributes => 'class="enteteFormulaire"');
-					htp.tableData(htf.formText('login',20));
-				htp.tableRowClose;	
-				htp.tableRowOpen;
-					htp.tableData('Mot de passe :', cattributes => 'class="enteteFormulaire"');
-					htp.tableData(htf.formPassword('password',20));
-				htp.tableRowClose;
-				htp.tableRowOpen;
-					htp.tableData('');
-					htp.tableData(htf.formSubmit(NULL,'Validation'));
-				htp.tableRowClose;
-				htp.tableClose;
-			htp.formClose;
-			htp.br;
-			htp.br;
-			htp.anchor('pq_ui_create_account.formCreate', 'Création de compte');
-			htp.print('</div>');
-		htp.div(cattributes => 'id="footer"');
-			htp.print('Système de réservation d''un centre de tennis');
-		htp.print('</div>');
-		htp.bodyClose;
-		htp.htmlClose;
+			pq_ui_login.aff_login;
+		pq_ui_commun.aff_footer;
 	END login;
+
+	--Procédure permettant simplement d'affiche le formulaire de connexion d'un compte existant ainsi que le formulaire de création d'un nouveau compte
+	PROCEDURE aff_login IS 
+	BEGIN		
+		htp.br;
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Connexion avec un compte existant');
+		htp.print('</div>');		
+		htp.br;
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_login.check_login', 'POST', cattributes => 'onSubmit="return validerConnexionCompteExistant(this,document)"');
+			htp.tableOpen;
+			htp.tableheader('');
+			htp.tableheader('');
+			htp.tableheader('');
+			htp.tableRowOpen;
+				htp.tableData('Identifiant* :', cattributes => 'class="enteteFormulaire"');			
+				htp.print('<td>');
+					htp.formText('login',20,cattributes => 'maxlength="20" id="vlogin"');
+				htp.print('</td>');
+				htp.tableData('',cattributes => 'id="vloginError" class="error"');
+			htp.tableRowClose;	
+			htp.tableRowOpen;
+				htp.tableData('Mot de passe* :', cattributes => 'class="enteteFormulaire"');		
+				htp.print('<td>');					
+					htp.formPassword('password',20,cattributes => 'maxlength="20" id="vpassword"');
+				htp.print('</td>');
+				htp.tableData('',cattributes => 'id="vpasswordError" class="error"');
+			htp.tableRowClose;
+			htp.tableRowOpen;
+				htp.tableData('');
+				htp.tableData(htf.formSubmit(NULL,'Validation'));
+			htp.tableRowClose;
+			htp.tableClose;
+		htp.formClose;
+		htp.br;
+		htp.br;
+		--Affichage du formulaire de création d'un nouveau compte
+		pq_ui_create_account.formCreate;
+	END aff_login;
 	
 	PROCEDURE check_login ( login IN VARCHAR2, password IN VARCHAR2) IS 
 		checkLog BOOLEAN;
@@ -83,12 +90,18 @@ AS
 		IF (decrypted_password=password) then
 			--redirect accueil
 			pq_ui_commun.aff_accueil;
-		ELSE
-			OWA_COOKIE.remove('numpersonne',NULL);
-			pq_ui_login.login;
-			htp.print('Mauvais mot de passe');
+		ELSE			
+			pq_ui_commun.header;
+				htp.br; 
+				htp.div(cattributes => 'id="corps"');
+				htp.print('<div class="error">');
+					htp.print('Le mot de passe indiqué est incorrect.');
+				htp.print('</div>');
+				pq_ui_login.aff_login;	
+			pq_ui_commun.aff_footer;	
+			--OWA_COOKIE.remove('numpersonne',NULL);			
 		END IF;
-		EXCEPTION 
+		EXCEPTION 			
 			when others then 
 			  IF (SQLCODE=100) THEN
 			  htp.print('Compte inconnu');
