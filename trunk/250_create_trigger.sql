@@ -1236,11 +1236,19 @@ CREATE OR REPLACE TRIGGER TI_S_INSCRIRE_BEFORE
 	FOR EACH ROW
 	DECLARE 
 		PERSONNE_CODE_NIVEAU PERSONNE.CODE_NIVEAU%TYPE;
+		PERSONNE_CODE_STATUT_EMPLOYE  PERSONNE.CODE_STATUT_EMPLOYE%TYPE;
 		ENTRAINEMENT_CODE_NIVEAU ENTRAINEMENT.CODE_NIVEAU%TYPE;
 	BEGIN
 	IF inserting then 
 		SELECT
-			PER.CODE_NIVEAU INTO PERSONNE_CODE_NIVEAU
+			PER.CODE_NIVEAU INTO PERSONNE_CODE_NIVEAU		 
+		FROM
+			PERSONNE PER
+		WHERE
+			PER.NUM_PERSONNE=:NEW.NUM_PERSONNE;
+			
+		SELECT
+			PER.CODE_STATUT_EMPLOYE INTO PERSONNE_CODE_STATUT_EMPLOYE 
 		FROM
 			PERSONNE PER
 		WHERE
@@ -1252,11 +1260,31 @@ CREATE OR REPLACE TRIGGER TI_S_INSCRIRE_BEFORE
 			ENTRAINEMENT ENT
 		WHERE
 			ENT.NUM_ENTRAINEMENT=:NEW.NUM_ENTRAINEMENT;
-			
-		IF PERSONNE_CODE_NIVEAU <> ENTRAINEMENT_CODE_NIVEAU THEN
+	
+		-- On commence par vérifier que la personne qui souhaite s'inscrire à un entrainement est adhérente au club de tennis
+		IF PERSONNE_CODE_STATUT_EMPLOYE <> 'AD' THEN
+				 raise_application_error(
+				   -20001,
+				   'Impossible d''inscrire la personne à cet entrainement car elle n''est pas adhérente au club. En effet son statut actuel est : ' || PERSONNE_CODE_STATUT_EMPLOYE);
+		END IF;
+	
+		-- Si la personne qui souhaite s'inscrire est bien adhérente au club alors
+		-- on compare le niveau de la personne "PERSONNE_CODE_NIVEAU" avec le niveau requis pour l'entrainement "ENTRAINEMENT_CODE_NIVEAU"
+			--Si le niveau de la personne est strictement inférieur	au niveau requis pour l'entrainement
+				--Alors, on affiche un message d'erreur et on lève une exception personnalisée.
+			--Sinon, si le niveau de la personne est supérieur ou égal au niveau requis pour l'entrainement
+				--Alors, aucun message d'erreur n'est affiché car la personne a l'autorisation de s'inscrire à cet entrainement.
+			--Note : on réalise le test sur le code car les niveaux ont été classés par ordre croissant 
+			--En effet, plus le code est petit plus le niveau est faible. 
+			--Exemple :
+					-- Personne A     : PERSONNE_CODE_NIVEAU = 3    , PERSONNE_NATURE_NIVEAU     = 30/5
+					-- Entrainement E : ENTRAINEMENT_CODE_NIVEAU = 4, ENTRAINEMENT_NATURE_NIVEAU = 30/4
+				-- Explication :
+					-- Comme PERSONNE_CODE_NIVEAU < ENTRAINEMENT_CODE_NIVEAU, car 3 < 4, alors la personne A n'est pas autorisée à s'inscrire à l'entrainement E.
+		IF TO_NUMBER(PERSONNE_CODE_NIVEAU) < TO_NUMBER(ENTRAINEMENT_CODE_NIVEAU) THEN
 			 raise_application_error(
-               -20002,
-               'Impossible d''inscrire la personne car elle n''a pas le niveau requis pour cet entrainement');
+			   -20002,
+			   'Impossible d''inscrire la personne car elle n''a pas le niveau requis pour cet entrainement.');
 		END IF;
 	END IF;
 END;
