@@ -152,8 +152,8 @@ IS
 		vnumPersonne:=TO_NUMBER(target_cookie.vals(1));
 		
         pq_ui_commun.aff_header;
-		htp.br;				
-		--pq_db_personne.updPersonne(vnumPersonne,lastname,firstname,login,password,vniveau,mail,tel,adresse,cp,ville);	
+		htp.br;		
+		--pq_db_personne.updPersonneAccount(vnumPersonne,lastname,firstname,login,password,mail,tel,adresse,cp,ville,vniveau);
 		htp.br;		
 		pq_ui_account.dis_account;
 		pq_ui_commun.aff_footer;
@@ -199,7 +199,7 @@ IS
 		
 		target_cookie := OWA_COOKIE.get('numpersonne');
 		vnumPersonne:=TO_NUMBER(target_cookie.vals(1));	
-		
+	 
 		SELECT NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,CODE_NIVEAU,EMAIL_PERSONNE,TEL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE 
 		INTO vnomPersonne,vprenomPersonne,vlogin,vMDP,vniveau,vemail,vtel,vadresse,vcp,vville
 		FROM PERSONNE WHERE NUM_PERSONNE = vnumPersonne;
