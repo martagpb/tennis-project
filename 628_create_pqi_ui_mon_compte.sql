@@ -25,7 +25,8 @@ IS
 	, tel IN VARCHAR2
 	, adresse IN VARCHAR2
 	, cp IN VARCHAR2
-	, ville IN VARCHAR2);
+	, ville IN VARCHAR2
+	, vniveau IN VARCHAR2);
 	  
 	--affiche les informations sur mon compte
 	PROCEDURE dis_account;

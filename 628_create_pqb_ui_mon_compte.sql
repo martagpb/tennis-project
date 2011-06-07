@@ -44,6 +44,7 @@ IS
 		vadresse PERSONNE.NUM_RUE_PERSONNE%TYPE;
 		vcp PERSONNE.CP_PERSONNE%TYPE;
 		vville PERSONNE.VILLE_PERSONNE%TYPE;
+		vniveau PERSONNE.CODE_NIVEAU%TYPE;
 		
 		vpassword VARCHAR(200);
 		
@@ -59,8 +60,8 @@ IS
 		target_cookie := OWA_COOKIE.get('numpersonne');
 		vnumPersonne:=TO_NUMBER(target_cookie.vals(1));
 
-		SELECT NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,EMAIL_PERSONNE,TEL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE 
-		INTO vnomPersonne,vprenomPersonne,vlogin,vMDP,vemail,vtel,vadresse,vcp,vville
+		SELECT NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,CODE_NIVEAU,EMAIL_PERSONNE,TEL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE 
+		INTO vnomPersonne,vprenomPersonne,vlogin,vMDP,vniveau,vemail,vtel,vadresse,vcp,vville
 		FROM PERSONNE WHERE NUM_PERSONNE = vnumPersonne;
 		
 		dbms_obfuscation_toolkit.desdecrypt(input_string => vMDP, 
@@ -89,6 +90,10 @@ IS
 			htp.tableRowOpen;
 				htp.tableData('Mot de passe :', cattributes => 'class="enteteFormulaire"');
 				htp.tableData(vpassword);
+			htp.tableRowClose;
+			htp.tableRowOpen;
+				htp.tableData('Niveau :', cattributes => 'class="enteteFormulaire"');
+				htp.tableData(vniveau);
 			htp.tableRowClose;
 			htp.tableRowOpen;
 				htp.tableData('Adresse mail :', cattributes => 'class="enteteFormulaire"');
@@ -120,7 +125,7 @@ IS
 		htp.br;
 		htp.br;
 	END  dis_account;
-
+	
 	-- Exécute la procédure de mise à jour d'un compte.
 	PROCEDURE exec_upd_account(
 	  lastname IN VARCHAR2
@@ -131,7 +136,8 @@ IS
 	, tel IN VARCHAR2
 	, adresse IN VARCHAR2
 	, cp IN VARCHAR2
-	, ville IN VARCHAR2)
+	, ville IN VARCHAR2
+	, vniveau IN VARCHAR2)
 	IS		
 		PERMISSION_DENIED EXCEPTION;
 		perm BOOLEAN;
@@ -147,7 +153,7 @@ IS
 		
         pq_ui_commun.aff_header;
 		htp.br;				
-		--pq_ui_personne.updPersonne(vnumPersonne,lastname,firstname,login,password,mail,tel,adresse,cp,ville);	
+		--pq_db_personne.updPersonne(vnumPersonne,lastname,firstname,login,password,vniveau,mail,tel,adresse,cp,ville);	
 		htp.br;		
 		pq_ui_account.dis_account;
 		pq_ui_commun.aff_footer;
@@ -159,6 +165,16 @@ IS
 	-- Affiche le formulaire permettant la mise à jour d'un compte
 	PROCEDURE form_upd_account
 	IS		
+		--On stocke les informations de nature et de code des niveaux dans le curseur niveauList		
+		CURSOR niveaulist 
+		IS 
+		SELECT 
+		    C.CODE
+		FROM 
+			CODIFICATION C
+		WHERE 
+			C.NATURE = 'Classement';
+			
 		vnomPersonne PERSONNE.NOM_PERSONNE%TYPE;
 		vprenomPersonne PERSONNE.PRENOM_PERSONNE%TYPE;
 		vlogin PERSONNE.LOGIN_PERSONNE%TYPE;
@@ -168,6 +184,7 @@ IS
 		vadresse PERSONNE.NUM_RUE_PERSONNE%TYPE;
 		vcp PERSONNE.CP_PERSONNE%TYPE;
 		vville PERSONNE.VILLE_PERSONNE%TYPE;
+		vniveau PERSONNE.CODE_NIVEAU%TYPE;
 		
 		PERMISSION_DENIED EXCEPTION;
 		perm BOOLEAN;
@@ -183,8 +200,8 @@ IS
 		target_cookie := OWA_COOKIE.get('numpersonne');
 		vnumPersonne:=TO_NUMBER(target_cookie.vals(1));	
 		
-		SELECT NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,EMAIL_PERSONNE,TEL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE 
-		INTO vnomPersonne,vprenomPersonne,vlogin,vMDP,vemail,vtel,vadresse,vcp,vville
+		SELECT NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,CODE_NIVEAU,EMAIL_PERSONNE,TEL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE 
+		INTO vnomPersonne,vprenomPersonne,vlogin,vMDP,vniveau,vemail,vtel,vadresse,vcp,vville
 		FROM PERSONNE WHERE NUM_PERSONNE = vnumPersonne;
 		
 		pq_ui_commun.aff_header;
@@ -223,6 +240,22 @@ IS
 					htp.tableData('Mot de passe * :', cattributes => 'class="enteteFormulaire"');
 					htp.tableData('<INPUT TYPE="text" id="password" name="password" maxlength="40" value="'||vpassword||'"> ');
 					htp.tableData('',cattributes => 'id="passwordText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+				htp.tableData('Niveau * :');
+					--Forme une liste déroulante avec tous les niveaux de la table codification								
+					htp.print('<td>');
+					htp.print('<select id="vniveau" name="vniveau">');						
+					for currentNiveau in niveaulist loop		
+						if(currentNiveau.CODE=vniveau)
+						then
+							htp.print('<option selected value="'||vniveau||'">'||currentNiveau.CODE||'</option>');	
+						else
+							htp.print('<option value="'||vniveau||'">'||currentNiveau.CODE||'</option>');	
+						end if;							
+					end loop;
+					htp.print('</select>');										
+					htp.print('</td>');	
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Adresse mail * :', cattributes => 'class="enteteFormulaire"');
