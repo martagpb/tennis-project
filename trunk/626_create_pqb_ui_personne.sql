@@ -171,6 +171,13 @@ IS
 					htp.tabledata('Adresse :', cattributes => 'class="enteteFormulaire"');
 					htp.tabledata(currentPersonne.NUM_RUE_PERSONNE || ' ' || currentPersonne.CP_PERSONNE || ' ' || currentPersonne.VILLE_PERSONNE);				
 				htp.tablerowclose;
+				htp.tablerowopen;
+					htp.tabledata('Actif :', cattributes => 'class="enteteFormulaire"');
+					IF currentPersonne.ACTIF=1 THEN
+						htp.tabledata('Oui');		
+					ELSE
+						htp.tabledata('Non');	
+				htp.tablerowclose;
 				IF currentPersonne.CODE_STATUT_EMPLOYE IS NOT NULL THEN
 				htp.tablerowopen;
 					htp.tabledata('Statut d''employé :', cattributes => 'class="enteteFormulaire"');
@@ -228,65 +235,169 @@ IS
 				end loop;	
 			htp.tableClose;		
 			END IF;
-			htp.anchor('pq_ui_personne.manage_personnes_with_menu', 'Retourner à la gestion des personnes');	
+			htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');	
 		pq_ui_commun.aff_footer;
 	END dis_personne;
 	
+	
+	PROCEDURE form_add_personne
+	IS
+		CURSOR listStatutsEmployes IS
+		SELECT 
+			 COD.CODE
+			,COD.NATURE
+			,COD.LIBELLE
+		FROM 
+			CODIFICATION COD
+		WHERE
+			COD.NATURE='ROLE'
+		ORDER BY 
+			1;
+		CURSOR listNiveaux IS
+		SELECT 
+			 COD.CODE
+			,COD.NATURE 
+			,COD.LIBELLE
+		FROM 
+			CODIFICATION COD
+		WHERE
+			COD.NATURE='Classement'
+		ORDER BY 
+			1;	
+	BEGIN
+		pq_ui_commun.aff_header;
+		htp.br;
+		htp.br;
+		htp.br;
+		htp.br;
+		htp.print('<div class="titre_niveau_1">');
+		htp.print('Création d''un nouveau compte');
+		htp.print('</div>');			
+		htp.br;
+		htp.print('Les champs marqués d''une étoile sont obligatoires');
+		htp.br;
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_personne.exec_add_personne', 'POST', cattributes => 'onSubmit="return valider(this,document)"');
+			htp.tableOpen(cattributes => 'CELLSPACING=8');
+				htp.tableheader('');
+				htp.tableheader('');
+				htp.tableheader('');
+				htp.tableRowOpen;
+					htp.tableData('Nom * :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('lastname',20));
+					htp.tableData('',cattributes => 'id="lastnameText" class="error"');
+				htp.tableRowClose;	
+				htp.tableRowOpen;
+					htp.tableData('Prénom * :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('firstname',20));
+					htp.tableData('',cattributes => 'id="firstnameText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Identifiant * :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('login',20));
+					htp.tableData('',cattributes => 'id="identifiantText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Mot de passe * :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formPassword('password',20));
+					htp.tableData('',cattributes => 'id="passwordText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Adresse mail * :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('mail',20));
+					htp.tableData('',cattributes => 'id="mailText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Adresse :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('street',20));
+					htp.tableData('');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Code postal :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('postal',20));
+					htp.tableData('',cattributes => 'id="postalText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Ville :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('city',20));
+					htp.tableData('',cattributes => 'id="cityText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Téléphone :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('phone',20));
+					htp.tableData('',cattributes => 'id="phoneText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Niveau :', cattributes => 'class="enteteFormulaire"');
+                                        htp.print('<td>');
+					htp.formSelectOpen('level');
+						for currentNiveau in listNiveaux loop
+							htp.formSelectOption(currentNiveau.LIBELLE, cattributes      => 'VALUE=' || currentNiveau.CODE);
+						end loop;	
+					htp.formSelectClose;
+                                        htp.print('</td>');
+					htp.tableData('',cattributes => 'id="levelText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Statut de joueur :', cattributes => 'class="enteteFormulaire"');
+                                        htp.print('<td>');
+					htp.formSelectOpen('statutJoueur');
+						htp.formSelectOption('Visiteur',cattributes      => 'VALUE="V"');
+						htp.formSelectOption('Adhérent',cattributes      => 'VALUE="A"');
+					htp.formSelectClose;
+                                        htp.print('</td>');
+					htp.tableData('',cattributes => 'id="StatutJoueurText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Statut employé :', cattributes => 'class="enteteFormulaire"');
+                                        htp.print('<td>');
+					htp.formSelectOpen('statutEmploye');
+						for currentStatut in listStatutsEmployes loop
+							htp.formSelectOption(currentStatut.LIBELLE, cattributes      => ('VALUE=' || currentStatut.CODE));
+						end loop;	
+					htp.formSelectClose;
+                                        htp.print('</td>');
+					htp.tableData('',cattributes => 'id="statutEmpText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('');
+					htp.tableData(htf.formSubmit(NULL,'Validation'));
+				htp.tableRowClose;
+			htp.tableClose();
+		htp.formClose;
+		htp.br;	
+	END form_add_personne;
+
 
 	
 	-- Exécute la procédure d'ajout d'un personne et gère les erreurs éventuelles.
-/*	PROCEDURE exec_add_personne(
-	  vcodeSurface IN CHAR
-	, vnatureSurface IN VARCHAR2
-	, vactif IN NUMBER)
+	PROCEDURE exec_add_personne ( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2)
 	IS
 	BEGIN
 		pq_ui_commun.aff_header;
 			htp.br;
-			pq_db_personne.add_personne(vcodeSurface,vnatureSurface,vactif);
+			pq_db_personne.add_personne(lastname ,  firstname ,login ,password ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur );
 			htp.print('<div class="success"> ');
-				htp.print('Le personne a été ajouté avec succès.');
+				htp.print('La personne a été ajoutée avec succès.');
 			htp.print('</div>');			
 			htp.br;
 			htp.br;			
-			pq_ui_personne.manage_personnes;
+			pq_ui_personne.dis_personnes;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout d''un personne en cours...');
-	END exec_add_personne;*/
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Erreur lors de l''ajout d''une personne');
+	END exec_add_personne;
 	
-	-- Exécute la procédure de mise à jour d'un personne et gère les erreurs éventuelles
-/*	PROCEDURE exec_upd_personne(
-	  vnumpersonne IN NUMBER
-	, vcodeSurface IN CHAR
-	, vnatureSurface IN VARCHAR2
-	, vactif IN NUMBER)
-	IS
-	BEGIN
-		pq_ui_commun.aff_header;				
-			pq_db_personne.upd_personne(vnumpersonne,vcodeSurface,vnatureSurface,vactif);
-			htp.print('<div class="success"> ');
-				htp.print('Le personne n° '|| vnumpersonne || ' a été mis à jour avec succès.');
-			htp.print('</div>');				
-			htp.br;
-			htp.br;			
-			pq_ui_personne.manage_personnes;
-		pq_ui_commun.aff_footer;
-	EXCEPTION
-		WHEN OTHERS THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un personne en cours...');
-	END exec_upd_personne;*/
 	
 	-- Exécute la procédure de suppression d'un personne et gère les erreurs éventuelles
-/*	PROCEDURE exec_del_personne(
+	PROCEDURE exec_del_personne(
 	  vnumpersonne IN NUMBER)
 	IS
 	BEGIN
 		pq_ui_commun.aff_header;		
 			pq_db_personne.del_personne(vnumpersonne);
 			htp.print('<div class="success"> ');
-				htp.print('Le personne n° '|| vnumpersonne || ' a été supprimé avec succès.');
+				htp.print('La personne n° '|| vnumpersonne || ' a été supprimée avec succès.');
 			htp.print('</div>');				
 			htp.br;
 			htp.br;			
@@ -295,93 +406,195 @@ IS
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression d''un personne en cours...');
-	END exec_del_personne;*/
+	END exec_del_personne;
 	
 	
-	/*
-	-- Affiche le formulaire de saisie permettant la modification d’un personne existant
+	
+	-- Affiche le formulaire de saisie permettant la modification d’une personne existante
 	PROCEDURE form_upd_personne(
-	  vnumpersonne IN NUMBER
-	, vcodeSurface IN CHAR
-	, vnatureSurface IN VARCHAR2
-	, vactif IN NUMBER)
+	  vnumpersonne IN NUMBER)
 	IS
-		-- On stocke dans un curseur la liste de tous les libelles de codification existants
-		CURSOR listLibelleCodification IS
+		currentPersonne PERSONNE%ROWTYPE;
+		CURSOR listStatutsEmployes IS
 		SELECT 
-		    COD.LIBELLE
-		  , COD.NATURE
-		  , COD.CODE
+			 COD.CODE
+			,COD.NATURE
+			,COD.LIBELLE
 		FROM 
 			CODIFICATION COD
 		WHERE
-			--TODO : Récupérer cette valeur de manière dynamique si possible
-			COD.NATURE = 'Surface'
+			COD.NATURE='ROLE'
 		ORDER BY 
 			1;
+		CURSOR listNiveaux IS
+		SELECT 
+			 COD.CODE
+			,COD.NATURE 
+			,COD.LIBELLE
+		FROM 
+			CODIFICATION COD
+		WHERE
+			COD.NATURE='Classement'
+		ORDER BY 
+			1;	
+		password VARCHAR2(255);
+	BEGIN
+		SELECT
+			* INTO currentPersonne
+		FROM
+			PERSONNE
+		WHERE
+			NUM_PERSONNE=vnumpersonne;
+			dbms_obfuscation_toolkit.desdecrypt(input_string => currentPersonne.MDP_PERSONNE, 
+										key_string => 'tennispro', 
+										decrypted_string  => password );
+		pq_ui_commun.aff_header;
+		htp.br;
+		htp.br;
+		htp.br;
+		htp.br;
+		htp.print('<div class="titre_niveau_1">');
+		htp.print('Création d''un nouveau compte');
+		htp.print('</div>');			
+		htp.br;
+		htp.print('Les champs marqués d''une étoile sont obligatoires');
+		htp.br;
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_personne.exec_upd_personne', 'POST', cattributes => 'onSubmit="return valider(this,document)"');
+			htp.formText('num',20,NULL,vnumpersonne, cattributes => 'type="hidden"');
+			htp.tableOpen(cattributes => 'CELLSPACING=8');
+				htp.tableheader('');
+				htp.tableheader('');
+				htp.tableheader('');
+				htp.tableRowOpen;
+					htp.tableData('Nom * :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('lastname',20,NULL,currentPersonne.NOM_PERSONNE));
+					htp.tableData('',cattributes => 'id="lastnameText" class="error"');
+				htp.tableRowClose;	
+				htp.tableRowOpen;
+					htp.tableData('Prénom * :');
+					htp.tableData(htf.formText('firstname',20,NULL,currentPersonne.PRENOM_PERSONNE));
+					htp.tableData('',cattributes => 'id="firstnameText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Identifiant * :');
+					htp.tableData(htf.formText('log',20,NULL, currentPersonne.LOGIN_PERSONNE));
+					htp.tableData('',cattributes => 'id="identifiantText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Mot de passe * :');
+					htp.tableData(htf.formPassword('pass',20,NULL,password));
+					htp.tableData('',cattributes => 'id="passwordText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Adresse mail * :');
+					htp.tableData(htf.formText('mail',20,NULL,currentPersonne.EMAIL_PERSONNE));
+					htp.tableData('',cattributes => 'id="mailText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Adresse :');
+					htp.tableData(htf.formText('street',20,NULL,currentPersonne.NUM_RUE_PERSONNE));
+					htp.tableData('');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Code postal :');
+					htp.tableData(htf.formText('postal',20,NULL,currentPersonne.CP_PERSONNE));
+					htp.tableData('',cattributes => 'id="postalText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Ville :');
+					htp.tableData(htf.formText('city',20,NULL,currentPersonne.VILLE_PERSONNE));
+					htp.tableData('',cattributes => 'id="cityText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Téléphone :');
+					htp.tableData(htf.formText('phone',20,NULL,currentPersonne.TEL_PERSONNE));
+					htp.tableData('',cattributes => 'id="phoneText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Niveau :', cattributes => 'class="enteteFormulaire"');
+                    htp.print('<td>');
+					htp.formSelectOpen('level');
+						for currentNiveau in listNiveaux loop
+							IF currentNiveau.CODE = currentPersonne.Code_NIVEAU THEN
+								htp.formSelectOption(currentNiveau.LIBELLE, cattributes      => 'selected="selected" VALUE=' || currentNiveau.CODE); 
+							ELSE
+								htp.formSelectOption(currentNiveau.LIBELLE, cattributes      => 'VALUE=' || currentNiveau.CODE);
+							END IF;
+						end loop;	
+					htp.formSelectClose;
+                    htp.print('</td>');
+					htp.tableData('',cattributes => 'id="levelText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Statut de joueur :', cattributes => 'class="enteteFormulaire"');
+                    htp.print('<td>');
+					htp.formSelectOpen('statutJoueur');
+						IF currentPersonne.STATUT_JOUEUR='V' THEN
+							htp.formSelectOption('Visiteur',cattributes      => 'selected="selected" VALUE="V"');
+						ELSE
+							htp.formSelectOption('Visiteur',cattributes      => 'VALUE="V"');
+						END IF;
+						IF currentPersonne.STATUT_JOUEUR='A' THEN
+								htp.formSelectOption('Adhérent',cattributes      => 'selected="selected" VALUE="A"');
+						ELSE
+							htp.formSelectOption('Adhérent',cattributes      => 'VALUE="A"');
+						END IF;
+					htp.formSelectClose;
+                    htp.print('</td>');
+					htp.tableData('',cattributes => 'id="StatutJoueurText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Statut employé :', cattributes => 'class="enteteFormulaire"');
+                    htp.print('<td>');
+					htp.formSelectOpen('statutEmploye');
+						for currentStatut in listStatutsEmployes loop
+							IF currentStatut.CODE = currentPersonne.CODE_STATUT_EMPLOYE THEN
+								htp.formSelectOption(currentStatut.LIBELLE, cattributes      => ('selected="selected" VALUE=' || currentStatut.CODE));
+							ELSE
+								htp.formSelectOption(currentStatut.LIBELLE, cattributes      => ('VALUE=' || currentStatut.CODE));
+							END IF;
+						end loop;	
+					htp.formSelectClose;
+                    htp.print('</td>');
+					htp.tableData('',cattributes => 'id="statutEmpText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Droit :');
+					htp.tableData(htf.formText('droit',20,NULL,currentPersonne.NIVEAU_DROIT));
+					htp.tableData('',cattributes => 'id="droitText" class="error"');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('');
+					htp.tableData(htf.formSubmit(NULL,'Validation'));
+				htp.tableRowClose;
+			htp.tableClose();
+		htp.formClose;
+		htp.br;	
+	EXCEPTION
+		WHEN OTHERS THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification d''une personne');
+	END form_upd_personne;
+	
+	
+		-- Exécute la procédure de mise à jour d'un personne et gère les erreurs éventuelles
+	PROCEDURE exec_upd_personne(num IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,log IN VARCHAR2,pass IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2, droit IN NUMBER)
+	IS
 	BEGIN
 		pq_ui_commun.aff_header;	
-				htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_personne.exec_upd_personne', 'POST', cattributes => 'onSubmit="return validerpersonne(this,document)"');
-					htp.formhidden ('vnumpersonne',vnumpersonne);
-					--Les bonnes valeurs dans les champs hidden sont indiquées après validation du formulaire (Cf. validerpersonne)
-					htp.formhidden ('vcodeSurface','DefaultValue', cattributes => 'id="idVcodeSurface"');
-					htp.formhidden ('vnatureSurface','DefaultValue', cattributes => 'id="idVnatureSurface"');
-					htp.tableOpen;
-					htp.br;
-					htp.print('Mise à jour d''un personne' || ' (' || htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||vnumpersonne||'&'||'vcodeSurface='||vcodeSurface||'&'||'vnatureSurface='||vnatureSurface||'&'||'vactif='||vactif,'Actualiser')|| ')' );
-					htp.br;
-					htp.br;
-					htp.tableRowOpen;
-						htp.tableData('N° du personne * :', cattributes => 'class="enteteFormulaire"');
-						htp.tableData(vnumpersonne);
-					htp.tableRowClose;	
-					htp.tableRowOpen;
-						htp.tableData('Libelle de la surface * :', cattributes => 'class="enteteFormulaire"');	
-						--Forme une liste déroulante avec tous les libellés de surface à partir de la table CODIFICATION									
-						htp.print('<td>');
-							htp.print('<select id="vlibelleSurface">');						
-							FOR currentLibelle in listLibelleCodification loop
-								--On transmet le code, la nature et le libellé
-								htp.print('<option value="'||currentLibelle.CODE||'*'||currentLibelle.NATURE||'*'||currentLibelle.LIBELLE||'"');
-								IF(currentLibelle.CODE=vcodeSurface and currentLibelle.NATURE=vnatureSurface) THEN
-									--Valeur sélectionnée par défaut
-									htp.print(' selected="selected"'); 
-								END IF;
-								htp.print('>'||currentLibelle.LIBELLE||'</option>');
-							END LOOP; 																				
-							htp.print('</select>');										
-						htp.print('</td>');						
-					htp.tableRowClose;
-					htp.tableRowOpen;
-						htp.tableData('Le personne est-il actif ? * :', cattributes => 'class="enteteFormulaire"');												
-						htp.print('<td>');
-						htp.print('<select name="vactif" id="vactif">');
-							htp.print('<option value="1"');
-							IF(vactif=1) THEN
-								htp.print(' selected="selected"'); --Valeur sélectionnée par défaut si actif vaut 1
-							END IF;
-							htp.print('>oui</option>');
-							htp.print('<option value="0"');
-							IF(vactif=0) THEN
-								htp.print(' selected="selected"'); --Valeur sélectionnée par défaut si actif vaut 0
-							END IF;
-							htp.print('>non</option>');
-						htp.print('</select>');
-						htp.print('</td>');	
-					htp.tableRowClose;
-					htp.tableRowOpen;
-						htp.tableData('');
-						htp.tableData(htf.formSubmit(NULL,'Validation'));
-					htp.tableRowClose;
-					htp.tableClose;
-				htp.formClose;
-				htp.br;
-				htp.anchor('pq_ui_personne.manage_personnes_with_menu', 'Retourner à la gestion des personne');
+		
+			pq_db_personne.updPersonneFull(num, lastname ,  firstname ,log ,pass ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur, droit );
+			htp.print('<div class="success"> ');
+				htp.print('La personne n° '|| vnumpersonne || ' a été mis à jour avec succès.');
+			htp.print('</div>');				
+			htp.br;
+			htp.br;			
+			pq_ui_personne.manage_personnes;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification d''un personne');
-	END form_upd_personne;
-	*/	
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un personne en cours...');
+	END exec_upd_personne;
+	
+	
 END pq_ui_personne;
 /

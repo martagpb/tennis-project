@@ -23,49 +23,23 @@ IS
 	  vNumPersonne IN NUMBER);
 	
 	-- Exécute la procédure d'ajout d'une personne et gère les erreurs éventuelles.
-	/*PROCEDURE exec_add_personne(
-		 vStatutEmploye IN VARCHAR2
-		,vNiveau IN VARCHAR2
-		,vNom IN VARCHAR2
-		,vPrenom IN VARCHAR2
-		,vLogin IN VARCHAR2
-		,vPassword IN VARCHAR2
-		,vTelephone IN VARCHAR2
-		,vMail IN VARCHAR2
-		,vNumRue IN VARCHAR2
-		,vCodePostal IN VARCHAR2
-		,vVille IN VARCHAR2
-	);*/
+	PROCEDURE exec_add_personne ( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2);
 	
 	-- Exécute la procédure de mise à jour d'une personne et gère les erreurs éventuelles
-	/*PROCEDURE exec_upd_personne(
-		vStatutEmploye IN VARCHAR2
-		,vNiveau IN VARCHAR2
-		,vNom IN VARCHAR2
-		,vPrenom IN VARCHAR2
-		,vLogin IN VARCHAR2
-		,vPassword IN VARCHAR2
-		,vTelephone IN VARCHAR2
-		,vMail IN VARCHAR2
-		,vNumRue IN VARCHAR2
-		,vCodePostal IN VARCHAR2
-		,vVille IN VARCHAR2
-	);*/
+	PROCEDURE exec_upd_personne(num IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,log IN VARCHAR2,pass IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2, droit IN NUMBER);
+	
 	
 	-- Exécute la procédure de suppression d'une personne et gère les erreurs éventuelles
-	/*PROCEDURE exec_del_personne(
-	  vnumPersonne IN NUMBER);*/
-	
-	-- Exécute la procédure d’affichage des personnes et gère les erreurs éventuelles
-	/*PROCEDURE exec_dis_personnes(
-	  vnumPersonne IN NUMBER);*/
+	PROCEDURE exec_del_personne(
+	  vnumPersonne IN NUMBER);
+
 	
 	-- Affiche le formulaire permettant la saisie d’une nouvelle personne
-	/*PROCEDURE form_add_personne;*/
+	PROCEDURE form_add_personne;
 	
-	/*-- Affiche le formulaire de saisie permettant la modification d’une personne existante
+	-- Affiche le formulaire de saisie permettant la modification d’une personne existante
 	PROCEDURE form_upd_personne(
 	  vnumPersonne IN NUMBER);
-	*/
+	
 END pq_ui_personne;
 /
