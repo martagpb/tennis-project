@@ -203,6 +203,48 @@ IS
 		COMMIT; 
 	END;
 	
+	PROCEDURE updPersonneAccount( 
+	 vnumPersonne IN PERSONNE.NUM_PERSONNE%TYPE
+	,	lastname IN PERSONNE.NOM_PERSONNE%TYPE
+	 ,  firstname IN PERSONNE.PRENOM_PERSONNE%TYPE
+	 ,  login IN PERSONNE.LOGIN_PERSONNE%TYPE
+	 ,  password IN PERSONNE.MDP_PERSONNE%TYPE
+	 ,  mail IN PERSONNE.EMAIL_PERSONNE%TYPE
+	 ,  phone IN PERSONNE.TEL_PERSONNE%TYPE
+	 ,  street IN PERSONNE.NUM_RUE_PERSONNE%TYPE
+	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
+	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE
+	 ,	codeNiveau IN PERSONNE.CODE_NIVEAU%TYPE)
+	IS 
+		crypted_password VARCHAR2(255);
+		natureNiveau PERSONNE.NATURE_NIVEAU%TYPE;
+	BEGIN 
+		SELECT 
+			COD.NATURE INTO natureNiveau
+		FROM 
+			CODIFICATION COD
+		WHERE
+			COD.CODE=codeNiveau;
+		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
+										key_string => 'tennispro', 
+										encrypted_string => crypted_password );
+		UPDATE PERSONNE
+		SET
+				NOM_PERSONNE = lastname
+		       ,PRENOM_PERSONNE = firstname
+			   ,LOGIN_PERSONNE = login
+			   ,MDP_PERSONNE = crypted_password
+			   ,TEL_PERSONNE = phone
+			   ,EMAIL_PERSONNE = mail
+			   ,NUM_RUE_PERSONNE = street
+			   ,CP_PERSONNE = postal
+			   ,VILLE_PERSONNE = city
+			   ,CODE_NIVEAU = codeNiveau
+			   ,NATURE_NIVEAU = natureNiveau
+		WHERE
+				NUM_PERSONNE = vnumPersonne;
+		COMMIT; 
+	END;
 	
 	PROCEDURE delPersonne( vnumPersonne IN PERSONNE.NUM_PERSONNE%TYPE)
 	IS
