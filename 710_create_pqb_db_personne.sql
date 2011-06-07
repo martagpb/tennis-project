@@ -68,8 +68,47 @@ IS
 		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
 										key_string => 'tennispro', 
 										encrypted_string => crypted_password );
-		INSERT INTO PERSONNE(NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT)
-		VALUES (lastname,firstname,login,crypted_password,phone,mail,street,postal,city,1);
+		INSERT INTO PERSONNE(NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,NIVEAU_DROIT,ACTIF)
+		VALUES (lastname,firstname,login,crypted_password,phone,mail,street,postal,city,1,1);
+		COMMIT; 
+	END; 
+	
+	PROCEDURE createPersonne( 
+	
+		lastname IN PERSONNE.NOM_PERSONNE%TYPE
+	 ,  firstname IN PERSONNE.PRENOM_PERSONNE%TYPE
+	 ,  login IN PERSONNE.LOGIN_PERSONNE%TYPE
+	 ,  password IN PERSONNE.MDP_PERSONNE%TYPE
+	 ,  mail IN PERSONNE.EMAIL_PERSONNE%TYPE
+	 ,  phone IN PERSONNE.TEL_PERSONNE%TYPE
+	 ,  street IN PERSONNE.NUM_RUE_PERSONNE%TYPE
+	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
+	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE
+	 , 	codeStatutEmploye IN PERSONNE.CODE_STATUT_EMPLOYE%TYPE
+	 ,	codeNiveau IN PERSONNE.CODE_NIVEAU%TYPE
+	 ,	statutJoueur IN PERSONNE.STATUT_JOUEUR%TYPE)
+	IS 
+		crypted_password VARCHAR2(255);
+		natureStatut PERSONNE.NATURE_STATUT_EMPLOYE%TYPE;
+		natureNiveau PERSONNE.NATURE_NIVEAU%TYPE;
+	BEGIN 
+		SELECT 
+			COD.NATURE INTO natureStatut
+		FROM 
+			CODIFICATION COD
+		WHERE
+			COD.CODE=codeStatutEmploye;
+		SELECT 
+			COD.NATURE INTO natureNiveau
+		FROM 
+			CODIFICATION COD
+		WHERE
+			COD.CODE=codeNiveau;
+		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
+										key_string => 'tennispro', 
+										encrypted_string => crypted_password );
+		INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE, NATURE_STATUT_EMPLOYE, CODE_NIVEAU, NATURE_NIVEAU, NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
+		VALUES (codeStatutEmploye,natureStatut,codeNiveau,natureNiveau,lastname,firstname,login,crypted_password,phone,mail,street,postal,city,statutJoueur,1);
 		COMMIT; 
 	END; 
 	
@@ -105,6 +144,83 @@ IS
 		WHERE
 				NUM_PERSONNE = vnumPersonne;
 		COMMIT; 
+	END;
+	
+	 PROCEDURE updPersonneFull( 
+	 vnumPersonne IN PERSONNE.NUM_PERSONNE%TYPE
+	,	lastname IN PERSONNE.NOM_PERSONNE%TYPE
+	 ,  firstname IN PERSONNE.PRENOM_PERSONNE%TYPE
+	 ,  login IN PERSONNE.LOGIN_PERSONNE%TYPE
+	 ,  password IN PERSONNE.MDP_PERSONNE%TYPE
+	 ,  mail IN PERSONNE.EMAIL_PERSONNE%TYPE
+	 ,  phone IN PERSONNE.TEL_PERSONNE%TYPE
+	 ,  street IN PERSONNE.NUM_RUE_PERSONNE%TYPE
+	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
+	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE
+	 , 	codeStatutEmploye IN PERSONNE.CODE_STATUT_EMPLOYE%TYPE
+	 ,	codeNiveau IN PERSONNE.CODE_NIVEAU%TYPE
+	 ,	statutJoueur IN PERSONNE.STATUT_JOUEUR%TYPE
+	 ,	niveauDroit IN PERSONNE.NIVEAU_DROIT%TYPE)
+	IS 
+		crypted_password VARCHAR2(255);
+		natureStatut PERSONNE.NATURE_STATUT_EMPLOYE%TYPE;
+		natureNiveau PERSONNE.NATURE_NIVEAU%TYPE;
+	BEGIN 
+		SELECT 
+			COD.NATURE INTO natureStatut
+		FROM 
+			CODIFICATION COD
+		WHERE
+			COD.CODE=codeStatutEmploye;
+		SELECT 
+			COD.NATURE INTO natureNiveau
+		FROM 
+			CODIFICATION COD
+		WHERE
+			COD.CODE=codeNiveau;
+		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
+										key_string => 'tennispro', 
+										encrypted_string => crypted_password );
+		UPDATE PERSONNE
+		SET
+				NOM_PERSONNE = lastname
+		       ,PRENOM_PERSONNE = firstname
+			   ,LOGIN_PERSONNE = login
+			   ,MDP_PERSONNE = crypted_password
+			   ,TEL_PERSONNE = phone
+			   ,EMAIL_PERSONNE = mail
+			   ,NUM_RUE_PERSONNE = street
+			   ,CP_PERSONNE = postal
+			   ,VILLE_PERSONNE = city
+			   ,CODE_STATUT_EMPLOYE = codeStatutEmploye
+			   ,NATURE_STATUT_EMPLOYE = natureStatut
+			   ,CODE_NIVEAU = codeNiveau
+			   ,NATURE_NIVEAU = natureNiveau
+			   ,STATUT_JOUEUR = statutJoueur
+			   ,NIVEAU_DROIT = niveauDroit
+		WHERE
+				NUM_PERSONNE = vnumPersonne;
+		COMMIT; 
+	END;
+	
+	
+	PROCEDURE delPersonne( vnumPersonne IN PERSONNE.NUM_PERSONNE%TYPE)
+	IS
+	BEGIN
+		UPDATE PERSONNE
+		SET
+			ACTIF=0
+		WHERE
+			NUM_PERSONNE=vnumPersonne;
+		DELETE FROM ETRE_ASSOCIE
+		WHERE
+			NUM_PERSONNE=vnumPersonne
+		AND
+			DATE_OCCUPATION>SYSDATE;
+		DELETE FROM S_INSCRIRE
+		WHERE
+			NUM_PERSONNE=vnumPersonne;
+		COMMIT;
 	END;
 	
 	
