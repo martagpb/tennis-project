@@ -170,6 +170,7 @@ IS
 		IS 
 		SELECT 
 		    C.CODE
+		   ,C.LIBELLE
 		FROM 
 			CODIFICATION C
 		WHERE 
@@ -249,9 +250,9 @@ IS
 					for currentNiveau in niveaulist loop		
 						if(currentNiveau.CODE=vniveau)
 						then
-							htp.print('<option selected value="'||vniveau||'">'||currentNiveau.CODE||'</option>');	
+							htp.print('<option selected value="'||vniveau||'">'||currentNiveau.LIBELLE||'</option>');	
 						else
-							htp.print('<option value="'||vniveau||'">'||currentNiveau.CODE||'</option>');	
+							htp.print('<option value="'||vniveau||'">'||currentNiveau.LIBELLE||'</option>');	
 						end if;							
 					end loop;
 					htp.print('</select>');										
