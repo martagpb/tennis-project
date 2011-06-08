@@ -614,12 +614,13 @@ IS
 		CURSOR niveaulist 
 		IS 
 		SELECT 
-			C.NATURE
+			C.LIBELLE
 		  , C.CODE
+		  , C.NATURE
 		FROM 
 			CODIFICATION C
 		WHERE 
-			C.LIBELLE = 'Classement';
+			C.NATURE = 'Classement';
 			
 		currentPlace NUMBER(2) := 0;
 		perm BOOLEAN;
@@ -650,7 +651,7 @@ IS
 		pq_ui_commun.aff_header;
 			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_upd_entrainement', 'POST', cattributes => 'onSubmit="return validerUpdEntrainement(this,document)"');				
 				htp.formhidden ('vnumEntrainement',vnumEntrainement);
-				htp.formhidden ('vnatureNiveau','NC', cattributes => 'id="idVnatureNiveau"');	
+				htp.formhidden ('vnatureNiveau','Classement', cattributes => 'id="idVnatureNiveau"');	
 				htp.formhidden ('vcodeNiveau','1', cattributes => 'id="idVcodeNiveau"');
 				htp.br;
 				htp.print('<div class="titre_niveau_1">');
@@ -688,9 +689,9 @@ IS
 						--Cependant, l'utilisateur ne verra que la nature du niveau dans la liste déroulante
 						if(currentNiveau.CODE=vcodeNiveau)
 						then
-							htp.print('<option selected value="'||currentNiveau.CODE||'*'||currentNiveau.NATURE||'">'||currentNiveau.NATURE||'</option>');
+							htp.print('<option selected value="'||currentNiveau.CODE||'*'||currentNiveau.NATURE||'">'||currentNiveau.LIBELLE||'</option>');
 						else
-							htp.print('<option value="'||currentNiveau.CODE||'*'||currentNiveau.NATURE||'">'||currentNiveau.NATURE||'</option>');
+							htp.print('<option value="'||currentNiveau.CODE||'*'||currentNiveau.NATURE||'">'||currentNiveau.LIBELLE||'</option>');
 						end if;							
 					end loop;
 					htp.print('</select>');										
