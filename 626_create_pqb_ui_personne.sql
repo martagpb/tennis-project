@@ -93,7 +93,7 @@ IS
 			END IF;			
 			htp.tabledata(htf.anchor('pq_ui_personne.dis_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Informations complémentaires'));
 			htp.tabledata(htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Mise à jour'));
-			htp.tabledata(htf.anchor('pq_ui_personne.exec_del_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+			htp.tabledata(htf.anchor('pq_ui_personne.exec_delpersonne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
 			htp.tableRowClose;
 		end loop;	
 		htp.tableClose;			
@@ -137,7 +137,7 @@ IS
 		FROM PERSONNE
 		WHERE NUM_PERSONNE=vnumpersonne;
 		pq_ui_commun.aff_header;
-			htp.print('<div class="titre_niveau_1">');
+		/*	htp.print('<div class="titre_niveau_1">');
 				htp.print('Affichage des informations de la personne n°' || vnumpersonne);
 			htp.print('</div>');			
 			htp.br;
@@ -235,7 +235,7 @@ IS
 				end loop;	
 			htp.tableClose;		
 			END IF;
-			htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');	
+			htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');	*/
 		pq_ui_commun.aff_footer;
 	END dis_personne;
 	
@@ -375,7 +375,7 @@ IS
 	BEGIN
 		pq_ui_commun.aff_header;
 			htp.br;
-			pq_db_personne.add_personne(lastname ,  firstname ,login ,password ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur );
+			pq_db_personne.createPersonne(lastname ,  firstname ,login ,password ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur );
 			htp.print('<div class="success"> ');
 				htp.print('La personne a été ajoutée avec succès.');
 			htp.print('</div>');			
@@ -395,7 +395,7 @@ IS
 	IS
 	BEGIN
 		pq_ui_commun.aff_header;		
-			pq_db_personne.del_personne(vnumpersonne);
+			pq_db_personne.delpersonne(vnumpersonne);
 			htp.print('<div class="success"> ');
 				htp.print('La personne n° '|| vnumpersonne || ' a été supprimée avec succès.');
 			htp.print('</div>');				
@@ -584,7 +584,7 @@ IS
 		
 			pq_db_personne.updPersonneFull(num, lastname ,  firstname ,log ,pass ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur, droit );
 			htp.print('<div class="success"> ');
-				htp.print('La personne n° '|| vnumpersonne || ' a été mis à jour avec succès.');
+				htp.print('La personne n° '|| num || ' a été mis à jour avec succès.');
 			htp.print('</div>');				
 			htp.br;
 			htp.br;			
