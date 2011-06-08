@@ -12,6 +12,65 @@
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_s_inscrire
 IS 
+	
+	--Permet d'afficher tous les entrainement existant 
+	PROCEDURE manage_entrainement
+	IS
+		CURSOR listEntrainement IS
+		SELECT 
+			E.NUM_ENTRAINEMENT
+		   ,P.NOM_PERSONNE
+		   ,P.PRENOM_PERSONNE
+		   ,E.LIB_ENTRAINEMENT
+		FROM 
+			ENTRAINEMENT E INNER JOIN PERSONNE P
+			ON E.NUM_ENTRAINEUR=P.NUM_PERSONNE
+		WHERE
+			TRUNC(DATE_FIN_ENTRAINEMENT)>=TRUNC(SYSDATE)
+		ORDER BY 
+			NUM_ENTRAINEMENT;
+			
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+		vnomEntraineur VARCHAR2(20);
+	BEGIN
+        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+        pq_ui_commun.aff_header;		
+		htp.br;			
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Gestion des entrainements');
+		htp.print('</div>');		
+		htp.br;
+		htp.br;	
+		htp.tableOpen('',cattributes => 'class="tableau"');
+			htp.tableheader('Numéro');
+			htp.tableheader('Intitulé');
+			htp.tableheader('Entraineur');
+			htp.tableheader('Informations');
+			htp.tableheader('Inscrire un joueur');
+			for currentEntrainement in listEntrainement loop
+				htp.tableRowOpen;
+				htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);	
+				htp.tabledata(currentEntrainement.LIB_ENTRAINEMENT);
+				htp.tabledata(currentEntrainement.PRENOM_PERSONNE||'  '||currentEntrainement.NOM_PERSONNE);
+				htp.tabledata(htf.anchor('pq_ui_s_inscrire.manage_inscriptions?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
+				htp.tabledata(htf.anchor('pq_ui_s_inscrire.form_add_inscription?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Incrire un joueur'));
+				htp.tableRowClose;	
+			end loop;
+		htp.tableClose;
+		htp.br; 
+		htp.br;
+		pq_ui_commun.aff_footer;
+	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+		WHEN OTHERS THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des entrainements');
+	END manage_entrainement;
+	
 
 	PROCEDURE manage_inscriptions(vnumEntrainement IN NUMBER)
 	AS
@@ -65,7 +124,8 @@ IS
 			htp.br;	
 				htp.tableOpen('',cattributes => 'class="tableau"');
 				htp.tableheader('N° joueur');
-				htp.tableheader('Nom joueur');
+				htp.tableheader('Nom');
+				htp.tableheader('Prénom');
 				htp.tableheader('Désinscrire');
 				for currentInscris in listInscriptions loop
 					htp.tableRowOpen;
@@ -124,7 +184,7 @@ IS
 		FROM
 			 PERSONNE PER
 		WHERE
-			PER.CODE_NIVEAU = (SELECT ENT.CODE_NIVEAU FROM ENTRAINEMENT ENT WHERE ENT.NUM_ENTRAINEMENT=vnumEntrainement)
+			PER.CODE_NIVEAU >= (SELECT ENT.CODE_NIVEAU FROM ENTRAINEMENT ENT WHERE ENT.NUM_ENTRAINEMENT=vnumEntrainement)
 		AND
 			PER.NUM_PERSONNE NOT IN (SELECT INS.NUM_PERSONNE FROM S_INSCRIRE INS WHERE INS.NUM_ENTRAINEMENT=vnumEntrainement)
 		AND PER.STATUT_JOUEUR='A'

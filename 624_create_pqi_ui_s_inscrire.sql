@@ -12,7 +12,9 @@
 
 CREATE OR REPLACE PACKAGE pq_ui_s_inscrire
 IS
-
+	--affiche la liste des entrainements
+	PROCEDURE manage_entrainement;
+	
 	--Permet d’afficher les inscriptions d'un entrainement avec le menu
 	PROCEDURE manage_inscriptions(vnumEntrainement IN NUMBER);
 	  
