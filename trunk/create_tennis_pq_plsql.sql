@@ -19,6 +19,10 @@ start 702_create_pqi_db_codification.sql
 SHOW ERRORS
 start 702_create_pqb_db_codification.sql
 SHOW ERRORS
+start 710_create_pqi_db_personne.sql
+SHOW ERRORS
+start 710_create_pqb_db_personne.sql
+SHOW ERRORS
 start 626_create_pqi_ui_personne.sql
 SHOW ERRORS
 start 626_create_pqb_ui_personne.sql
@@ -52,10 +56,6 @@ SHOW ERRORS
 start 708_create_pqi_db_terrain.sql
 SHOW ERRORS
 start 708_create_pqb_db_terrain.sql
-SHOW ERRORS
-start 710_create_pqi_db_personne.sql
-SHOW ERRORS
-start 710_create_pqb_db_personne.sql
 SHOW ERRORS
 start 712_create_pqi_db_entrainement.sql
 SHOW ERRORS
