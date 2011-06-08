@@ -89,7 +89,7 @@ IS
 										decrypted_string  => decrypted_password );
 		IF (decrypted_password=password) then
 			--redirect accueil
-			pq_ui_commun.aff_accueil;
+			pq_ui_accueil.dis_accueil;
 		ELSE			
 			pq_ui_commun.header;
 				htp.br; 
