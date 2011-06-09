@@ -553,6 +553,8 @@ INSERT INTO AVOIR_LIEU(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_JOUR,NUM_ENTRAINEMENT
 VALUES('20h00',18,5,18); 
 execute add_occupation_seance('20h00',18,5,18); 
 
+drop procedure add_occupation_seance;
+
 --Fin des enregistrements de la table AVOIR_LIEU
 
 -- -----------------------------------------------------------------------------
