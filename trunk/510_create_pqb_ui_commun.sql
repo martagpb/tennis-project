@@ -151,7 +151,7 @@ IS
 				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>');
 			htp.headClose;
 			htp.bodyOpen;
-			htp.print('<img title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.jpg">');	
+			htp.print('<img class="logo" title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.jpg">');	
 	END;
 
 	PROCEDURE aff_menu(niveau IN NUMBER)
