@@ -50,10 +50,17 @@ ul#ulmenu {
 }
 
 /*Positionnement du logo */
-img {
+img.logo {
     left: 25%;
     position: absolute;
     width: 80px;
+}
+
+/*Positionnement de l'image d'accueil */
+img.accueil{
+	text-align : center;
+    width: 683px;
+	height: 486px;
 }
 
 /*Titre de niveau 1*/
