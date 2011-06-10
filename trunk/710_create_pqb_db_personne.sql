@@ -204,10 +204,9 @@ IS
 	END;
 	
 	PROCEDURE updPersonneAccount( 
-	 vnumPersonne IN PERSONNE.NUM_PERSONNE%TYPE
-	,	lastname IN PERSONNE.NOM_PERSONNE%TYPE
+	    vnumPersonne IN PERSONNE.NUM_PERSONNE%TYPE
+	 ,	lastname IN PERSONNE.NOM_PERSONNE%TYPE
 	 ,  firstname IN PERSONNE.PRENOM_PERSONNE%TYPE
-	 ,  login IN PERSONNE.LOGIN_PERSONNE%TYPE
 	 ,  password IN PERSONNE.MDP_PERSONNE%TYPE
 	 ,  mail IN PERSONNE.EMAIL_PERSONNE%TYPE
 	 ,  phone IN PERSONNE.TEL_PERSONNE%TYPE
@@ -232,7 +231,6 @@ IS
 		SET
 				NOM_PERSONNE = lastname
 		       ,PRENOM_PERSONNE = firstname
-			   ,LOGIN_PERSONNE = login
 			   ,MDP_PERSONNE = crypted_password
 			   ,TEL_PERSONNE = phone
 			   ,EMAIL_PERSONNE = mail
