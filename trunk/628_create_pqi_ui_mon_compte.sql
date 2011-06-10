@@ -19,7 +19,6 @@ IS
 	PROCEDURE exec_upd_account(
 	  lastname IN VARCHAR2
 	, firstname IN VARCHAR2
-	, login IN VARCHAR2
 	, password IN VARCHAR2
 	, mail IN VARCHAR2
 	, tel IN VARCHAR2
@@ -33,6 +32,9 @@ IS
 		
 	-- Affiche le formulaire permettant la mise à jour d'un compte
 	PROCEDURE form_upd_account;
+	
+	-- Exécute la procédure de suppression du compte de la personne connectée et gère les erreurs éventuelles
+	PROCEDURE exec_del_mon_compte;
 		
 END pq_ui_account;
 /

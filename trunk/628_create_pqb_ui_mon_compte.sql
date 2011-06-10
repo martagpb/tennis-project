@@ -38,13 +38,13 @@ IS
 		vnomPersonne PERSONNE.NOM_PERSONNE%TYPE;
 		vprenomPersonne PERSONNE.PRENOM_PERSONNE%TYPE;
 		vlogin PERSONNE.LOGIN_PERSONNE%TYPE;
-		vMDP PERSONNE.MDP_PERSONNE%TYPE;
 		vemail PERSONNE.EMAIL_PERSONNE%TYPE;
 		vtel PERSONNE.TEL_PERSONNE%TYPE;
 		vadresse PERSONNE.NUM_RUE_PERSONNE%TYPE;
 		vcp PERSONNE.CP_PERSONNE%TYPE;
 		vville PERSONNE.VILLE_PERSONNE%TYPE;
 		vniveau PERSONNE.CODE_NIVEAU%TYPE;
+		vlibNiveau CODIFICATION.LIBELLE%TYPE;
 		
 		vpassword VARCHAR(200);
 		
@@ -60,13 +60,16 @@ IS
 		target_cookie := OWA_COOKIE.get('numpersonne');
 		vnumPersonne:=TO_NUMBER(target_cookie.vals(1));
 
-		SELECT NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,CODE_NIVEAU,EMAIL_PERSONNE,TEL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE 
-		INTO vnomPersonne,vprenomPersonne,vlogin,vMDP,vniveau,vemail,vtel,vadresse,vcp,vville
-		FROM PERSONNE WHERE NUM_PERSONNE = vnumPersonne;
+		SELECT NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,CODE_NIVEAU,EMAIL_PERSONNE,TEL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE 
+		INTO vnomPersonne,vprenomPersonne,vlogin,vniveau,vemail,vtel,vadresse,vcp,vville
+		FROM PERSONNE 
+		WHERE NUM_PERSONNE = vnumPersonne;
 		
-		dbms_obfuscation_toolkit.desdecrypt(input_string => vMDP, 
-										key_string => 'tennispro', 
-										decrypted_string  => vpassword );
+		SELECT C.LIBELLE 
+		INTO vlibNiveau 
+		FROM CODIFICATION C
+		WHERE C.NATURE = 'Classement' 
+		AND C.CODE = vniveau;
 
 		htp.br;	
 		htp.print('Information de votre compte : ');
@@ -88,12 +91,8 @@ IS
 				htp.tableData(vlogin);
 			htp.tableRowClose;
 			htp.tableRowOpen;
-				htp.tableData('Mot de passe :', cattributes => 'class="enteteFormulaire"');
-				htp.tableData(vpassword);
-			htp.tableRowClose;
-			htp.tableRowOpen;
 				htp.tableData('Niveau :', cattributes => 'class="enteteFormulaire"');
-				htp.tableData(vniveau);
+				htp.tableData(vlibNiveau);
 			htp.tableRowClose;
 			htp.tableRowOpen;
 				htp.tableData('Adresse mail :', cattributes => 'class="enteteFormulaire"');
@@ -121,16 +120,54 @@ IS
 		htp.anchor('pq_ui_account.form_upd_account', 'Modifier votre compte');	
 		htp.br;
 		htp.br;
+		htp.anchor('pq_ui_account.exec_del_mon_compte', 'Supprimer mon compte');
+		htp.br;
+		htp.br;
 		htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
 		htp.br;
 		htp.br;
 	END  dis_account;
 	
+	-- Exécute la procédure de suppression du compte de la personne connectée et gère les erreurs éventuelles
+	PROCEDURE exec_del_mon_compte
+	IS
+		PERMISSION_DENIED EXCEPTION;
+		perm BOOLEAN;
+		target_cookie OWA_COOKIE.cookie;
+		vnumPersonne NUMBER(5);
+	BEGIN		
+        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		
+		target_cookie := OWA_COOKIE.get('numpersonne');
+		vnumPersonne:=TO_NUMBER(target_cookie.vals(1));
+		
+		pq_ui_commun.aff_header;		
+		pq_db_personne.delpersonne(vnumPersonne);
+		htp.br;
+		htp.br;	
+		htp.print('<div class="success"> ');
+			htp.print('Votre compte a été supprimé avec succès.');
+		htp.print('</div>');		
+		htp.br;
+		htp.br;	
+		pq_ui_commun.deconnect;		
+		htp.br;
+		htp.br;			
+		pq_ui_commun.aff_footer;
+	EXCEPTION
+		WHEN PERMISSION_DENIED THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+		WHEN OTHERS THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression de votre compte en cours ...');
+	END exec_del_mon_compte;
+	
 	-- Exécute la procédure de mise à jour d'un compte.
 	PROCEDURE exec_upd_account(
 	  lastname IN VARCHAR2
 	, firstname IN VARCHAR2
-	, login IN VARCHAR2
 	, password IN VARCHAR2
 	, mail IN VARCHAR2
 	, tel IN VARCHAR2
@@ -153,7 +190,7 @@ IS
 		
         pq_ui_commun.aff_header;
 		htp.br;		
-		--pq_db_personne.updPersonneAccount(vnumPersonne,lastname,firstname,login,password,mail,tel,adresse,cp,ville,vniveau);
+		pq_db_personne.updPersonneAccount(vnumPersonne,lastname,firstname,password,mail,tel,adresse,cp,ville,vniveau);
 		htp.br;		
 		pq_ui_account.dis_account;
 		pq_ui_commun.aff_footer;
@@ -174,7 +211,9 @@ IS
 		FROM 
 			CODIFICATION C
 		WHERE 
-			C.NATURE = 'Classement';
+			C.NATURE = 'Classement'
+		ORDER BY 
+			to_number(C.CODE);
 			
 		vnomPersonne PERSONNE.NOM_PERSONNE%TYPE;
 		vprenomPersonne PERSONNE.PRENOM_PERSONNE%TYPE;
@@ -233,13 +272,13 @@ IS
 						htp.tableData('',cattributes => 'id="firstnameText" class="error"');
 					htp.tableRowClose;
 					htp.tableRowOpen;
-					htp.tableData('Identifiant * :', cattributes => 'class="enteteFormulaire"');
-					htp.tableData('<INPUT TYPE="text" id="login" name="login" maxlength="40" value="'||vlogin||'"> ');
+					htp.tableData('Identifiant :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData('<label>'||vlogin||'</label>');
 					htp.tableData('',cattributes => 'id="identifiantText" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Mot de passe * :', cattributes => 'class="enteteFormulaire"');
-					htp.tableData('<INPUT TYPE="text" id="password" name="password" maxlength="40" value="'||vpassword||'"> ');
+					htp.tableData('<INPUT TYPE="password" id="password" name="password" maxlength="40" value="'||vpassword||'"> ');
 					htp.tableData('',cattributes => 'id="passwordText" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
