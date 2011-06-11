@@ -8,29 +8,36 @@
 /*Body*/
 body {
 	 background-color: #4682B4; /* Couleur de fond */ 
-     color: white;  /* Couleur du texte */
-     font-family: "Comic Sans MS",Verdana; /* Police du texte */
+     color: black;  /* Couleur du texte en noir pour une bonne lisibilité */
+     font-family: "Arial", "Comic Sans MS",Verdana; /* Police du texte */
      font-size: 14px; /* La taille du texte */
      text-align: center; /* Pour corriger le bug de centrage pour IE9 et inférieurs  */ 
 }
 
 /*Menu*/
 ul#ulmenu {
-	text-align : center;
-	width: 1000px;
-	margin: 0;
+	/*Centrage du menu*/
+    margin-left: auto;
+    margin-right: auto;    
+    width: 600px;
+	text-align: center;
 }
 
-#menuadherent {
+#menuAgentAcceuil {
      height: 100px;
 }
 
-#menuadmin {
-     height: 80px;
+#menuAdministrateur {
+     height: 100px;
 }
 
-#menuvisiteur {
+#menuAutre {
      height: 100px;
+}
+
+#menuEntraineur {
+     height: 100px;
+	 width: 1450px;
 }
 
 /*Corps*/
@@ -44,23 +51,18 @@ ul#ulmenu {
 /*Pied de page*/
 #footer {
      height: 40px;
-     margin: 0pt auto;
+     margin: 10pt auto;
      text-align: center;
      width: 80%;
+	 color: white;		/*Couleur du texte blanc pour créer un contraste au niveau du pied de page.*/
 }
 
 /*Positionnement du logo */
-img.logo {
-    left: 25%;
+.logo {
+    left: 175px;
     position: absolute;
-    width: 80px;
-}
-
-/*Positionnement de l'image d'accueil */
-img.accueil{
-	text-align : center;
-    width: 683px;
-	height: 486px;
+    top: 25px;
+    width: 100px;
 }
 
 /*Titre de niveau 1*/
@@ -77,7 +79,13 @@ img.accueil{
     font-weight: bold;
 }
 
-/*Message d'erreur*/
+/*Message d'erreur personnalisé utilisé pour les titres*/
+.error_custom {
+     color: red;
+     font-weight: bold;
+}
+
+/*Message d'erreur dans les formulaires*/
 .error {
      color: red;
      font-size: 12px;
@@ -98,14 +106,15 @@ table { /* Le tableau en lui-même */
 
 /*Tableaux spécifiques pour la classe tableau */
 
-.tableau table { /* Le tableau en lui-même */
+.tableau  { /* Le tableau en lui-même */
      border-collapse: collapse;  /* On colle les bordures intérieures entre-elles */
      border: 2px solid black; 	 /* Taille, couleur et type des bordures extérieures du tableau */
      margin: auto;  				/* On centre le tableau */
 }
 
 .tableau th { /* Les cellules d'en-tête du tableau*/
-     background-color: #1F1F1F; /* Couleur de fond de l'en-tête du tableau */  
+     color: white;				/* Couleur du texte en blanc*/
+	 background-color: #1F1F1F; /* Couleur de fond de l'en-tête du tableau */  
      padding: 6px;				/* On espace les titres d'en-tête avec une marge intérieure */
 }
 
