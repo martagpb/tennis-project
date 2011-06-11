@@ -30,5 +30,9 @@ IS
 	   vvalue in NUMBER)
 	RETURN VARCHAR2;
 	
+	-- Fonction qui retourne le mot 'interdit'
+	FUNCTION dis_forbidden
+	RETURN VARCHAR2;
+	
 END pq_ui_param_commun;
 /
