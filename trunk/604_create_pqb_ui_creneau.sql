@@ -27,7 +27,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des créneaux');
 	END manage_creneaux_with_menu;
@@ -45,10 +45,14 @@ IS
 		ORDER BY 
 			1
 		  , 2;		 	
+		 
+		--Variables permettant de déterminer si le curseur est vide ou non
+		cursorListCreneauIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorListCreneau NUMBER(1):= 0;  
 		  
 		creneauUtilisePourEntrainement NUMBER(5):= 0;  
 		creneauUtilisePourReservation  NUMBER(5):= 0; 
-		 
+						
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -65,48 +69,66 @@ IS
 		htp.print(htf.anchor('pq_ui_creneau.form_add_creneau','Ajouter un créneau'));
 		htp.br;	
 		htp.br;	
-		htp.tableOpen('',cattributes => 'class="tableau"');
-			htp.tableheader('Heure de début');
-			htp.tableheader('Heure de fin');
-			htp.tableheader('Informations');
-			htp.tableheader('Mise à jour');
-			htp.tableheader('Suppression');
-			for currentCreneau in listCreneaux loop
-				htp.tableRowOpen;
-				htp.tabledata(currentCreneau.HEURE_DEBUT_CRENEAU);
-				htp.tabledata(currentCreneau.HEURE_FIN_CRENEAU);					
-				htp.tabledata(htf.anchor('pq_ui_creneau.dis_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU||'&'||'vheureFinCreneau='||currentCreneau.HEURE_FIN_CRENEAU,'Informations'));
-				
-				--Permet de déterminer si un créneau est utilisé pour un entrainement				
-				SELECT 
-					COUNT(*) INTO creneauUtilisePourEntrainement
-				FROM 
-					AVOIR_LIEU 
-				WHERE 
-					HEURE_DEBUT_CRENEAU = currentCreneau.HEURE_DEBUT_CRENEAU;
+		
+		--On parcours le curseur pour déterminer s'il est vide
+		for emptyCreneau in listCreneaux loop
+			nbValuesIntoCursorListCreneau:= nbValuesIntoCursorListCreneau + 1;	
+			--On sort de la boucle dès qu'il y a une valeur
+			if nbValuesIntoCursorListCreneau > 0 then
+				--On indique le fait que le curseur n'est pas vide
+				cursorListCreneauIsEmpty := false;
+				exit;
+			end if;
+		end loop;	
+		
+		--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+		if cursorListCreneauIsEmpty = true Then
+			htp.print('Il n''y a aucun créneau de disponible.');	
+		--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+		else				
+			htp.tableOpen('',cattributes => 'class="tableau"');
+				htp.tableheader('Heure de début');
+				htp.tableheader('Heure de fin');
+				htp.tableheader('Informations');
+				htp.tableheader('Mise à jour');
+				htp.tableheader('Suppression');
+				for currentCreneau in listCreneaux loop
+					htp.tableRowOpen;
+					htp.tabledata(currentCreneau.HEURE_DEBUT_CRENEAU);
+					htp.tabledata(currentCreneau.HEURE_FIN_CRENEAU);					
+					htp.tabledata(htf.anchor('pq_ui_creneau.dis_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU||'&'||'vheureFinCreneau='||currentCreneau.HEURE_FIN_CRENEAU,'Informations'));
 					
-				--Permet de déterminer si un créneau est utilisé pour une réservation (autre qu'un entrainement)		
-				SELECT 
-					COUNT(*) INTO creneauUtilisePourReservation
-				FROM 
-					OCCUPER 
-				WHERE 
-					HEURE_DEBUT_CRENEAU = currentCreneau.HEURE_DEBUT_CRENEAU;
-					
-				--On autorise la mise à jour et la suppression d'un créneau seulement dans le cas où il n'est pas utilisé
-				if (creneauUtilisePourEntrainement = 0 and creneauUtilisePourReservation = 0) then
-					htp.tabledata(htf.anchor('pq_ui_creneau.form_upd_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU||'&'||'vheureFinCreneau='||currentCreneau.HEURE_FIN_CRENEAU,'Mise à jour'));
-					htp.tabledata(htf.anchor('pq_ui_creneau.exec_del_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-				else
-					htp.tabledata('Non autorisée');
-					htp.tabledata('Non autorisée');
-				end if;							
-				htp.tableRowClose;
-			end loop;	
-		htp.tableClose;
+					--Permet de déterminer si un créneau est utilisé pour un entrainement				
+					SELECT 
+						COUNT(*) INTO creneauUtilisePourEntrainement
+					FROM 
+						AVOIR_LIEU 
+					WHERE 
+						HEURE_DEBUT_CRENEAU = currentCreneau.HEURE_DEBUT_CRENEAU;
+						
+					--Permet de déterminer si un créneau est utilisé pour une réservation (autre qu'un entrainement)		
+					SELECT 
+						COUNT(*) INTO creneauUtilisePourReservation
+					FROM 
+						OCCUPER 
+					WHERE 
+						HEURE_DEBUT_CRENEAU = currentCreneau.HEURE_DEBUT_CRENEAU;
+						
+					--On autorise la mise à jour et la suppression d'un créneau seulement dans le cas où il n'est pas utilisé
+					if (creneauUtilisePourEntrainement = 0 and creneauUtilisePourReservation = 0) then
+						htp.tabledata(htf.anchor('pq_ui_creneau.form_upd_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU||'&'||'vheureFinCreneau='||currentCreneau.HEURE_FIN_CRENEAU,'Mise à jour'));
+						htp.tabledata(htf.anchor('pq_ui_creneau.exec_del_creneau?vheureDebutCreneau='||currentCreneau.HEURE_DEBUT_CRENEAU,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+					else
+						htp.tabledata(pq_ui_param_commun.dis_forbidden);
+						htp.tabledata(pq_ui_param_commun.dis_forbidden);
+					end if;							
+					htp.tableRowClose;
+				end loop;	
+			htp.tableClose;
+		end if;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des créneaux');
 	END manage_creneaux;
@@ -137,7 +159,7 @@ IS
 			pq_ui_commun.aff_footer;
 	EXCEPTION
 	WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 	END dis_creneau;
 	
 	-- Exécute la procédure d'ajout d'un créneau et gère les erreurs éventuelles.
@@ -166,7 +188,7 @@ IS
 		--Traitement personnalisée de l'erreur :
 			-- Nom Exception: DUP_VAL_ON_INDEX, Erreur oracle : ORA-00001, Code erreur : -1
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN DUP_VAL_ON_INDEX THEN
 			pq_ui_commun.dis_error_custom('Le créneau n''a pas été ajouté','Un créneau existe déjà avec une heure de début qui vaut '|| vheureDebutCreneau ||'.','Merci de choisir une autre valeur de début de créneau.','pq_ui_creneau.form_add_creneau','Retour vers la création d''un créneau');
 		WHEN OTHERS THEN
@@ -197,7 +219,7 @@ IS
 			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un créneau en cours...');
 	END exec_upd_creneau;
@@ -225,7 +247,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression d''un créneau en cours...');
 	END exec_del_creneau;
@@ -249,7 +271,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Affichage d''un créneau en cours...');
 	END exec_dis_creneau;
@@ -320,7 +342,7 @@ IS
 						htp.tableData('',cattributes => 'id="vheureDebutError" class="error"');						
 					htp.tableRowClose;	
 					htp.tableRowOpen;
-						htp.tableData('Heure de fin :', cattributes => 'class="enteteFormulaire"');
+						htp.tableData('Heure de fin * :', cattributes => 'class="enteteFormulaire"');
 						htp.print('<td>');
 							htp.print('<select id="vheureFin">');								
 							FOR currentEndHour in 6..23 loop								
@@ -362,7 +384,7 @@ IS
 			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Saisie d''un nouveau créneau');
 	END form_add_creneau;
@@ -412,7 +434,7 @@ IS
 						htp.tableData('',cattributes => 'id="vheureDebutError" class="error"');						
 					htp.tableRowClose;		
 					htp.tableRowOpen;
-						htp.tableData('Heure de fin :', cattributes => 'class="enteteFormulaire"');
+						htp.tableData('Heure de fin * :', cattributes => 'class="enteteFormulaire"');
 						htp.print('<td>');
 							htp.print('<select id="vheureFin">');								
 							FOR currentEndHour in 6..23 loop								
@@ -464,7 +486,7 @@ IS
 			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification d''un créneau');
 	END form_upd_creneau;
