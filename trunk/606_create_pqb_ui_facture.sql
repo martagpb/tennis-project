@@ -74,7 +74,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des factures');
 	END manage_factures;
@@ -136,7 +136,7 @@ IS
 		
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Visualisation de facture');
 		END;
@@ -204,7 +204,7 @@ IS
 				htp.formClose;
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Formulaire d''ajout de facture');
 		END;
@@ -251,7 +251,7 @@ IS
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout de facture');
 		END;

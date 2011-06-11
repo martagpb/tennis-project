@@ -15,7 +15,13 @@ IS
 		numPersonne IN PERSONNE.NUM_PERSONNE%TYPE
 	  , statut OUT CODIFICATION.LIBELLE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		SELECT 
 			COD.LIBELLE INTO statut
 		FROM
@@ -30,7 +36,13 @@ IS
 		numPersonne IN PERSONNE.NUM_PERSONNE%TYPE
 	  , statut OUT CODIFICATION.LIBELLE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		SELECT 
 			PER.STATUT_JOUEUR INTO statut
 		FROM
@@ -43,7 +55,13 @@ IS
 		login IN PERSONNE.LOGIN_PERSONNE%TYPE
 	  , numPersonne OUT PERSONNE.NUM_PERSONNE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		SELECT 
 			PER.NUM_PERSONNE INTO numPersonne
 		FROM
@@ -62,9 +80,15 @@ IS
 	 ,  street IN PERSONNE.NUM_RUE_PERSONNE%TYPE
 	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
 	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE)
-	IS 
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION; 
 		crypted_password VARCHAR2(255);
-	BEGIN 
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF; 
 		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
 										key_string => 'tennispro', 
 										encrypted_string => crypted_password );
@@ -73,8 +97,7 @@ IS
 		COMMIT; 
 	END; 
 	
-	PROCEDURE createPersonne( 
-	
+	PROCEDURE createPersonne( 	
 		lastname IN PERSONNE.NOM_PERSONNE%TYPE
 	 ,  firstname IN PERSONNE.PRENOM_PERSONNE%TYPE
 	 ,  login IN PERSONNE.LOGIN_PERSONNE%TYPE
@@ -87,11 +110,17 @@ IS
 	 , 	codeStatutEmploye IN PERSONNE.CODE_STATUT_EMPLOYE%TYPE
 	 ,	codeNiveau IN PERSONNE.CODE_NIVEAU%TYPE
 	 ,	statutJoueur IN PERSONNE.STATUT_JOUEUR%TYPE)
-	IS 
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		crypted_password VARCHAR2(255);
 		natureStatut PERSONNE.NATURE_STATUT_EMPLOYE%TYPE;
 		natureNiveau PERSONNE.NATURE_NIVEAU%TYPE;
-	BEGIN 
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF; 
 		SELECT 
 			COD.NATURE INTO natureStatut
 		FROM 
@@ -123,9 +152,15 @@ IS
 	 ,  street IN PERSONNE.NUM_RUE_PERSONNE%TYPE
 	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
 	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE)
-	IS 
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION; 
 		crypted_password VARCHAR2(255);
-	BEGIN 
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF; 
 		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
 										key_string => 'tennispro', 
 										encrypted_string => crypted_password );
@@ -161,11 +196,17 @@ IS
 	 ,	codeNiveau IN PERSONNE.CODE_NIVEAU%TYPE
 	 ,	statutJoueur IN PERSONNE.STATUT_JOUEUR%TYPE
 	 ,	niveauDroit IN PERSONNE.NIVEAU_DROIT%TYPE)
-	IS 
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION; 
 		crypted_password VARCHAR2(255);
 		natureStatut PERSONNE.NATURE_STATUT_EMPLOYE%TYPE;
 		natureNiveau PERSONNE.NATURE_NIVEAU%TYPE;
-	BEGIN 
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		SELECT 
 			COD.NATURE INTO natureStatut
 		FROM 
@@ -214,10 +255,16 @@ IS
 	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
 	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE
 	 ,	codeNiveau IN PERSONNE.CODE_NIVEAU%TYPE)
-	IS 
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		crypted_password VARCHAR2(255);
 		natureNiveau PERSONNE.NATURE_NIVEAU%TYPE;
-	BEGIN 
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF; 
 		SELECT 
 			COD.NATURE INTO natureNiveau
 		FROM 
@@ -246,7 +293,13 @@ IS
 	
 	PROCEDURE delPersonne( vnumPersonne IN PERSONNE.NUM_PERSONNE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		UPDATE PERSONNE
 		SET
 			ACTIF=0

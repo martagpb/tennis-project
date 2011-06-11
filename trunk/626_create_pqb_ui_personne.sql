@@ -15,21 +15,28 @@ IS
 	--Permet d'afficher toutes les personnes et les actions possibles de gestion avec le menu
 	PROCEDURE manage_personnes
 	IS
+		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		pq_ui_commun.aff_header;
 		pq_ui_personne.dis_personnes;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des personnes');
 	END manage_personnes;	
 				
 	--Permet d'afficher toutes les personnes et les actions possibles de gestion (sans le menu)
 	PROCEDURE dis_personnes
-	IS		
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		-- On stocke dans un curseur la liste de toutes les personnes existantes
 		CURSOR listpersonne IS
 		SELECT 
@@ -48,6 +55,10 @@ IS
 		ORDER BY 
 			1;
 	BEGIN	
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		htp.print('<div class="titre_niveau_1">');
 			htp.print('Gestion des personnes');
 		htp.print('</div>');	
@@ -105,6 +116,8 @@ IS
 	--Permet d’afficher une personne existante
 	PROCEDURE dis_personne(vnumpersonne IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		currentPersonne PERSONNE%ROWTYPE;
 		CURSOR listReservation IS
 		SELECT 
@@ -133,6 +146,10 @@ IS
 		ORDER BY 
 			1;	
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		SELECT * into currentPersonne
 		FROM PERSONNE
 		WHERE NUM_PERSONNE=vnumpersonne;
@@ -242,6 +259,8 @@ IS
 	
 	PROCEDURE form_add_personne
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		CURSOR listStatutsEmployes IS
 		SELECT 
 			 COD.CODE
@@ -265,6 +284,10 @@ IS
 		ORDER BY 
 			1;	
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		pq_ui_commun.aff_header;
 		htp.br;
 		htp.br;
@@ -372,7 +395,13 @@ IS
 	-- Exécute la procédure d'ajout d'un personne et gère les erreurs éventuelles.
 	PROCEDURE exec_add_personne ( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		pq_ui_commun.aff_header;
 			htp.br;
 			pq_db_personne.createPersonne(lastname ,  firstname ,login ,password ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur );
@@ -393,7 +422,13 @@ IS
 	PROCEDURE exec_del_personne(
 	  vnumpersonne IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		pq_ui_commun.aff_header;		
 			pq_db_personne.delpersonne(vnumpersonne);
 			htp.print('<div class="success"> ');
@@ -414,6 +449,8 @@ IS
 	PROCEDURE form_upd_personne(
 	  vnumpersonne IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		currentPersonne PERSONNE%ROWTYPE;
 		CURSOR listStatutsEmployes IS
 		SELECT 
@@ -439,6 +476,10 @@ IS
 			1;	
 		password VARCHAR2(255);
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		SELECT
 			* INTO currentPersonne
 		FROM
@@ -576,12 +617,17 @@ IS
 	END form_upd_personne;
 	
 	
-		-- Exécute la procédure de mise à jour d'un personne et gère les erreurs éventuelles
+	-- Exécute la procédure de mise à jour d'un personne et gère les erreurs éventuelles
 	PROCEDURE exec_upd_personne(num IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,log IN VARCHAR2,pass IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2, droit IN NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.aff_header;	
-		
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;			
 			pq_db_personne.updPersonneFull(num, lastname ,  firstname ,log ,pass ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur, droit );
 			htp.print('<div class="success"> ');
 				htp.print('La personne n° '|| num || ' a été mis à jour avec succès.');
@@ -594,7 +640,6 @@ IS
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un personne en cours...');
 	END exec_upd_personne;
-	
-	
+		
 END pq_ui_personne;
 /

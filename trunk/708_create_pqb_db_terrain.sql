@@ -30,7 +30,7 @@ IS
 		COMMIT;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 	END add_terrain;
 	
 	--Permet de modifier un terrain existant
@@ -57,7 +57,7 @@ IS
 		COMMIT;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 	END upd_terrain;
 	
 	--Permet de supprimer un terrain existant
@@ -77,7 +77,7 @@ IS
 		COMMIT;
 		EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 	END del_terrain;
 	
 END pq_db_terrain;

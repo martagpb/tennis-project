@@ -126,7 +126,7 @@ IS
 		vexception_avoir_lieu NUMBER(1);
 		vexception_occuper NUMBER(1);
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		end if;
@@ -159,7 +159,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN FAILED_CREATE_AVOIR_LIEU  THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'ERREUR Un entrainement est déja programmé sur le terrain numéro ' ||vnumTerrain||' à '||vheureDebutCreneau);
 		WHEN FAILED_CREATE_SEANCE THEN
@@ -181,7 +181,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
 		pq_ui_commun.aff_header;
-		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		end if;
@@ -203,7 +203,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression de la séance en cours...');
 	END exec_del_avoir_lieu;
@@ -217,7 +217,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		CURSOR creneaulist IS SELECT HEURE_DEBUT_CRENEAU FROM CRENEAU;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		end if;
@@ -274,7 +274,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 	END form_add_avoir_lieu;
 	
 END pq_ui_avoir_lieu;

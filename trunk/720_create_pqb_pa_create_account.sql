@@ -23,9 +23,9 @@ IS
 	 ,  street IN PERSONNE.NUM_RUE_PERSONNE%TYPE
 	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
 	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE)
-	IS 
+	IS
 		crypted_password VARCHAR2(255);
-	BEGIN 
+	BEGIN
 		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
 										key_string => 'tennispro', 
 										encrypted_string => crypted_password );
