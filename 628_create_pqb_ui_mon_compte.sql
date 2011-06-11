@@ -18,7 +18,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		perm BOOLEAN;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -53,7 +53,7 @@ IS
 		target_cookie OWA_COOKIE.cookie;
 		vnumPersonne NUMBER(5);
 	BEGIN		
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -72,7 +72,9 @@ IS
 		AND C.CODE = vniveau;
 
 		htp.br;	
-		htp.print('Information de votre compte : ');
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Information de votre compte');
+		htp.print('</div>');
 		htp.br;
 		htp.br;				
 		htp.tableOpen(cattributes => 'CELLSPACING=8');
@@ -136,7 +138,7 @@ IS
 		target_cookie OWA_COOKIE.cookie;
 		vnumPersonne NUMBER(5);
 	BEGIN		
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -159,7 +161,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression de votre compte en cours ...');
 	END exec_del_mon_compte;
@@ -181,7 +183,7 @@ IS
 		target_cookie OWA_COOKIE.cookie;
 		vnumPersonne NUMBER(5);
 	BEGIN		
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -196,7 +198,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 	END exec_upd_account;
 	  
 	-- Affiche le formulaire permettant la mise à jour d'un compte
@@ -232,7 +234,7 @@ IS
 		vnumPersonne NUMBER(5);
 		vpassword VARCHAR(200);
 	BEGIN	
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -339,7 +341,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 	END form_upd_account;
 	
 END pq_ui_account;
