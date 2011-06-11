@@ -38,7 +38,7 @@ IS
 			htp.tableclose;
 			htp.br;
 			htp.br;
-			htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
+			htp.anchor('pq_ui_login.login', 'Retourner à la page d''authentification');
 		pq_ui_commun.aff_footer;
 	END;
 
@@ -53,8 +53,9 @@ IS
 	IS
 	begin
 			htp.br;
-			htp.print(vtitre);
-			htp.br;
+			htp.print('<div class="error_custom"> ');
+				htp.print(vtitre);
+			htp.print('</div>');
 			htp.br;
 			htp.print('Explication : ' || vexplicationerreur);
 			htp.br;
@@ -66,42 +67,71 @@ IS
 		pq_ui_commun.aff_footer;
 	END;
 	
-	PROCEDURE aff_accueil
+	--Permet d'afficher une erreur personnalisée lors que l'utilisateur n'a pas les droits d'accès pour une page.
+	PROCEDURE dis_error_permission_denied
 	IS
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
-		IF perm=false THEN
-			RAISE PERMISSION_DENIED;
-		END IF;
-			pq_ui_commun.aff_header;
-		htp.print('Accueil');
-		pq_ui_commun.aff_footer;
-	EXCEPTION
-		WHEN PERMISSION_DENIED THEN
-			 pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+		pq_ui_commun.aff_header;
+		pq_ui_commun.dis_error_custom('Accès refusé pour la page demandée','Vous n''avez pas les droits nécessaires pour accéder à la page demandée.','Connectez-vous avec un autre compte ou contactez votre administrateur pour obtenir les droits nécessaires.','pq_ui_accueil.dis_accueil', 'Retourner à l''accueil');
 	END;
-
+		
+	--Procédure permettant de déterminer si une personne est autorisée à accéder à une page donnée en retourner une valeur booléenne
+		-- NiveauP : correspond au niveau de droit de la page
+		-- permission : contient la valeur booléenne retournée
+		-- Retourne : 
+			-- true  : si la personne est autorisée
+			-- false : si la personne n'est pas autorisée
+	--Rappel du tableau des droits : (Oui = accès autorisé et Non = accès refusé)
+		--Numéro | Entraineur | Agent d’accueil | Administrateur
+		--  0    |     Oui    |        Oui      |      Oui
+		--  1    |     Non    |        Oui      |      Oui
+		--  2    |     Oui    |        Non      |      Oui
+		--  3    |     Non    |        Non      |      Oui
+		--  4    |     Oui    |        Oui      |      Non
+		--  5    |     Non    |        Oui      |      Non
+		--  6    |     Oui    |        Non      |      Non	
+		--  7    |     Non    |        Non      |      Non		
 	PROCEDURE isAuthorized (niveauP IN NUMBER, permission OUT BOOLEAN)
 	IS
 			niveauPersonne PERSONNE.NIVEAU_DROIT%TYPE;
 			unlog EXCEPTION;
 	BEGIN
-		getNiveau(niveau => niveauPersonne);
-			IF niveauPersonne=-1 THEN
-			  RAISE unlog;
-			END IF;
-		IF(niveauPersonne<niveauP) THEN
-				permission:=false;
+		--Récupération du niveau de la personne pour le stocker dans la variable niveauPersonne
+		pq_ui_commun.getNiveau(niveau => niveauPersonne);
+		--On lève une exception personnalisée si le niveau de la personne vaut -1
+		IF niveauPersonne=-1 THEN
+		  RAISE unlog;
+		END IF;		
+		--Si le niveau de la page vaut 0 et que le niveau de la personne vaut 1(entraineur), 2(agent d'accueil) ou 3(administrateur) l'accès est autorisé
+		IF niveauP=0 and (niveauPersonne=1 or niveauPersonne=2 or niveauPersonne=3) THEN
+			permission:=true;
+		--Si le niveau de la page vaut 1 et que le niveau de la personne vaut 2(agent d'accueil) ou 3(administrateur) l'accès est autorisé
+		ELSIF niveauP=1 and (niveauPersonne=2 or niveauPersonne=3) THEN
+			permission:=true;		
+		--Si le niveau de la page vaut 2 et que le niveau de la personne vaut 1(entraineur)ou 3(administrateur) l'accès est autorisé
+		ELSIF niveauP=2 and (niveauPersonne=1 or niveauPersonne=3) THEN
+			permission:=true;
+		--Si le niveau de la page vaut 3 et que le niveau de la personne vaut 3(administrateur) l'accès est autorisé
+		ELSIF niveauP=3 and niveauPersonne=3 THEN
+			permission:=true;
+		--Si le niveau de la page vaut 4 et que le niveau de la personne vaut 1(entraineur) ou 2(agent d'accueil) l'accès est autorisé
+		ELSIF niveauP=4 and (niveauPersonne=1 or niveauPersonne=2) THEN
+			permission:=true;
+		--Si le niveau de la page vaut 5 et que le niveau de la personne vaut 2(agent d'accueil) l'accès est autorisé
+		ELSIF niveauP=5 and niveauPersonne=3 THEN
+			permission:=true;
+		--Si le niveau de la page vaut 6 et que le niveau de la personne vaut 1(entraineur) l'accès est autorisé
+		ELSIF niveauP=6 and niveauPersonne=1 THEN
+			permission:=true;
+		--Sinon, dans tous les autres cas, l'accès est interdit (Cf. Les "non" dans le tableau des droits ci-dessus).
 		ELSE
-				permission:=true;
+			permission:=false;
 		END IF;
+		
 	EXCEPTION
 		WHEN unlog THEN
 			permission:=false;
 			pq_ui_login.LOGIN;
-
 	END;
 
 	PROCEDURE getNiveau(niveau OUT PERSONNE.NIVEAU_DROIT%TYPE)
@@ -151,7 +181,7 @@ IS
 				htp.print('<script language=javascript type="text/javascript" src="' || rep_js || 'create.js"></script>');
 			htp.headClose;
 			htp.bodyOpen;
-			htp.print('<img class="logo" title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.jpg">');	
+			htp.print('<img title="Système de réservation" alt="Logo" src="' || rep_img || 'logo.png" class="logo">');
 	END;
 
 	PROCEDURE aff_menu(niveau IN NUMBER)
@@ -159,102 +189,22 @@ IS
 	BEGIN
 		CASE niveau
 			WHEN 1 THEN
-				pq_ui_commun.aff_menu_niveau1;
+				pq_ui_commun.aff_menu_niveau_entraineur;
 			WHEN 2 THEN
-				pq_ui_commun.aff_menu_niveau2;
+				pq_ui_commun.aff_menu_niveau_agent_accueil;
 			WHEN 3 THEN
-				pq_ui_commun.aff_menu_niveau3;
+				pq_ui_commun.aff_menu_niveau_administrateur;
+			ELSE
+				pq_ui_commun.aff_menu_niveau_autre;
 		END CASE;
 	END;
-
-
-	PROCEDURE aff_menu_niveau1
+PROCEDURE aff_menu_niveau_entraineur
 	IS
 	BEGIN
-		htp.div(cattributes => 'id="menuvisiteur"');
+		htp.div(cattributes => 'id="menuEntraineur"');
 			htp.ulistOpen(cattributes => 'id="ulmenu"');
 				htp.listItem;
 					htp.anchor('pq_ui_accueil.dis_accueil', 'Accueil');
-				htp.print('</li>');
-				htp.listItem;
-					htp.anchor('#', 'Réservation');
-					htp.ulistOpen(cattributes => 'class="niveau2"');
-						htp.listItem;
-							htp.anchor('#', 'Mes réservations');
-						htp.print('</li>');
-						htp.listItem;
-							htp.anchor('#', 'Nouvelle réservation');
-						htp.print('</li>');
-					htp.ulistClose;
-				htp.print('</li>');
-				htp.listItem;
-					htp.anchor('pq_ui_account.exec_dis_account', 'Mon compte');
-				htp.print('</li>');
-				htp.listItem;
-					htp.anchor('pq_ui_commun.deconnect', 'Deconnexion');
-				htp.print('</li>');
-			htp.ulistClose;
-		htp.print('</div>');
-	END;
-
-	PROCEDURE aff_menu_niveau2
-	IS
-	BEGIN
-		htp.div(cattributes => 'id="menuadherent"');
-			htp.ulistOpen(cattributes => 'id="ulmenu"');
-				htp.listItem;
-					htp.anchor('pq_ui_accueil.dis_accueil', 'Accueil');
-				htp.print('</li>');
-				htp.listItem;
-					htp.anchor('#', 'Réservation');
-					htp.ulistOpen(cattributes => 'class="niveau2"');
-						htp.listItem;
-							htp.anchor('#', 'Mes réservations');
-						htp.print('</li>');
-						htp.listItem;
-							htp.anchor('#', 'Nouvelle réservation');
-						htp.print('</li>');
-					htp.ulistClose;
-				htp.print('</li>');
-				htp.listItem;
-					htp.anchor('#', 'Entrainement');
-					htp.ulistOpen(cattributes => 'class="niveau2"');
-						htp.listItem;
-							htp.anchor('#', 'Mes entrainements');
-						htp.print('</li>');
-						htp.listItem;
-							htp.anchor('#', 'Souscrire');
-						htp.print('</li>');
-					htp.ulistClose;
-				htp.print('</li>');
-				htp.listItem;
-					htp.anchor('pq_ui_account.exec_dis_account', 'Mon compte');
-				htp.print('</li>');
-				htp.listItem;
-					htp.anchor('pq_ui_commun.deconnect', 'Deconnexion');
-				htp.print('</li>');
-			htp.ulistClose;
-		htp.print('</div>');
-	END;
-
-	PROCEDURE aff_menu_niveau3
-	IS
-	BEGIN
-		htp.div(cattributes => 'id="menuadmin"');
-			htp.ulistOpen(cattributes => 'id="ulmenu"');
-				htp.listItem;
-					htp.anchor('pq_ui_accueil.dis_accueil', 'Accueil');
-				htp.print('</li>');
-				htp.listItem;
-					htp.anchor('#', 'Réservation');
-					htp.ulistOpen(cattributes => 'class="niveau2"');
-						htp.listItem;
-							htp.anchor('#', 'Mes réservations');
-						htp.print('</li>');
-						htp.listItem;
-							htp.anchor('#', 'Nouvelle réservation');
-						htp.print('</li>');
-					htp.ulistClose;
 				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Entrainement');
@@ -263,7 +213,7 @@ IS
 							htp.anchor('pq_ui_entrainement_entraineur.manage_entrainement_entraineur', 'Mes entrainements');
 						htp.print('</li>');
 						htp.listItem;
-							htp.anchor('#', 'Souscrire');
+							htp.anchor('pq_ui_entrainement_entraineur.form_add_entrainement_entr', 'Nouvel entrainement');
 						htp.print('</li>');
 					htp.ulistClose;
 				htp.print('</li>');
@@ -271,27 +221,114 @@ IS
 					htp.anchor('pq_ui_account.exec_dis_account', 'Mon compte');
 				htp.print('</li>');
 				htp.listItem;
-					htp.anchor('#', 'Administration');
+					htp.anchor('pq_ui_commun.deconnect', 'Deconnexion');
+				htp.print('</li>');
+			htp.ulistClose;
+		htp.print('</div>');
+	END;
+
+	PROCEDURE aff_menu_niveau_agent_accueil
+	IS
+	BEGIN
+		htp.div(cattributes => 'id="menuAgentAcceuil"');
+			htp.ulistOpen(cattributes => 'id="ulmenu"');
+				htp.listItem;
+					htp.anchor('pq_ui_accueil.dis_accueil', 'Accueil');
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('#', 'Réservation');
 					htp.ulistOpen(cattributes => 'class="niveau2"');
 						htp.listItem;
-							htp.anchor('pq_ui_terrain.manage_terrains_with_menu', 'Gestion des terrains');
+							htp.anchor('#', 'Nouvelle réservation');
 						htp.print('</li>');
 						htp.listItem;
-							htp.anchor('pq_ui_creneau.manage_creneaux_with_menu', 'Gestion des créneaux');
+							htp.anchor('#', 'Gestion des réservations');
+						htp.print('</li>');
+					htp.ulistClose;
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('#', 'Entrainement');
+					htp.ulistOpen(cattributes => 'class="niveau2"');
+						htp.listItem;
+							htp.anchor('pq_ui_entrainement_entraineur.form_add_entrainement_entr', 'Nouvel entrainement');
 						htp.print('</li>');
 						htp.listItem;
 							htp.anchor('pq_ui_entrainement.manage_entrainement', 'Gestion des entrainements');
 						htp.print('</li>');
+					htp.ulistClose;
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('#', 'Joueur');
+					htp.ulistOpen(cattributes => 'class="niveau2"');
 						htp.listItem;
-							htp.anchor('pq_ui_codification.manage_codification_with_menu', 'Gestion des codifications');
+							htp.anchor('#', 'Ajouter un joueur');
 						htp.print('</li>');
 						htp.listItem;
-							htp.anchor('pq_ui_abonnement.manage_abonnements', 'Gestion des abonnements');
-						htp.print('</li>');
-						htp.listItem;
-							htp.anchor('pq_ui_facture.manage_factures', 'Gestion des factures');
+							htp.anchor('#', 'Gestion des joueurs');
 						htp.print('</li>');
 					htp.ulistClose;
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_account.exec_dis_account', 'Mon compte');
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_commun.deconnect', 'Deconnexion');
+				htp.print('</li>');
+			htp.ulistClose;
+		htp.print('</div>');
+	END;
+
+	PROCEDURE aff_menu_niveau_administrateur
+	IS
+	BEGIN
+		htp.div(cattributes => 'id="menuAdministrateur"');
+			htp.ulistOpen(cattributes => 'id="ulmenu"');
+				htp.listItem;
+					htp.anchor('pq_ui_accueil.dis_accueil', 'Accueil');
+				htp.listItem;
+					htp.anchor('#', 'Réservations');
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('#', 'Personnes');
+				htp.print('</li>');				
+				htp.listItem;
+					htp.anchor('pq_ui_entrainement.manage_entrainement', 'Entrainements');
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_terrain.manage_terrains_with_menu', 'Terrains');
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_creneau.manage_creneaux_with_menu', 'Créneaux');
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_codification.manage_codification_with_menu', 'Codifications');
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_abonnement.manage_abonnements', 'Abonnements');
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_facture.manage_factures', 'Factures');
+				htp.print('</li>');
+				htp.listItem;
+					htp.anchor('pq_ui_account.exec_dis_account', 'Mon compte');
+				htp.print('</li>');				
+				htp.listItem;
+					htp.anchor('pq_ui_commun.deconnect', 'Deconnexion');
+				htp.print('</li>');
+			htp.ulistClose;
+		htp.print('</div>');
+	END;
+
+	PROCEDURE aff_menu_niveau_autre
+	IS
+	BEGIN
+		htp.div(cattributes => 'id="menuAutre"');
+			htp.ulistOpen(cattributes => 'id="ulmenu"');
+				htp.listItem;
+					htp.anchor('pq_ui_accueil.dis_accueil', 'Accueil');
+				htp.print('</li>');				
+				htp.listItem;
+					htp.anchor('pq_ui_account.exec_dis_account', 'Mon compte');
 				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('pq_ui_commun.deconnect', 'Deconnexion');

@@ -26,17 +26,21 @@ IS
 	, vlienretour  in varchar2
 	, vlibellelien in varchar2);	
 	
+	--Permet d'afficher une erreur personnalisée lors que l'utilisateur n'a pas les droits d'accès pour une page.
+	PROCEDURE dis_error_permission_denied;
+	
 	PROCEDURE aff_header;
 	PROCEDURE header;
 	PROCEDURE aff_menu(niveau IN NUMBER);
-	PROCEDURE aff_menu_niveau1;
-	PROCEDURE aff_menu_niveau2;
-	PROCEDURE aff_menu_niveau3;
+	PROCEDURE aff_menu_niveau_entraineur;
+	PROCEDURE aff_menu_niveau_agent_accueil;
+	PROCEDURE aff_menu_niveau_administrateur;
+	PROCEDURE aff_menu_niveau_autre;
 	PROCEDURE aff_footer;
-	PROCEDURE aff_accueil;
 	PROCEDURE deconnect;
 	PROCEDURE isAuthorized(niveauP IN NUMBER, permission OUT BOOLEAN);
 	PROCEDURE getNiveau(niveau OUT PERSONNE.NIVEAU_DROIT%TYPE);
 		
 END pq_ui_commun;
 /
+
