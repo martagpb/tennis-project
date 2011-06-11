@@ -75,7 +75,7 @@ IS
 		target_cookie OWA_COOKIE.cookie;
 		vnumEntraineur NUMBER(5);
 	BEGIN	
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -88,7 +88,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des entrainements');
 	END manage_entrainement_entraineur;	
@@ -100,7 +100,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		perm BOOLEAN;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -111,7 +111,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Affichage de l''entrainement en cours...');
 	END exec_dis_entrainement_entr;
@@ -130,7 +130,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -148,7 +148,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout d''un entrainement en cours...');
 	END exec_add_entrainement_entr;
@@ -167,7 +167,7 @@ IS
 		vnumEntraineur NUMBER(5);
 	BEGIN
 		pq_ui_commun.aff_header;
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -185,7 +185,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification de l''entrainement en cours...');
 	END exec_upd_entrainement_entr;
@@ -199,7 +199,7 @@ IS
 		target_cookie OWA_COOKIE.cookie;
 		vnumEntraineur NUMBER(5);
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -219,7 +219,7 @@ IS
 		htp.br;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression d''un entrainement en cours...');
 	END exec_del_entrainement_entr;
@@ -229,7 +229,7 @@ IS
 	PROCEDURE dis_entrainement_entr(
 	  vnumEntrainement IN NUMBER)
 	IS
-		vnatureNiveau ENTRAINEMENT.NATURE_NIVEAU%TYPE;
+		vlibelleNiveau CODIFICATION.LIBELLE%TYPE;
 		vnbplaces ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE;
 		vdateDebut ENTRAINEMENT.DATE_DEBUT_ENTRAINEMENT%TYPE;
 		vdateFin ENTRAINEMENT.DATE_FIN_ENTRAINEMENT%TYPE;
@@ -250,27 +250,30 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
 
 		SELECT 
-			LIB_ENTRAINEMENT
-		  , NATURE_NIVEAU
-		  , NB_PLACE_ENTRAINEMENT
-		  , DATE_DEBUT_ENTRAINEMENT
-		  , DATE_FIN_ENTRAINEMENT 
+			E.LIB_ENTRAINEMENT
+		  , C.LIBELLE
+		  , E.NB_PLACE_ENTRAINEMENT
+		  , E.DATE_DEBUT_ENTRAINEMENT
+		  , E.DATE_FIN_ENTRAINEMENT 
 		INTO 
 			vlibEntrainement
-		  , vnatureNiveau
+		  , vlibelleNiveau
 		  , vnbplaces
 		  , vdateDebut
 		  , vdateFin
 		FROM 
-			ENTRAINEMENT
+			ENTRAINEMENT E
+				INNER JOIN CODIFICATION C
+				ON  E.NATURE_NIVEAU = C.NATURE
+				AND E.CODE_NIVEAU   = C.CODE
 		WHERE 
-			NUM_ENTRAINEMENT = vnumEntrainement;
+			E.NUM_ENTRAINEMENT = vnumEntrainement;
 		
 		SELECT 
 			COUNT(*) 
@@ -289,7 +292,7 @@ IS
 		htp.br;						
 		htp.print('Description de l''entrainement numéro '|| vnumEntrainement || ' : '||vlibEntrainement);
 		htp.br;
-		htp.print('L''entrainement s''adresse aux joueurs possèdant au moins le niveau : '|| vnatureNiveau || '.');
+		htp.print('L''entrainement s''adresse aux joueurs possèdant au moins le niveau : '|| vlibelleNiveau || '.');
 		htp.br;
 		htp.print('Le nombre de places disponibles est de : '|| vnbPlaces || '.');
 		htp.br;
@@ -358,7 +361,7 @@ IS
 		htp.br; 
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 	END dis_entrainement_entr;
 	
 	-- Affiche le formulaire permettant la saisie d’un nouvel entrainement
@@ -374,7 +377,7 @@ IS
 		FROM 
 			CODIFICATION C
 		WHERE 
-			C.LIBELLE = 'Classement';
+			C.NATURE = 'Classement';
 			
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -390,7 +393,7 @@ IS
 		currentFinMonth NUMBER(2) := 0;
 		currentFinYear NUMBER(4) := 0;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -498,7 +501,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 	END form_add_entrainement_entr;
 	
 	-- Affiche le formulaire de saisie permettant la modification d’un entrainement existant	
@@ -524,7 +527,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		currentPlace NUMBER(2) := 0;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -600,7 +603,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 	END form_upd_entrainement_entr;
 		
 END pq_ui_entrainement_entraineur;
