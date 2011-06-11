@@ -22,7 +22,13 @@ IS
 	, vdateDebut IN ENTRAINEMENT.DATE_DEBUT_ENTRAINEMENT%TYPE
 	, vdateFin IN ENTRAINEMENT.DATE_FIN_ENTRAINEMENT%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		INSERT INTO ENTRAINEMENT (NUM_ENTRAINEUR,CODE_NIVEAU,NATURE_NIVEAU,LIB_ENTRAINEMENT,NB_PLACE_ENTRAINEMENT,DATE_DEBUT_ENTRAINEMENT,DATE_FIN_ENTRAINEMENT)
 		VALUES (vnumEntraineur,vcodeNiveau,vnatureNiveau,vlibEntrainement,vnbPlaces,vdateDebut,vdateFin);
 		COMMIT;
@@ -40,7 +46,13 @@ IS
 	, vlibEntrainement IN ENTRAINEMENT.LIB_ENTRAINEMENT%TYPE
 	, vnbPlaces IN ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		UPDATE ENTRAINEMENT
 		SET
 				NUM_ENTRAINEUR = vnumEntraineur
@@ -60,36 +72,42 @@ IS
 	PROCEDURE del_entrainement(
 	  vnumEntrainement IN ENTRAINEMENT.NUM_ENTRAINEMENT%TYPE)
 	 IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		vdateDebut Date;
 	 BEGIN
-	 SELECT DATE_DEBUT_ENTRAINEMENT INTO vdateDebut FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
-	 IF(vdateDebut<SYSDATE)
-	 THEN
-	  	UPDATE ENTRAINEMENT 
-		SET 
-			DATE_FIN_ENTRAINEMENT=SYSDATE
-		WHERE
-			NUM_ENTRAINEMENT = vnumEntrainement;
-		--supprimer toutes les occupations à venir
-		DELETE FROM OCCUPER
-		WHERE
-			trunc(DATE_OCCUPATION) > trunc(sysdate)
-			AND NUM_ENTRAINEMENT = vnumEntrainement;
-	 ELSE
-		--supprimer toutes les enregistrements de la table avoir lieu
-		DELETE FROM AVOIR_LIEU
-		WHERE
-			NUM_ENTRAINEMENT = vnumEntrainement;
-		--supprimer toutes les occupations à venir
-		DELETE FROM OCCUPER
-		WHERE
-			trunc(DATE_OCCUPATION) > trunc(sysdate)
-			AND NUM_ENTRAINEMENT = vnumEntrainement;
-		--Supprime l'entrainement	
-		DELETE FROM ENTRAINEMENT
-		WHERE
-			NUM_ENTRAINEMENT = vnumEntrainement;
-	 END IF;
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		 SELECT DATE_DEBUT_ENTRAINEMENT INTO vdateDebut FROM ENTRAINEMENT WHERE NUM_ENTRAINEMENT = vnumEntrainement;
+		 IF(vdateDebut<SYSDATE)
+		 THEN
+			UPDATE ENTRAINEMENT 
+			SET 
+				DATE_FIN_ENTRAINEMENT=SYSDATE
+			WHERE
+				NUM_ENTRAINEMENT = vnumEntrainement;
+			--supprimer toutes les occupations à venir
+			DELETE FROM OCCUPER
+			WHERE
+				trunc(DATE_OCCUPATION) > trunc(sysdate)
+				AND NUM_ENTRAINEMENT = vnumEntrainement;
+		 ELSE
+			--supprimer toutes les enregistrements de la table avoir lieu
+			DELETE FROM AVOIR_LIEU
+			WHERE
+				NUM_ENTRAINEMENT = vnumEntrainement;
+			--supprimer toutes les occupations à venir
+			DELETE FROM OCCUPER
+			WHERE
+				trunc(DATE_OCCUPATION) > trunc(sysdate)
+				AND NUM_ENTRAINEMENT = vnumEntrainement;
+			--Supprime l'entrainement	
+			DELETE FROM ENTRAINEMENT
+			WHERE
+				NUM_ENTRAINEMENT = vnumEntrainement;
+		 END IF;
 	COMMIT;
 	EXCEPTION
 		WHEN OTHERS THEN
