@@ -55,6 +55,14 @@ IS
 		END CASE;
 		RETURN response;
 	END;
+	
+	FUNCTION dis_forbidden
+	RETURN VARCHAR2
+	IS
+		forbidden VARCHAR2(255) := 'Interdite';
+	BEGIN
+		RETURN forbidden;
+	END;
 		
 END pq_ui_param_commun;
 /
