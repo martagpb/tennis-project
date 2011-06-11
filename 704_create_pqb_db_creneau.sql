@@ -29,7 +29,7 @@ IS
 		COMMIT;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 	END add_creneau;
 	
 	--Permet de modifier un créneau existant
@@ -53,7 +53,7 @@ IS
 		COMMIT;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 	END upd_creneau;
 	
 	--Permet de supprimer un créneau existant
@@ -71,9 +71,9 @@ IS
 		WHERE 
 			HEURE_DEBUT_CRENEAU = vheureDebutCreneau;
 		COMMIT;
-		EXCEPTION
+	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 	END del_creneau;
 	
 END pq_db_creneau;

@@ -19,7 +19,13 @@ IS
 	, pdatePaiement IN FACTURE.DATE_PAIEMENT%TYPE
 	, pnumPersonne IN FACTURE.NUM_PERSONNE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		INSERT INTO FACTURE(DATE_FACTURE, MONTANT_FACTURE, DATE_PAIEMENT, NUM_PERSONNE)
 		VALUES(pdate, pmontant, pdatePaiement, pnumPersonne); 
 		COMMIT;
@@ -31,8 +37,14 @@ IS
 	, pdate IN FACTURE.DATE_FACTURE%TYPE
 	, pmontant IN FACTURE.MONTANT_FACTURE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		var number(5);
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		UPDATE FACTURE
 		SET
 		    NUM_FACTURE   	= pnumFacture
@@ -48,8 +60,14 @@ IS
 	  pnumFacture IN FACTURE.NUM_FACTURE%TYPE
 	, pmontant IN FACTURE.MONTANT_FACTURE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		var number(5);
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		UPDATE FACTURE
 		SET
 		    NUM_FACTURE   	= pnumFacture
@@ -63,7 +81,13 @@ IS
 	PROCEDURE del_facture(
 	  pnumFacture IN FACTURE.NUM_FACTURE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		DELETE FROM FACTURE
 		WHERE 
 			NUM_FACTURE = pnumFacture;

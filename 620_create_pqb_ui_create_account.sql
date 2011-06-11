@@ -12,8 +12,9 @@
  
 CREATE OR REPLACE PACKAGE BODY pq_ui_create_account
 IS  
-	PROCEDURE formCreate IS
-	begin			
+	PROCEDURE formCreate 
+	IS
+	BEGIN	
 		htp.print('<div class="titre_niveau_1">');
 			htp.print('Création d''un nouveau compte');
 		htp.print('</div>');			
@@ -81,8 +82,8 @@ IS
 	
 	PROCEDURE create_account ( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,phone IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2)
 	IS
-	BEGIN 
-	pq_ui_commun.header;
+	BEGIN
+		pq_ui_commun.header;
 		htp.div(cattributes => 'id="corps"');
 			htp.br; 
 			pq_db_personne.createPersonne(lastname,firstname,login,password,mail,phone,street,postal,city); 

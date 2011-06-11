@@ -14,7 +14,9 @@ CREATE OR REPLACE PACKAGE BODY pq_ui_abonnement
 IS 
 	--Permet d'afficher tous les créneaux et les actions possibles de gestion (avec le menu)
 	PROCEDURE manage_abonnements
-	IS		
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;	
 		CURSOR listAbonnements IS
 		SELECT
 			  A.NUM_ABONNEMENT
@@ -25,10 +27,8 @@ IS
 			ABONNEMENT A INNER JOIN PERSONNE P ON A.NUM_JOUEUR = P.NUM_PERSONNE
 		ORDER BY
 			A.NUM_ABONNEMENT;
-			
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -67,7 +67,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des abonnements');
 	END manage_abonnements;
@@ -76,6 +76,8 @@ IS
 	PROCEDURE dis_abonnement(
 	  pnumAbonnement IN VARCHAR2)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		vnumAbonnement 	ABONNEMENT.NUM_ABONNEMENT%TYPE;
 		vnomPersonne 	PERSONNE.NOM_PERSONNE%TYPE;
 		vdateDebut 		ABONNEMENT.DATE_DEBUT_ABONNEMENT%TYPE;
@@ -89,14 +91,11 @@ IS
 			MENSUALITE M
 		WHERE
 			M.NUM_ABONNEMENT = numAbonnement;
-		
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
-		END IF;
-		
+		END IF;		
 		pq_ui_commun.aff_header;
 		
 		vnumAbonnement := TO_NUMBER(pnumAbonnement);
@@ -141,7 +140,7 @@ IS
 		
 	EXCEPTION		
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN INVALID_NUMBER THEN
 			pq_ui_commun.dis_error_custom('Le numéro d''abonnement est incorrect.','','','pq_ui_abonnement.manage_abonnements','Retour vers la liste des abonnements');
 		WHEN OTHERS THEN
@@ -151,6 +150,8 @@ IS
 	-- Affiche le formulaire permettant la saisie d’un nouvel abonnement
 	PROCEDURE form_add_abonnement
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		-- On stocke dans un curseur la liste de tous les adhérents existants
 		CURSOR listeAdherents IS
 		SELECT 
@@ -162,10 +163,8 @@ IS
 			P.STATUT_JOUEUR = 'A'
 		ORDER BY 
 			P.NOM_PERSONNE;
-	
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -212,7 +211,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Saisie d''un nouvel abonnement');
 	END form_add_abonnement;
@@ -223,17 +222,17 @@ IS
 	, pdateDebut IN VARCHAR2
 	, pduree IN VARCHAR2)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		vnumJoueur ABONNEMENT.NUM_JOUEUR%TYPE;
 		vdateDebut ABONNEMENT.DATE_DEBUT_ABONNEMENT%TYPE;
 		vduree ABONNEMENT.DUREE_ABONNEMENT%TYPE;
-	
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
-		
+			
 		pq_ui_commun.aff_header;
 		
 		vnumJoueur := TO_NUMBER(pnumJoueur);
@@ -252,7 +251,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN DUP_VAL_ON_INDEX THEN
 			pq_ui_commun.dis_error_custom('L''abonnement n''a pas été ajouté','','','pq_ui_abonnement.form_add_abonnement','Retour vers la création d''un abonnement');
 		WHEN OTHERS THEN
@@ -264,6 +263,8 @@ IS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
 		pq_ui_commun.aff_header(3);
 				htp.br;				
@@ -305,6 +306,8 @@ IS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
 		pq_ui_commun.aff_header(3);
 				htp.br;				
@@ -318,7 +321,9 @@ IS
 	
 	-- Affiche le formulaire permettant la saisie d’un nouveau créneau	
 	PROCEDURE form_add_creneau
-	IS		 
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;		 
 		currentStartHour NUMBER(2) := 0;
 		currentStartMinute NUMBER(2) := 0;
 		currentEndHour NUMBER(2) := 0;
@@ -427,6 +432,8 @@ IS
 	  vheureDebutCreneau IN CHAR
 	, vheureFinCreneau IN CHAR)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		currentStartHour CHAR(3) := pq_ui_creneau.get_heure(vheureDebutCreneau);
 		currentStartMinute CHAR(3) := pq_ui_creneau.get_minute(vheureDebutCreneau);
 		currentEndHour NUMBER(2) := 0;
@@ -523,6 +530,8 @@ IS
 	)
 	RETURN CHAR
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		heure CHAR(3):= '00'; 
 	BEGIN
 		heure := substr(vcreneau, 1, 2); 
@@ -535,6 +544,8 @@ IS
 	)
 	RETURN CHAR
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		minutes CHAR(3):= '00'; 
 	BEGIN
 		minutes := substr(vcreneau, 4, 2); 

@@ -13,7 +13,7 @@
 CREATE OR REPLACE PACKAGE BODY pq_ui_s_inscrire
 IS 
 	
-	--Permet d'afficher tous les entrainement existant 
+	--Permet d'afficher tous les entrainement existants
 	PROCEDURE manage_entrainement
 	IS
 		CURSOR listEntrainement IS
@@ -34,7 +34,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		vnomEntraineur VARCHAR2(20);
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -66,7 +66,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des entrainements');
 	END manage_entrainement;
@@ -77,22 +77,22 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>2,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
-                pq_ui_commun.aff_header;
-		pq_ui_s_inscrire.dis_inscriptions(vnumEntrainement);
+			pq_ui_commun.aff_header;
+			pq_ui_s_inscrire.dis_inscriptions(vnumEntrainement);
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des inscriptions');
 	END manage_inscriptions;
 	
 
-	--Permet dafficher les inscriptions d'un entrainement
+	--Permet d'afficher les inscriptions d'un entrainement
 	PROCEDURE dis_inscriptions(vnumEntrainement IN NUMBER)
 	AS
 	CURSOR listInscriptions IS
@@ -109,7 +109,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>2,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -138,7 +138,7 @@ IS
 				htp.tableClose;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des inscriptions');
 	END dis_inscriptions;
@@ -150,7 +150,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>2,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -166,13 +166,13 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Désinscription en cours...');
 	END exec_del_inscription;
 	
 	
-	-- Affiche le formulaire permettant la saisie dune nouvelle inscription
+	-- Affiche le formulaire permettant la saisie d'une nouvelle inscription
 	PROCEDURE form_add_inscription(vnumEntrainement IN NUMBER)
 	AS
 		perm BOOLEAN;
@@ -190,7 +190,7 @@ IS
 		AND PER.STATUT_JOUEUR='A'
 		ORDER BY 1;
 	BEGIN
-        pq_ui_commun.ISAUTHORIZED(niveauP=>2,permission=>perm);
+        pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -216,7 +216,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Inscription en cours...');
 	END form_add_inscription;
@@ -240,7 +240,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusé.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Inscription en cours...');
 	END exec_add_inscription;

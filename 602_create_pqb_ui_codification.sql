@@ -27,7 +27,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des codification');
 	END manage_codification_with_menu;
@@ -110,8 +110,8 @@ IS
 					htp.tabledata(htf.anchor('pq_ui_codification.form_upd_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE||'&'||'vlibelle='||currentCodification.LIBELLE,'Mise à jour'));
 					htp.tabledata(htf.anchor('pq_ui_codification.exec_del_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
 				else
-					htp.tabledata('Non autorisée');
-					htp.tabledata('Non autorisée');
+					htp.tabledata(pq_ui_param_commun.dis_forbidden);
+					htp.tabledata(pq_ui_param_commun.dis_forbidden);
 				end if;		
 				
 				htp.tableRowClose;
@@ -119,7 +119,7 @@ IS
 		htp.tableClose;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des codifications');
 	END manage_codification;
@@ -160,7 +160,7 @@ IS
 			pq_ui_commun.aff_footer;
 	EXCEPTION
 	WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 	END dis_codification;
 		
 	-- Exécute la procédure d'ajout d'une codification et gère les erreurs éventuelles
@@ -190,7 +190,7 @@ IS
 		--Traitement personnalisée de l'erreur :
 			-- Nom Exception: DUP_VAL_ON_INDEX, Erreur oracle : ORA-00001, Code erreur : -1
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN DUP_VAL_ON_INDEX THEN
 			pq_ui_commun.dis_error_custom('La codification n''a pas été ajoutée','Une codification existe déjà avec un code qui vaut '|| vcode ||' et une nature '|| vnature ||'.','Merci de choisir d''autres valeurs pour le code et/ou la nature.','pq_ui_codification.form_add_codification','Retour vers la création d''une codification');
 		WHEN OTHERS THEN
@@ -222,7 +222,7 @@ IS
 			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''une codification en cours...');
 	END exec_upd_codification;
@@ -251,7 +251,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression d''une codification en cours...');
 	END exec_del_codification;
@@ -276,7 +276,7 @@ IS
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Affichage d''une codification en cours...');
 	END exec_dis_codification;
@@ -339,7 +339,7 @@ IS
 			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Saisie d''une nouvelle codification');
 	END form_add_codification;
@@ -397,7 +397,7 @@ IS
 			pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification d''une codification');
 	END form_upd_codification;
