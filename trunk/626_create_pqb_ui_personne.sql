@@ -104,7 +104,7 @@ IS
 			END IF;			
 			htp.tabledata(htf.anchor('pq_ui_personne.dis_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Informations complémentaires'));
 			htp.tabledata(htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Mise à jour'));
-			htp.tabledata(htf.anchor('pq_ui_personne.exec_delpersonne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+			htp.tabledata(htf.anchor('pq_ui_personne.exec_del_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
 			htp.tableRowClose;
 		end loop;	
 		htp.tableClose;			
@@ -154,7 +154,10 @@ IS
 		FROM PERSONNE
 		WHERE NUM_PERSONNE=vnumpersonne;
 		pq_ui_commun.aff_header;
-		/*	htp.print('<div class="titre_niveau_1">');
+		htp.br;
+		htp.br;
+		htp.br;
+			htp.print('<div class="titre_niveau_1">');
 				htp.print('Affichage des informations de la personne n°' || vnumpersonne);
 			htp.print('</div>');			
 			htp.br;
@@ -194,6 +197,7 @@ IS
 						htp.tabledata('Oui');		
 					ELSE
 						htp.tabledata('Non');	
+					END IF;
 				htp.tablerowclose;
 				IF currentPersonne.CODE_STATUT_EMPLOYE IS NOT NULL THEN
 				htp.tablerowopen;
@@ -209,6 +213,7 @@ IS
 				END IF;
 			htp.tableclose;
 			htp.br;
+			htp.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||vnumpersonne,'Modifier');
 			htp.br;		
 			htp.br;
 			htp.br;
@@ -252,7 +257,7 @@ IS
 				end loop;	
 			htp.tableClose;		
 			END IF;
-			htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');	*/
+			htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');	
 		pq_ui_commun.aff_footer;
 	END dis_personne;
 	
@@ -404,6 +409,8 @@ IS
 		END IF;
 		pq_ui_commun.aff_header;
 			htp.br;
+			htp.br;
+			htp.br;
 			pq_db_personne.createPersonne(lastname ,  firstname ,login ,password ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur );
 			htp.print('<div class="success"> ');
 				htp.print('La personne a été ajoutée avec succès.');
@@ -431,12 +438,15 @@ IS
 		END IF;
 		pq_ui_commun.aff_header;		
 			pq_db_personne.delpersonne(vnumpersonne);
+			htp.br;
+			htp.br;
+			htp.br;
 			htp.print('<div class="success"> ');
 				htp.print('La personne n° '|| vnumpersonne || ' a été supprimée avec succès.');
 			htp.print('</div>');				
 			htp.br;
 			htp.br;			
-			pq_ui_personne.manage_personnes;
+			pq_ui_personne.dis_personnes;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -501,11 +511,16 @@ IS
 		htp.print('Les champs marqués d''une étoile sont obligatoires');
 		htp.br;
 		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_personne.exec_upd_personne', 'POST', cattributes => 'onSubmit="return valider(this,document)"');
-			htp.formText('num',20,NULL,vnumpersonne, cattributes => 'type="hidden"');
+			htp.formHidden('num',vnumpersonne);
 			htp.tableOpen(cattributes => 'CELLSPACING=8');
 				htp.tableheader('');
 				htp.tableheader('');
 				htp.tableheader('');
+				htp.tableRowOpen;
+					htp.tableData('Numéro * :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText(NULL,20,NULL,vnumpersonne, cattributes => 'disabled="disabled"'));
+					htp.tableData('',cattributes => 'id="numText" class="error"');
+				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Nom * :', cattributes => 'class="enteteFormulaire"');
 					htp.tableData(htf.formText('lastname',20,NULL,currentPersonne.NOM_PERSONNE));
@@ -627,14 +642,17 @@ IS
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
-		pq_ui_commun.aff_header;			
+		pq_ui_commun.aff_header;	
 			pq_db_personne.updPersonneFull(num, lastname ,  firstname ,log ,pass ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur, droit );
+			htp.br;
+			htp.br;
+			htp.br;
 			htp.print('<div class="success"> ');
 				htp.print('La personne n° '|| num || ' a été mis à jour avec succès.');
 			htp.print('</div>');				
 			htp.br;
 			htp.br;			
-			pq_ui_personne.manage_personnes;
+			pq_ui_personne.dis_personnes;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN OTHERS THEN

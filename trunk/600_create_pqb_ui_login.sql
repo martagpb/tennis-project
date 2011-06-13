@@ -61,36 +61,46 @@ IS
 		pq_ui_create_account.formCreate;
 	END aff_login;
 	
-	PROCEDURE check_login ( login IN VARCHAR2, password IN VARCHAR2) IS 
-		checkLog BOOLEAN;
+	
+	
+	PROCEDURE check_login (login IN VARCHAR2, password IN VARCHAR2)
+	IS
 		numPer NUMBER;
 		crypted_password VARCHAR2(255);
 		decrypted_password VARCHAR(255);
-	BEGIN 
-	SELECT 
-			MDP_PERSONNE INTO crypted_password  
+		isActif NUMBER(1);
+	BEGIN
+		SELECT 
+		NUM_PERSONNE INTO numPer  
 		FROM
 			PERSONNE
 		WHERE
 			LOGIN_PERSONNE=login;
-	SELECT 
-		NUM_PERSONNE INTO numPer  
-	FROM
-		PERSONNE
-	WHERE
-		LOGIN_PERSONNE=login;
-		--Obligation de créer le cookie ici, dans l'entête HTTP. Suppression après vérification si mauvaise indentification
-		OWA_UTIL.mime_header ('text/html', FALSE);
-		OWA_COOKIE.send ('numpersonne', TO_CHAR(numPer),SYSDATE+1);
-		OWA_UTIL.http_header_close;  -- Now close the header
-		htp.br; 
+		SELECT 
+			 MDP_PERSONNE, ACTIF
+			INTO crypted_password, isActif
+		FROM
+			PERSONNE
+		WHERE
+			LOGIN_PERSONNE=login;
 		dbms_obfuscation_toolkit.desdecrypt(input_string => crypted_password, 
 										key_string => 'tennispro', 
 										decrypted_string  => decrypted_password );
 		IF (decrypted_password=password) then
-			--redirect accueil
-			pq_ui_accueil.dis_accueil;
-		ELSE			
+			OWA_UTIL.mime_header ('text/html', FALSE);
+			OWA_COOKIE.send ('numpersonne', TO_CHAR(numPer),SYSDATE+1);
+			OWA_UTIL.REDIRECT_URL('pq_ui_accueil.dis_accueil');
+			OWA_UTIL.http_header_close;  -- Now close the header
+		ELSIF (isActif=0) THEN
+			pq_ui_commun.header;
+				htp.br; 
+				htp.div(cattributes => 'id="corps"');
+				htp.print('<div class="error">');
+					htp.print('Le compte est inactif.');
+				htp.print('</div>');
+				pq_ui_login.aff_login;	
+			pq_ui_commun.aff_footer;
+		ELSE 	
 			pq_ui_commun.header;
 				htp.br; 
 				htp.div(cattributes => 'id="corps"');
@@ -99,9 +109,9 @@ IS
 				htp.print('</div>');
 				pq_ui_login.aff_login;	
 			pq_ui_commun.aff_footer;	
-			--OWA_COOKIE.remove('numpersonne',NULL);			
+			OWA_COOKIE.remove('numpersonne',NULL);				
 		END IF;
-		EXCEPTION 			
+	EXCEPTION 			
 			when others then 
 			  IF (SQLCODE=100) THEN
 			  htp.print('Compte inconnu');
@@ -109,7 +119,7 @@ IS
 			  ELSE
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Connexion à l''application');				
 			END IF;
-	END check_login; 
+	END check_login;
 	
 END pq_ui_login;
 /
