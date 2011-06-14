@@ -160,7 +160,7 @@ IS
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_personne.form_add_personne','Ajouter une personne'));
 		htp.print('  -  ');
-		htp.print(htf.anchor('pq_ui_personne.form_search_personne','Rechercher une personne'));
+		htp.print(htf.anchor('pq_ui_personne.form_search_personnes','Rechercher une personne'));
 		htp.br;	
 		htp.br;					
 		htp.tableOpen('',cattributes => 'class="tableau"');
