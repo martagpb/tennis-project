@@ -35,6 +35,10 @@ IS
 		ORDER BY 
 			NUM_ENTRAINEMENT;
 		
+		--Variables permettant de déterminer si le curseur est vide ou non
+		cursorListIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorList NUMBER(1):= 0; 
+		
 		vnomEntraineur VARCHAR2(20);
 	BEGIN
 		htp.br;			
@@ -49,24 +53,41 @@ IS
 		htp.print(htf.anchor('pq_ui_entrainement.manage_historique_entrainement','Historique'));
 		htp.br;
 		htp.br;	
-		htp.tableOpen('',cattributes => 'class="tableau"');
-			htp.tableheader('Numéro');
-			htp.tableheader('Intitulé');
-			htp.tableheader('Entraineur');
-			htp.tableheader('Informations');
-			htp.tableheader('Mise à jour');
-			htp.tableheader('Suppression');
-			for currentEntrainement in listEntrainement loop
-				htp.tableRowOpen;
-				htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);	
-				htp.tabledata(currentEntrainement.LIB_ENTRAINEMENT);
-				htp.tabledata(currentEntrainement.PRENOM_PERSONNE||'  '||currentEntrainement.NOM_PERSONNE);
-				htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
-				htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Mise à jour'));
-				htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-				htp.tableRowClose;	
-			end loop;
-		htp.tableClose;
+		--On parcours le curseur pour déterminer s'il est vide
+		for emptyEntr in listEntrainement loop
+			nbValuesIntoCursorList:= nbValuesIntoCursorList + 1;	
+			--On sort de la boucle dès qu'il y a une valeur
+			if nbValuesIntoCursorList > 0 then
+				--On indique le fait que le curseur n'est pas vide
+				cursorListIsEmpty := false;
+				exit;
+			end if;
+		end loop;	
+				
+		--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+		if cursorListIsEmpty = true Then	
+			htp.print('Il n''y a aucun entrainement de disponible.');	
+		--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+		else
+			htp.tableOpen('',cattributes => 'class="tableau"');
+				htp.tableheader('Numéro');
+				htp.tableheader('Intitulé');
+				htp.tableheader('Entraineur');
+				htp.tableheader('Informations');
+				htp.tableheader('Mise à jour');
+				htp.tableheader('Suppression');
+				for currentEntrainement in listEntrainement loop
+					htp.tableRowOpen;
+					htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);	
+					htp.tabledata(currentEntrainement.LIB_ENTRAINEMENT);
+					htp.tabledata(currentEntrainement.PRENOM_PERSONNE||'  '||currentEntrainement.NOM_PERSONNE);
+					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
+					htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Mise à jour'));
+					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+					htp.tableRowClose;	
+				end loop;
+			htp.tableClose;
+		end if;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des entrainements');
@@ -116,6 +137,11 @@ IS
 			TRUNC(DATE_FIN_ENTRAINEMENT)<TRUNC(SYSDATE)
 		ORDER BY 
 			NUM_ENTRAINEMENT;
+			
+		--Variables permettant de déterminer si le curseur est vide ou non
+		cursorListIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorList NUMBER(1):= 0; 
+			
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -130,6 +156,23 @@ IS
 				htp.print('</div>');					
 				htp.br;
 				htp.br;	
+				
+		--On parcours le curseur pour déterminer s'il est vide
+		for emptyEntr in listEntrainement loop
+			nbValuesIntoCursorList:= nbValuesIntoCursorList + 1;	
+			--On sort de la boucle dès qu'il y a une valeur
+			if nbValuesIntoCursorList > 0 then
+				--On indique le fait que le curseur n'est pas vide
+				cursorListIsEmpty := false;
+				exit;
+			end if;
+		end loop;	
+				
+		--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+		if cursorListIsEmpty = true Then
+			htp.print('Il n''y a aucun entrainement de disponible dans l''historique.');	
+		--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+		else				
 				htp.tableOpen('',cattributes => 'class="tableau"');
 				htp.tableheader('Numéro');
 				htp.tableheader('Intitulé');
@@ -144,6 +187,7 @@ IS
 						htp.tableRowClose;
 					end loop;	
 				htp.tableClose;
+		end if;
 				htp.br;
 				htp.br;
 				htp.anchor('pq_ui_entrainement.manage_entrainement', 'Retourner à la gestion des entrainements actuels');
