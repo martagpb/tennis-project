@@ -20,13 +20,22 @@ IS
 	, vnumEntrainement IN AVOIR_LIEU.NUM_ENTRAINEMENT%TYPE
 	, vexception IN OUT NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		
 		INSERT INTO AVOIR_LIEU(NUM_JOUR,HEURE_DEBUT_CRENEAU,NUM_TERRAIN,NUM_ENTRAINEMENT)
 		VALUES(vnumJour,vheureDebutCreneau,vnumTerrain,vnumEntrainement);
 		COMMIT;
 		vexception:=0;
 		--Il n'y a pas de commit ici car il s'effectue après l'ajout des occupations
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 			vexception:=1;
@@ -40,12 +49,19 @@ IS
 	, vnumEntrainement IN AVOIR_LIEU.NUM_ENTRAINEMENT%TYPE
 	, vexception IN OUT NUMBER)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		vdateDebut ENTRAINEMENT.DATE_DEBUT_ENTRAINEMENT%TYPE;
 		vdateFin ENTRAINEMENT.DATE_FIN_ENTRAINEMENT%TYPE;
 		vincrementDate Date;
 		vnumJourDebut NUMBER(1);
 		vnumSeance NUMBER(3);
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		
 		select date_debut_entrainement into vdateDebut from entrainement where num_entrainement=vnumEntrainement;
 		select date_fin_entrainement into vdateFin from entrainement where num_entrainement=vnumEntrainement;
 		select to_char(vdateDebut,'D') into vnumJourDebut from entrainement where num_entrainement=vnumEntrainement;
@@ -65,6 +81,8 @@ IS
 		vexception:=0;
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 			vexception:=1;
@@ -76,7 +94,13 @@ IS
 	, vheureDebutCreneau IN AVOIR_LIEU.HEURE_DEBUT_CRENEAU%TYPE
 	, vnumTerrain IN AVOIR_LIEU.NUM_TERRAIN%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		DELETE FROM AVOIR_LIEU
 		WHERE
 			NUM_JOUR = vnumJour
@@ -84,6 +108,8 @@ IS
 			AND NUM_TERRAIN = vnumTerrain;
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END del_avoir_lieu;

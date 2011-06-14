@@ -20,11 +20,19 @@ IS
 	, vnumFacture IN OCCUPER.NUM_FACTURE%TYPE
 	, vnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE)
 	IS 
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_FACTURE,NUM_JOUEUR)
 		VALUES(vheureDebutCreneau,vnumTerrain,vdateOccupation,vnumFacture,vnumJoueur);
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END add_reservation;
@@ -37,11 +45,19 @@ IS
 	, vnumEntrainement IN OCCUPER.NUM_ENTRAINEMENT%TYPE
 	, vnumSeance IN OCCUPER.NUM_SEANCE%TYPE)
 	IS 
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_ENTRAINEMENT,NUM_SEANCE)
 		VALUES(vheureDebutCreneau,vnumTerrain,vdateOccupation,vnumEntrainement,vnumSeance);
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END add_seance;
@@ -52,11 +68,19 @@ IS
 	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
 	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE)
 	IS 
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION)
 		VALUES(vheureDebutCreneau,vnumTerrain,vdateOccupation);
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END add_occupation;
@@ -71,7 +95,13 @@ IS
 	, vnumEntrainement IN OCCUPER.NUM_ENTRAINEMENT%TYPE
 	, vnumSeance IN OCCUPER.NUM_SEANCE%TYPE)
 	IS 
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		UPDATE OCCUPER
 		SET
 				NUM_FACTURE = vnumFacture
@@ -84,6 +114,8 @@ IS
 				AND DATE_OCCUPATION = vdateOccupation;
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END upd_occupation;
@@ -94,7 +126,13 @@ IS
 	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
 	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 	  	DELETE FROM OCCUPER
 		WHERE
 			HEURE_DEBUT_CRENEAU = vheureDebutCreneau
@@ -102,6 +140,8 @@ IS
 			AND DATE_OCCUPATION = vdateOccupation;
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END del_occupation;
@@ -113,7 +153,13 @@ IS
 	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
 	, vnumEntrainement IN OCCUPER.NUM_ENTRAINEMENT%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
 		DELETE FROM OCCUPER
 		WHERE
 			HEURE_DEBUT_CRENEAU = vheureDebutCreneau
@@ -122,6 +168,8 @@ IS
 			AND NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END del_seance;			

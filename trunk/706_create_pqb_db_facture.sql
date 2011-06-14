@@ -22,13 +22,16 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
 		INSERT INTO FACTURE(DATE_FACTURE, MONTANT_FACTURE, DATE_PAIEMENT, NUM_PERSONNE)
 		VALUES(pdate, pmontant, pdatePaiement, pnumPersonne); 
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END add_facture;
 	
 	--Permet de modifier une facture existante
@@ -41,7 +44,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		var number(5);
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -53,6 +56,9 @@ IS
 		WHERE
 			NUM_FACTURE = pnumFacture;
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END upd_facture;
 	
 	--Permet de modifier le montant d'une facture existante
@@ -64,7 +70,7 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		var number(5);
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -75,6 +81,9 @@ IS
 		WHERE
 			NUM_FACTURE = pnumFacture;
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END upd_facture;
 	
 	--Permet de supprimer une facture existante
@@ -84,7 +93,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -92,6 +101,9 @@ IS
 		WHERE 
 			NUM_FACTURE = pnumFacture;
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END del_facture;
 	
 END pq_db_facture;
