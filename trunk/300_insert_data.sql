@@ -779,16 +779,15 @@ VALUES(8, to_date('02/2012','MM/YYYY'));
 
 INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (8,14);  -- OK : entrainement n°8  (15/4), personne adhérente n°14 (15)   ==> niveau supérieur (ok) et statut adhérent   (ok)
 INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (11,18); -- OK : entrainement n°11 (15/1), personne adhérente n°18 (15/1) ==> niveau égal      (ok) et statut adhérent   (ok)
-INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (10,16); -- KO : entrainement n°10 (15/2), personne adhérente n°16 (15/3) ==> niveau inférieur (ko) mais statut adhérent (ok)
-INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (7,22);  -- KO : entrainement n°7  (15/5), personne adhérente n°22 (15/5) ==> niveau égal      (ko) mais statut visiteur (ko)
-INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (5,19);  -- KO : entrainement n°5  (30/1), personne adhérente n°19 (NC)   ==> niveau inférieur (ko) et statut visiteur   (ko)
+
+
 
 -- -----------------------------------------------------------------------------
 --       TABLE : ETRE_ASSOCIE
 -- -----------------------------------------------------------------------------
 /* En attente des insertion dans la table OCCUPER */
 
---INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE) VALUES ();
+INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE) VALUES ('19h00',1,'05/09/11',1);
 
 
 -- -----------------------------------------------------------------------------

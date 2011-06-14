@@ -64,7 +64,9 @@ IS
 		htp.print('</div>');	
 		htp.br;	
 		htp.br;	
-		htp.print(htf.anchor('pq_ui_personne.form_add_personne','Ajouter un personne'));
+		htp.print(htf.anchor('pq_ui_personne.form_add_personne','Ajouter une personne'));
+		htp.print('  -  ');
+		htp.print(htf.anchor('pq_ui_personne.form_search_personnes','Rechercher une personne'));
 		htp.br;	
 		htp.br;					
 		htp.tableOpen('',cattributes => 'class="tableau"');
@@ -76,6 +78,9 @@ IS
 		htp.tableheader('Niveau');
 		htp.tableheader('Statut joueur');
 		htp.tableheader('Statut employé');
+		htp.tableheader('Informations');
+		htp.tableheader('Mise à jour');
+		htp.tableheader('Supprimer');
 		for currentpersonne in listpersonne loop
 			htp.tableRowOpen;
 			htp.tabledata(currentpersonne.NUM_PERSONNE);
@@ -112,6 +117,101 @@ IS
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des personnes');
 	END dis_personnes;
+	
+	
+	--Permet d'afficher toutes les personnes et les actions possibles de gestion (sans le menu), en fonction de critères de recherche
+	PROCEDURE dis_search_personnes(login IN VARCHAR2, nom IN VARCHAR2, prenom IN VARCHAR2)
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+		-- On stocke dans un curseur la liste de toutes les personnes existantes
+		CURSOR listpersonne IS
+		SELECT 
+			 PER.NUM_PERSONNE           
+			,PER.NOM_PERSONNE
+			,PER.PRENOM_PERSONNE
+			,PER.LOGIN_PERSONNE
+			,PER.VILLE_PERSONNE
+			,PER.CODE_STATUT_EMPLOYE
+			,PER.NATURE_STATUT_EMPLOYE
+			,PER.CODE_NIVEAU
+			,PER.NATURE_NIVEAU
+			,PER.STATUT_JOUEUR
+		FROM 
+			PERSONNE PER
+		WHERE
+			PER.LOGIN_PERSONNE=login
+		OR
+			PER.NOM_PERSONNE=nom
+		OR
+			PER.PRENOM_PERSONNE=prenom
+		ORDER BY 
+			1;
+	BEGIN	
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
+		htp.print('<div class="titre_niveau_1">');
+			htp.print('Gestion des personnes');
+		htp.print('</div>');	
+		htp.br;	
+		htp.br;	
+		htp.print(htf.anchor('pq_ui_personne.form_add_personne','Ajouter une personne'));
+		htp.print('  -  ');
+		htp.print(htf.anchor('pq_ui_personne.form_search_personne','Rechercher une personne'));
+		htp.br;	
+		htp.br;					
+		htp.tableOpen('',cattributes => 'class="tableau"');
+		htp.tableheader('N° du personne');
+		htp.tableheader('Nom');
+		htp.tableheader('Prénom');
+		htp.tableheader('Login');
+		htp.tableheader('Ville');
+		htp.tableheader('Niveau');
+		htp.tableheader('Statut joueur');
+		htp.tableheader('Statut employé');
+		htp.tableheader('Informations');
+		htp.tableheader('Mise à jour');
+		htp.tableheader('Supprimer');
+		for currentpersonne in listpersonne loop
+			htp.tableRowOpen;
+			htp.tabledata(currentpersonne.NUM_PERSONNE);
+			htp.tabledata(currentpersonne.NOM_PERSONNE);
+			htp.tabledata(currentpersonne.PRENOM_PERSONNE);
+			htp.tabledata(currentpersonne.LOGIN_PERSONNE);
+			IF currentpersonne.VILLE_PERSONNE IS NOT NULL THEN
+				htp.tabledata(currentpersonne.VILLE_PERSONNE);
+			ELSE
+				htp.tabledata('');
+			END IF;
+			IF currentpersonne.CODE_NIVEAU IS NOT NULL THEN
+				htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_NIVEAU,currentpersonne.NATURE_NIVEAU));
+			ELSE
+				htp.tabledata('');
+			END IF;
+			IF currentpersonne.STATUT_JOUEUR IS NOT NULL THEN
+			htp.tabledata(currentpersonne.STATUT_JOUEUR);
+			ELSE
+				htp.tabledata('');
+			END IF;
+			IF currentpersonne.CODE_STATUT_EMPLOYE IS NOT NULL THEN
+			htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_STATUT_EMPLOYE,currentpersonne.NATURE_STATUT_EMPLOYE));
+			ELSE
+				htp.tabledata('');
+			END IF;			
+			htp.tabledata(htf.anchor('pq_ui_personne.dis_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Informations complémentaires'));
+			htp.tabledata(htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Mise à jour'));
+			htp.tabledata(htf.anchor('pq_ui_personne.exec_del_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+			htp.tableRowClose;
+		end loop;	
+		htp.tableClose;	
+		pq_ui_commun.aff_footer;		
+	EXCEPTION
+		WHEN OTHERS THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des personnes');
+	END dis_search_personnes;
 
 	--Permet d’afficher une personne existante
 	PROCEDURE dis_personne(vnumpersonne IN NUMBER)
@@ -658,6 +758,50 @@ IS
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un personne en cours...');
 	END exec_upd_personne;
+	
+	PROCEDURE form_search_personnes
+	IS
+	perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		pq_ui_commun.aff_header;
+			htp.br;
+		htp.br;
+		htp.br;
+		htp.br;
+		htp.print('<div class="titre_niveau_1">');
+		htp.print('Recherche d''une personne');
+		htp.print('</div>');			
+		htp.br;
+		htp.print('Remplissez un ou plusieurs critères de recherche');
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_personne.dis_search_personnes', 'POST', cattributes => 'onSubmit="return valider(this,document)"');
+			htp.tableOpen(cattributes => 'CELLSPACING=8');
+				htp.tableheader('');
+				htp.tableheader('');
+				htp.tableRowOpen;
+					htp.tableData('Login :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('login',20,NULL));
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Nom :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('nom',20,NULL));
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('Prenom :', cattributes => 'class="enteteFormulaire"');
+					htp.tableData(htf.formText('prenom',20,NULL));
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('');
+					htp.tableData(htf.formSubmit(NULL,'Validation'));
+				htp.tableRowClose;
+			htp.tableClose;
+		htp.formClose;
+		pq_ui_commun.aff_footer;
+	END form_search_personnes;
 		
 END pq_ui_personne;
 /
