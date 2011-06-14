@@ -23,15 +23,9 @@ IS
 	END login;
 
 	--Procédure permettant simplement d'affiche le formulaire de connexion d'un compte existant ainsi que le formulaire de création d'un nouveau compte
-	PROCEDURE aff_login IS 
-		target_cookie OWA_COOKIE.cookie;
+	PROCEDURE aff_login 
+	IS 
 	BEGIN
-		target_cookie := OWA_COOKIE.get('numpersonne');
-		IF target_cookie.vals(1) <> NULL THEN
-			OWA_UTIL.mime_header ('text/html', FALSE);
-			OWA_UTIL.REDIRECT_URL('pq_ui_accueil.dis_accueil');
-			OWA_UTIL.http_header_close;  -- Now close the header
-		END IF;
 		htp.br;
 		htp.print('<div class="titre_niveau_1">');
 			htp.print('Connexion avec un compte existant');
@@ -92,17 +86,19 @@ IS
 										key_string => 'tennispro', 
 										decrypted_string  => decrypted_password );
 		IF (isActif=0) THEN
+				pq_ui_commun.header;
 				htp.br; 
 				htp.div(cattributes => 'id="corps"');
 				htp.print('<div class="error">');
 					htp.print('Le compte est inactif.');
 				htp.print('</div>');
 				pq_ui_login.aff_login;	
+				pq_ui_commun.aff_footer;
 		ELSIF (decrypted_password=password) then
 			OWA_UTIL.mime_header ('text/html', FALSE);
 			OWA_COOKIE.send ('numpersonne', TO_CHAR(numPer),SYSDATE+1);
 			OWA_UTIL.REDIRECT_URL('pq_ui_accueil.dis_accueil');
-			OWA_UTIL.http_header_close;  -- Now close the header
+			OWA_UTIL.http_header_close;  
 		ELSE 	
 			pq_ui_commun.header;
 				htp.br; 
@@ -116,9 +112,15 @@ IS
 		END IF;
 	EXCEPTION 			
 			when others then 
-			  IF (SQLCODE=100) THEN
-			  htp.print('Compte inconnu');
-				pq_ui_login.login;
+			  IF (SQLCODE=100) THEN			  
+				  pq_ui_commun.header;
+					htp.br; 
+					htp.div(cattributes => 'id="corps"');
+					htp.print('<div class="error">');
+						 htp.print('Compte inconnu');
+					htp.print('</div>');
+					pq_ui_login.aff_login;	
+				pq_ui_commun.aff_footer;
 			  ELSE
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Connexion à l''application');				
 			END IF;
