@@ -1225,6 +1225,8 @@ begin
                -20002,
                'Impossible d''ajouter "S_INSCRIRE" car "PERSONNE" n''existe pas.');
      end if;
+	 
+	 
 
 end;
 /
@@ -1238,6 +1240,7 @@ CREATE OR REPLACE TRIGGER TI_S_INSCRIRE_BEFORE
 		PERSONNE_CODE_NIVEAU PERSONNE.CODE_NIVEAU%TYPE;
 		PERSONNE_CODE_STATUT_EMPLOYE  PERSONNE.CODE_STATUT_EMPLOYE%TYPE;
 		ENTRAINEMENT_CODE_NIVEAU ENTRAINEMENT.CODE_NIVEAU%TYPE;
+		NB_PLACE NUMBER(3);
 	BEGIN
 	IF inserting then 
 		SELECT
@@ -1260,7 +1263,25 @@ CREATE OR REPLACE TRIGGER TI_S_INSCRIRE_BEFORE
 			ENTRAINEMENT ENT
 		WHERE
 			ENT.NUM_ENTRAINEMENT=:NEW.NUM_ENTRAINEMENT;
+			
+			-- Calcul du nombre de places restantes
+		SELECT
+			ENT.NB_PLACE_ENTRAINEMENT-(COUNT(INS.NUM_PERSONNE)) INTO NB_PLACE
+		FROM
+			ENTRAINEMENT ENT INNER JOIN S_INSCRIRE INS
+				ON ENT.NUM_ENTRAINEMENT=INS.NUM_ENTRAINEMENT
+		WHERE
+			ENT.NUM_ENTRAINEMENT=:NEW.NUM_ENTRAINEMENT;
+			
 	
+		-- Si il n'y a plus de place dans l'entrainement
+		IF NB_PLACE<=0  THEN
+				 raise_application_error(
+				   -20000,
+				   'Impossible d''inscrire la personne à cet entrainement car il n''y a plus de places');
+		END IF;
+			
+		
 		-- On commence par vérifier que la personne qui souhaite s'inscrire à un entrainement est adhérente au club de tennis
 		IF PERSONNE_CODE_STATUT_EMPLOYE <> 'AD' THEN
 				 raise_application_error(
@@ -1281,11 +1302,11 @@ CREATE OR REPLACE TRIGGER TI_S_INSCRIRE_BEFORE
 					-- Entrainement E : ENTRAINEMENT_CODE_NIVEAU = 4, ENTRAINEMENT_NATURE_NIVEAU = 30/4
 				-- Explication :
 					-- Comme PERSONNE_CODE_NIVEAU < ENTRAINEMENT_CODE_NIVEAU, car 3 < 4, alors la personne A n'est pas autorisée à s'inscrire à l'entrainement E.
-/*IF TO_NUMBER(PERSONNE_CODE_NIVEAU) < TO_NUMBER(ENTRAINEMENT_CODE_NIVEAU) THEN
+		IF TO_NUMBER(PERSONNE_CODE_NIVEAU) < TO_NUMBER(ENTRAINEMENT_CODE_NIVEAU) THEN
 			 raise_application_error(
 			   -20002,
 			   'Impossible d''inscrire la personne car elle n''a pas le niveau requis pour cet entrainement.');
-		END IF;*/
+		END IF;
 	END IF;
 END;
 /
