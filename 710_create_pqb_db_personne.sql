@@ -259,24 +259,17 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 		crypted_password VARCHAR2(255);
-		natureNiveau PERSONNE.NATURE_NIVEAU%TYPE;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF; 
-		SELECT 
-			COD.NATURE INTO natureNiveau
-		FROM 
-			CODIFICATION COD
-		WHERE
-			COD.CODE=codeNiveau;
 		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
 										key_string => 'tennispro', 
 										encrypted_string => crypted_password );
 		UPDATE PERSONNE
 		SET
-				NOM_PERSONNE = lastname
+			   NOM_PERSONNE = lastname
 		       ,PRENOM_PERSONNE = firstname
 			   ,MDP_PERSONNE = crypted_password
 			   ,TEL_PERSONNE = phone
@@ -285,7 +278,6 @@ IS
 			   ,CP_PERSONNE = postal
 			   ,VILLE_PERSONNE = city
 			   ,CODE_NIVEAU = codeNiveau
-			   ,NATURE_NIVEAU = natureNiveau
 		WHERE
 				NUM_PERSONNE = vnumPersonne;
 		COMMIT; 
@@ -296,7 +288,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;

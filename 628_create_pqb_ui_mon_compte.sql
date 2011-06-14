@@ -182,6 +182,7 @@ IS
 		perm BOOLEAN;
 		target_cookie OWA_COOKIE.cookie;
 		vnumPersonne NUMBER(5);
+		crypted_password VARCHAR2(255);
 	BEGIN		
         pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
@@ -191,7 +192,7 @@ IS
 		vnumPersonne:=TO_NUMBER(target_cookie.vals(1));
 		
         pq_ui_commun.aff_header;
-		htp.br;		
+		htp.br;	
 		pq_db_personne.updPersonneAccount(vnumPersonne,lastname,firstname,password,mail,tel,adresse,cp,ville,vniveau);
 		htp.br;		
 		pq_ui_account.dis_account;
@@ -257,7 +258,7 @@ IS
 		htp.br;
 		htp.print('Les champs marqués d''une étoile sont obligatoires');
 		htp.br;
-		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_account.exec_upd_account', 'GET', cattributes => 'onSubmit="return valider(this,document)"');
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_account.exec_upd_account', 'GET', cattributes => 'onSubmit="return validerUpdCount(this,document)"');
 			htp.tableOpen(cattributes => 'CELLSPACING=8');
 				htp.tableheader('');
 				htp.tableheader('');
@@ -276,11 +277,10 @@ IS
 					htp.tableRowOpen;
 					htp.tableData('Identifiant :', cattributes => 'class="enteteFormulaire"');
 					htp.tableData('<label>'||vlogin||'</label>');
-					htp.tableData('',cattributes => 'id="identifiantText" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Mot de passe * :', cattributes => 'class="enteteFormulaire"');
-					htp.tableData('<INPUT TYPE="password" id="password" name="password" maxlength="40" value="'||vpassword||'"> ');
+					htp.tableData('<INPUT TYPE="password" id="password" name="password" maxlength="8" value="'||vpassword||'"> ');
 					htp.tableData('',cattributes => 'id="passwordText" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
@@ -291,9 +291,9 @@ IS
 					for currentNiveau in niveaulist loop		
 						if(currentNiveau.CODE=vniveau)
 						then
-							htp.print('<option selected value="'||vniveau||'">'||currentNiveau.LIBELLE||'</option>');	
+							htp.print('<option selected value="'||currentNiveau.CODE||'">'||currentNiveau.LIBELLE||'</option>');	
 						else
-							htp.print('<option value="'||vniveau||'">'||currentNiveau.LIBELLE||'</option>');	
+							htp.print('<option value="'||currentNiveau.CODE||'">'||currentNiveau.LIBELLE||'</option>');	
 						end if;							
 					end loop;
 					htp.print('</select>');										
