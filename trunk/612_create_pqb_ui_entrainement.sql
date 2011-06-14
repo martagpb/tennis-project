@@ -15,6 +15,8 @@ IS
 		--affichage de la liste seule des entrainements
 	PROCEDURE aff_entrainement
 	IS
+		NB_PLACE NUMBER(3);
+		NB_PLACE_OCCUPEE NUMBER(3);
 		CURSOR listEntrainement IS
 		SELECT 
 			E.NUM_ENTRAINEMENT
@@ -72,19 +74,37 @@ IS
 			htp.tableheader('Numéro');
 			htp.tableheader('Intitulé');
 			htp.tableheader('Entraineur');
+			htp.tableheader('Nombre de places restantes');
 			htp.tableheader('Informations');
 			htp.tableheader('Mise à jour');
 			htp.tableheader('Suppression');
 			htp.tableheader('Inscription');
 			for currentEntrainement in listEntrainement loop
+				SELECT
+					COUNT(INS.NUM_PERSONNE) INTO NB_PLACE_OCCUPEE
+				FROM
+					S_INSCRIRE INS
+				WHERE 
+					INS.NUM_ENTRAINEMENT=currentEntrainement.NUM_ENTRAINEMENT;	
+				SELECT
+					ENT.NB_PLACE_ENTRAINEMENT INTO NB_PLACE
+				FROM
+					ENTRAINEMENT ENT 
+				WHERE
+					ENT.NUM_ENTRAINEMENT=currentEntrainement.NUM_ENTRAINEMENT;
 				htp.tableRowOpen;
 				htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);	
 				htp.tabledata(currentEntrainement.LIB_ENTRAINEMENT);
 				htp.tabledata(currentEntrainement.PRENOM_PERSONNE||'  '||currentEntrainement.NOM_PERSONNE);
+				htp.tabledata(NB_PLACE-NB_PLACE_OCCUPEE);
 				htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
 				htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Mise à jour'));
 				htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-				htp.tabledata(htf.anchor('pq_ui_s_inscrire.form_add_inscription?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Inscrire un joueur'));
+				IF (NB_PLACE-NB_PLACE_OCCUPEE>0) THEN
+					htp.tabledata(htf.anchor('pq_ui_s_inscrire.form_add_inscription?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Inscrire un joueur'));
+				ELSE
+					htp.tabledata('Il n''y a plus de place');
+				END IF;
 				htp.tableRowClose;	
 			end loop;
 		htp.tableClose;
@@ -356,6 +376,8 @@ IS
 		
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
+		NB_PLACE NUMBER(3);
+		NB_PLACE_OCCUPEE NUMBER(3);
 	BEGIN
         pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
@@ -411,6 +433,20 @@ IS
 		WHERE 
 			NUM_ENTRAINEMENT=vnumEntrainement;
 			
+		SELECT
+			COUNT(INS.NUM_PERSONNE) INTO NB_PLACE_OCCUPEE
+		FROM
+			S_INSCRIRE INS
+		WHERE 
+			INS.NUM_ENTRAINEMENT=vnumEntrainement;	
+			
+		SELECT
+			ENT.NB_PLACE_ENTRAINEMENT INTO NB_PLACE
+		FROM
+			ENTRAINEMENT ENT 
+		WHERE
+			ENT.NUM_ENTRAINEMENT=vnumEntrainement;
+			
 		htp.br;	
 		htp.print('<div class="titre_niveau_1">');
 			htp.print('Affichage des informations d''un entrainement');
@@ -424,7 +460,9 @@ IS
 		htp.br;
 		htp.print('L''entrainement s''adresse aux joueurs possèdant au moins le niveau : '|| vlibelleNiveau || '.');
 		htp.br;
-		htp.print('Le nombre de places disponibles est de : '|| vnbPlaces || '.');
+		htp.print('Le nombre de places est de : '|| vnbPlaces || '.');
+		htp.br;
+	--	htp.print('Le nombre de places restantes est de : '|| NB_PLACE-NB_PLACE_OCCUPEE || '.');
 		htp.br;
 		htp.print('Il a lieu entre le  : '|| TO_CHAR(vdateDebut,'DD/MM/YYYY') || ' et le ' || TO_CHAR(vdateFin,'DD/MM/YYYY') ||'.');
 		htp.br;

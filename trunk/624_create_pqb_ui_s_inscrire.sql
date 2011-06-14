@@ -16,6 +16,8 @@ IS
 	--Permet d'afficher les inscriptions d'un entrainement
 	PROCEDURE dis_inscriptions(vnumEntrainement IN NUMBER)
 	AS
+		NB_PLACE NUMBER(3);
+		NB_PLACE_OCCUPEE NUMBER(3);
 	CURSOR listInscriptions IS
 		SELECT
 			 PER.NUM_PERSONNE
@@ -30,6 +32,18 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
+		SELECT
+			COUNT(INS.NUM_PERSONNE) INTO NB_PLACE_OCCUPEE
+		FROM
+			S_INSCRIRE INS
+		WHERE 
+			INS.NUM_ENTRAINEMENT=vnumEntrainement;	
+		SELECT
+			ENT.NB_PLACE_ENTRAINEMENT INTO NB_PLACE
+		FROM
+			ENTRAINEMENT ENT 
+		WHERE
+			ENT.NUM_ENTRAINEMENT=vnumEntrainement;
 		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
@@ -40,7 +54,11 @@ IS
 		htp.print('</div>');			
 		htp.br;	
 		htp.br;	
-			htp.print(htf.anchor('pq_ui_s_inscrire.form_add_inscription?vnumEntrainement=' || vnumEntrainement,'Inscrire un joueur'));
+			IF (NB_PLACE-NB_PLACE_OCCUPEE>0) THEN
+				htp.print(htf.anchor('pq_ui_s_inscrire.form_add_inscription?vnumEntrainement=' || vnumEntrainement,'Inscrire un joueur'));	
+			ELSE
+					htp.tabledata('Il n''y a plus de place dans cet entrainement, il n''est pas possible d''inscrire un joueur');
+			END IF;
 			htp.br;	
 			htp.br;	
 				htp.tableOpen('',cattributes => 'class="tableau"');
@@ -105,10 +123,11 @@ IS
 		FROM
 			 PERSONNE PER
 		WHERE
-			PER.CODE_NIVEAU >= (SELECT ENT.CODE_NIVEAU FROM ENTRAINEMENT ENT WHERE ENT.NUM_ENTRAINEMENT=vnumEntrainement)
+			TO_NUMBER(PER.CODE_NIVEAU) >= TO_NUMBER((SELECT ENT.CODE_NIVEAU FROM ENTRAINEMENT ENT WHERE ENT.NUM_ENTRAINEMENT=vnumEntrainement))
 		AND
 			PER.NUM_PERSONNE NOT IN (SELECT INS.NUM_PERSONNE FROM S_INSCRIRE INS WHERE INS.NUM_ENTRAINEMENT=vnumEntrainement)
 		AND PER.STATUT_JOUEUR='A'
+		AND PER.ACTIF=1
 		ORDER BY 1;
 	BEGIN
         pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
