@@ -91,20 +91,18 @@ IS
 		dbms_obfuscation_toolkit.desdecrypt(input_string => crypted_password, 
 										key_string => 'tennispro', 
 										decrypted_string  => decrypted_password );
-		IF (decrypted_password=password) then
-			OWA_UTIL.mime_header ('text/html', FALSE);
-			OWA_COOKIE.send ('numpersonne', TO_CHAR(numPer),SYSDATE+1);
-			OWA_UTIL.REDIRECT_URL('pq_ui_accueil.dis_accueil');
-			OWA_UTIL.http_header_close;  -- Now close the header
-		ELSIF (isActif=0) THEN
-			pq_ui_commun.header;
+		IF (isActif=0) THEN
 				htp.br; 
 				htp.div(cattributes => 'id="corps"');
 				htp.print('<div class="error">');
 					htp.print('Le compte est inactif.');
 				htp.print('</div>');
 				pq_ui_login.aff_login;	
-			pq_ui_commun.aff_footer;
+		ELSIF (decrypted_password=password) then
+			OWA_UTIL.mime_header ('text/html', FALSE);
+			OWA_COOKIE.send ('numpersonne', TO_CHAR(numPer),SYSDATE+1);
+			OWA_UTIL.REDIRECT_URL('pq_ui_accueil.dis_accueil');
+			OWA_UTIL.http_header_close;  -- Now close the header
 		ELSE 	
 			pq_ui_commun.header;
 				htp.br; 
