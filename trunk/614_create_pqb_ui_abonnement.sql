@@ -24,6 +24,11 @@ IS
 			ABONNEMENT A INNER JOIN PERSONNE P ON A.NUM_JOUEUR = P.NUM_PERSONNE
 		ORDER BY
 			A.NUM_ABONNEMENT;
+			
+		--Variables permettant de déterminer si le curseur est vide ou non
+		cursorListIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorList NUMBER(1):= 0; 
+			
 	BEGIN
 		htp.br;	
 		htp.print('<div class="titre_niveau_1">');
@@ -34,26 +39,44 @@ IS
 		htp.print(htf.anchor('pq_ui_abonnement.form_add_abonnement','Ajouter un abonnement'));
 		htp.br;	
 		htp.br;	
-		htp.tableOpen('',cattributes => 'class="tableau"');
-			htp.tableheader('N° abonnement');
-			htp.tableheader('Nom joueur');
-			htp.tableheader('Date début');
-			htp.tableheader('Durée (en mois)');
-			htp.tableheader('Informations');
-			htp.tableheader('Mise à jour');
-			htp.tableheader('Suppression');
-			for currentAbonnement in listAbonnements loop
-				htp.tableRowOpen;
-				htp.tabledata(currentAbonnement.NUM_ABONNEMENT);
-				htp.tabledata(currentAbonnement.NOM_PERSONNE);	
-				htp.tabledata(currentAbonnement.DATE_DEBUT_ABONNEMENT);	
-				htp.tabledata(currentAbonnement.DUREE_ABONNEMENT);
-				htp.tabledata(htf.anchor('pq_ui_abonnement.dis_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Informations'));
-				htp.tabledata(htf.anchor('pq_ui_abonnement.form_upd_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Mise à jour'));
-				htp.tabledata(htf.anchor('pq_ui_abonnement.exec_del_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-				htp.tableRowClose;
-			end loop;	
-		htp.tableClose;		
+		
+		--On parcours le curseur pour déterminer s'il est vide
+		for emptyAbonnement in listAbonnements loop
+			nbValuesIntoCursorList:= nbValuesIntoCursorList + 1;	
+			--On sort de la boucle dès qu'il y a une valeur
+			if nbValuesIntoCursorList > 0 then
+				--On indique le fait que le curseur n'est pas vide
+				cursorListIsEmpty := false;
+				exit;
+			end if;
+		end loop;	
+		
+		--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+		if cursorListIsEmpty = true Then	
+			htp.print('Il n''y a aucun abonnement de disponible.');	
+		--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+		else		
+			htp.tableOpen('',cattributes => 'class="tableau"');
+				htp.tableheader('N° abonnement');
+				htp.tableheader('Nom joueur');
+				htp.tableheader('Date début');
+				htp.tableheader('Durée (en mois)');
+				htp.tableheader('Informations');
+				htp.tableheader('Mise à jour');
+				htp.tableheader('Suppression');
+				for currentAbonnement in listAbonnements loop
+					htp.tableRowOpen;
+					htp.tabledata(currentAbonnement.NUM_ABONNEMENT);
+					htp.tabledata(currentAbonnement.NOM_PERSONNE);	
+					htp.tabledata(currentAbonnement.DATE_DEBUT_ABONNEMENT);	
+					htp.tabledata(currentAbonnement.DUREE_ABONNEMENT);
+					htp.tabledata(htf.anchor('pq_ui_abonnement.dis_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Informations'));
+					htp.tabledata(htf.anchor('pq_ui_abonnement.form_upd_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Mise à jour'));
+					htp.tabledata(htf.anchor('pq_ui_abonnement.exec_del_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+					htp.tableRowClose;
+				end loop;	
+			htp.tableClose;	
+		end if;
 	END liste_abonnements;
 	
 	--Permet d'afficher tous les abonnements et les actions possibles de gestion (avec le menu)
