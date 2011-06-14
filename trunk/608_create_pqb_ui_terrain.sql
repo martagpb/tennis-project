@@ -47,7 +47,11 @@ IS
 			TERRAIN TER
 		ORDER BY 
 			1;
-			
+		
+		--Variables permettant de déterminer si le curseur est vide ou non
+		cursorListIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorList NUMBER(1):= 0; 		
+						
 		terrainUtilisePourEntrainement NUMBER(5):= 0;  
 		terrainUtilisePourReservation  NUMBER(5):= 0; 
 		
@@ -66,50 +70,68 @@ IS
 		htp.br;	
 		htp.print(htf.anchor('pq_ui_terrain.form_add_terrain','Ajouter un terrain'));
 		htp.br;	
-		htp.br;			
-		htp.tableOpen('',cattributes => 'class="tableau"');
-			htp.tableheader('N° du terrain');
-			htp.tableheader('Libellé surface');
-			htp.tableheader('Actif');
-			htp.tableheader('Informations');
-			htp.tableheader('Mise à jour');
-			htp.tableheader('Suppression');
-			for currentTerrain in listTerrain loop
-				htp.tableRowOpen;
-				htp.tabledata(currentTerrain.NUM_TERRAIN);
-				--On récupère le libellé du terrain à partir du code et de la nature
-				htp.tabledata(pq_db_codification.get_libelle(currentTerrain.CODE_SURFACE,currentTerrain.NATURE_SURFACE));
-				htp.tabledata(pq_ui_param_commun.dis_number_to_yes_or_not(currentTerrain.ACTIF));					
-				htp.tabledata(htf.anchor('pq_ui_terrain.dis_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Informations'));
-								
-				--Permet de déterminer si un terrain est utilisé pour un entrainement				
-				SELECT 
-					COUNT(*) INTO terrainUtilisePourEntrainement
-				FROM 
-					AVOIR_LIEU 
-				WHERE 
-					NUM_TERRAIN = currentTerrain.NUM_TERRAIN;
+		htp.br;		
+
+		--On parcours le curseur pour déterminer s'il est vide
+		for emptyTerrain in listTerrain loop
+			nbValuesIntoCursorList:= nbValuesIntoCursorList + 1;	
+			--On sort de la boucle dès qu'il y a une valeur
+			if nbValuesIntoCursorList > 0 then
+				--On indique le fait que le curseur n'est pas vide
+				cursorListIsEmpty := false;
+				exit;
+			end if;
+		end loop;	
+		
+		--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+		if cursorListIsEmpty = true Then	
+			htp.print('Il n''y a aucun terrain de disponible.');	
+		--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+		else		
+			htp.tableOpen('',cattributes => 'class="tableau"');
+				htp.tableheader('N° du terrain');
+				htp.tableheader('Libellé surface');
+				htp.tableheader('Actif');
+				htp.tableheader('Informations');
+				htp.tableheader('Mise à jour');
+				htp.tableheader('Suppression');
+				for currentTerrain in listTerrain loop
+					htp.tableRowOpen;
+					htp.tabledata(currentTerrain.NUM_TERRAIN);
+					--On récupère le libellé du terrain à partir du code et de la nature
+					htp.tabledata(pq_db_codification.get_libelle(currentTerrain.CODE_SURFACE,currentTerrain.NATURE_SURFACE));
+					htp.tabledata(pq_ui_param_commun.dis_number_to_yes_or_not(currentTerrain.ACTIF));					
+					htp.tabledata(htf.anchor('pq_ui_terrain.dis_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Informations'));
+									
+					--Permet de déterminer si un terrain est utilisé pour un entrainement				
+					SELECT 
+						COUNT(*) INTO terrainUtilisePourEntrainement
+					FROM 
+						AVOIR_LIEU 
+					WHERE 
+						NUM_TERRAIN = currentTerrain.NUM_TERRAIN;
+						
+					--Permet de déterminer si un terrain est utilisé pour une réservation (autre qu'un entrainement)		
+					SELECT 
+						COUNT(*) INTO terrainUtilisePourReservation
+					FROM 
+						OCCUPER 
+					WHERE 
+						NUM_TERRAIN = currentTerrain.NUM_TERRAIN;	
+						
+					--On autorise la mise à jour et la suppression d'un terrain seulement dans le cas où il n'est pas utilisé
+					if (terrainUtilisePourEntrainement = 0 and terrainUtilisePourReservation = 0) then
+						htp.tabledata(htf.anchor('pq_ui_terrain.form_upd_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Mise à jour'));
+						htp.tabledata(htf.anchor('pq_ui_terrain.exec_del_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+					else
+						htp.tabledata(pq_ui_param_commun.dis_forbidden);
+						htp.tabledata(pq_ui_param_commun.dis_forbidden);
+					end if;						
 					
-				--Permet de déterminer si un terrain est utilisé pour une réservation (autre qu'un entrainement)		
-				SELECT 
-					COUNT(*) INTO terrainUtilisePourReservation
-				FROM 
-					OCCUPER 
-				WHERE 
-					NUM_TERRAIN = currentTerrain.NUM_TERRAIN;	
-					
-				--On autorise la mise à jour et la suppression d'un terrain seulement dans le cas où il n'est pas utilisé
-				if (terrainUtilisePourEntrainement = 0 and terrainUtilisePourReservation = 0) then
-					htp.tabledata(htf.anchor('pq_ui_terrain.form_upd_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN||'&'||'vcodeSurface='||currentTerrain.CODE_SURFACE||'&'||'vnatureSurface='||currentTerrain.NATURE_SURFACE||'&'||'vactif='||currentTerrain.ACTIF,'Mise à jour'));
-					htp.tabledata(htf.anchor('pq_ui_terrain.exec_del_terrain?vnumTerrain='||currentTerrain.NUM_TERRAIN,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-				else
-					htp.tabledata(pq_ui_param_commun.dis_forbidden);
-					htp.tabledata(pq_ui_param_commun.dis_forbidden);
-				end if;						
-				
-				htp.tableRowClose;
-			end loop;	
-		htp.tableClose;			
+					htp.tableRowClose;
+				end loop;	
+			htp.tableClose;	
+		end if;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
 			pq_ui_commun.dis_error_permission_denied;
@@ -285,7 +307,6 @@ IS
 		FROM 
 			CODIFICATION COD
 		WHERE
-			--TODO : Récupérer cette valeur de manière dynamique si possible
 			COD.NATURE = 'Surface'
 		ORDER BY 
 			1;
@@ -363,7 +384,6 @@ IS
 		FROM 
 			CODIFICATION COD
 		WHERE
-			--TODO : Récupérer cette valeur de manière dynamique si possible
 			COD.NATURE = 'Surface'
 		ORDER BY 
 			1;
