@@ -64,8 +64,6 @@ IS
 		htp.formClose;
 		htp.br;
 		htp.br;
-		--Affichage du formulaire de création d'un nouveau compte
-		pq_ui_create_account.formCreate;
 	END aff_login;
 	
 	
