@@ -25,7 +25,7 @@ function valider(form,document){
 	firstname=form.firstname.value;
 	lastname=form.lastname.value;
 	login=form.login.value;
-	password=form.password.value;
+	pwd=form.password.value;
 	
 	if(		mail== ""
 		|| 	mail== null
@@ -35,8 +35,8 @@ function valider(form,document){
 		|| 	lastname== null
 		||	login== ""
 		|| 	login== null
-		||	password== ""
-		|| 	password== null) {			
+		||	pwd== ""
+		|| 	pwd== null) {			
 		alert("Veuillez remplir tous les champs obligatoires.");
 		return false;
 	}
@@ -44,7 +44,36 @@ function valider(form,document){
 		document.getElementById("mailText").innerHTML ="Format invalide";
 		return false;
 	}
-	else if(password.value.length!=8){
+	else if(pwd.length!=8){
+		document.getElementById("passwordText").innerHTML ="Le mot de passe doit faire 8 caractères";
+		return false;
+	}
+	return true;
+}
+
+function validerUpdCount(form,document){
+
+	mail=form.mail.value;
+	firstname=form.firstname.value;
+	lastname=form.lastname.value;
+	pwd=form.password.value;
+	
+	if(		mail== ""
+		|| 	mail== null
+		||	firstname== ""
+		|| 	firstname== null 
+		|| 	lastname== ""
+		|| 	lastname== null
+		||	pwd== ""
+		|| 	pwd== null) {			
+		alert("Veuillez remplir tous les champs obligatoires.");
+		return false;
+	}
+	else if(!verifiermail(mail)){
+		document.getElementById("mailText").innerHTML ="Format invalide";
+		return false;
+	}
+	else if(pwd.length!=8){
 		document.getElementById("passwordText").innerHTML ="Le mot de passe doit faire 8 caractères";
 		return false;
 	}
