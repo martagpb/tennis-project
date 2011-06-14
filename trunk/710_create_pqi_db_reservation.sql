@@ -12,13 +12,34 @@
 
 CREATE OR REPLACE PACKAGE pq_db_reservation
 IS
+
 	--Permet d’ajouter une réservation
 	PROCEDURE add_reservation(
-	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
-	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	  pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, pdate IN OCCUPER.DATE_OCCUPATION%TYPE
+	, pheure IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE);
+	
+	--Permet d’ajouter une réservation
+	PROCEDURE add_reservation(
+	  pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, pdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, pheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, pnumFacture IN OCCUPER.NUM_FACTURE%TYPE
+	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE);
+
+	--	Met à jour une réservation
+	PROCEDURE upd_reservation(
+	  pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, pdate IN OCCUPER.DATE_OCCUPATION%TYPE
+	, pheure IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE);
+	
+	--Permet de supprimer une reservation existante
+	PROCEDURE del_reservation(
+	  vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
 	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
-	, vnumFacture IN OCCUPER.NUM_FACTURE%TYPE
-	, vnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE);
+	, vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE);		
 
 	--Ajouter une personne invitée à une réservation
 	PROCEDURE add_etre_associe(
@@ -26,12 +47,6 @@ IS
 	, vnumTerrain IN ETRE_ASSOCIE.NUM_TERRAIN%TYPE
 	, vdateOccupation IN ETRE_ASSOCIE.DATE_OCCUPATION%TYPE
 	, vnumPersonne IN ETRE_ASSOCIE.NUM_PERSONNE%TYPE);
-
-	--Permet de supprimer une reservation existante
-	PROCEDURE del_reservation(
-	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
-	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
-	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE);		
 
 	--Permet de supprimer une personne invitée à une réservation
 	PROCEDURE del_etre_associe(

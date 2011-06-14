@@ -286,7 +286,7 @@ PROCEDURE aff_menu_niveau_entraineur
 				htp.listItem;
 					htp.anchor('pq_ui_accueil.dis_accueil', 'Accueil');
 				htp.listItem;
-					htp.anchor('#', 'Réservations');
+					htp.anchor('pq_ui_reservation.liste_terrains', 'Réservations');
 				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('pq_ui_personne.manage_personnes', 'Personnes');
