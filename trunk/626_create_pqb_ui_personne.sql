@@ -54,6 +54,11 @@ IS
 			PERSONNE PER
 		ORDER BY 
 			1;
+						
+		--Variables permettant de déterminer si le curseur est vide ou non
+		cursorListIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorList NUMBER(1):= 0; 	
+		
 	BEGIN	
 		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
@@ -68,51 +73,63 @@ IS
 		htp.print('  -  ');
 		htp.print(htf.anchor('pq_ui_personne.form_search_personnes','Rechercher une personne'));
 		htp.br;	
-		htp.br;					
-		htp.tableOpen('',cattributes => 'class="tableau"');
-		htp.tableheader('N° du personne');
-		htp.tableheader('Nom');
-		htp.tableheader('Prénom');
-		htp.tableheader('Login');
-		htp.tableheader('Ville');
-		htp.tableheader('Niveau');
-		htp.tableheader('Statut joueur');
-		htp.tableheader('Statut employé');
-		htp.tableheader('Informations');
-		htp.tableheader('Mise à jour');
-		htp.tableheader('Supprimer');
-		for currentpersonne in listpersonne loop
-			htp.tableRowOpen;
-			htp.tabledata(currentpersonne.NUM_PERSONNE);
-			htp.tabledata(currentpersonne.NOM_PERSONNE);
-			htp.tabledata(currentpersonne.PRENOM_PERSONNE);
-			htp.tabledata(currentpersonne.LOGIN_PERSONNE);
-			IF currentpersonne.VILLE_PERSONNE IS NOT NULL THEN
-				htp.tabledata(currentpersonne.VILLE_PERSONNE);
-			ELSE
-				htp.tabledata('');
-			END IF;
-			IF currentpersonne.CODE_NIVEAU IS NOT NULL THEN
-				htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_NIVEAU,currentpersonne.NATURE_NIVEAU));
-			ELSE
-				htp.tabledata('');
-			END IF;
-			IF currentpersonne.STATUT_JOUEUR IS NOT NULL THEN
-			htp.tabledata(currentpersonne.STATUT_JOUEUR);
-			ELSE
-				htp.tabledata('');
-			END IF;
-			IF currentpersonne.CODE_STATUT_EMPLOYE IS NOT NULL THEN
-			htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_STATUT_EMPLOYE,currentpersonne.NATURE_STATUT_EMPLOYE));
-			ELSE
-				htp.tabledata('');
-			END IF;			
-			htp.tabledata(htf.anchor('pq_ui_personne.dis_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Informations complémentaires'));
-			htp.tabledata(htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Mise à jour'));
-			htp.tabledata(htf.anchor('pq_ui_personne.exec_del_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-			htp.tableRowClose;
+		htp.br;	
+		
+		--On parcours le curseur pour déterminer s'il est vide
+		for emptyPersonne in listpersonne loop
+			nbValuesIntoCursorList:= nbValuesIntoCursorList + 1;	
+			--On sort de la boucle dès qu'il y a une valeur
+			if nbValuesIntoCursorList > 0 then
+				--On indique le fait que le curseur n'est pas vide
+				cursorListIsEmpty := false;
+				exit;
+			end if;
 		end loop;	
-		htp.tableClose;			
+		
+		--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+		if cursorListIsEmpty = true Then	
+			htp.print('Il n''y a aucune personne de disponible.');	
+		--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+		else	
+			htp.tableOpen('',cattributes => 'class="tableau"');
+			htp.tableheader('N° du personne');
+			htp.tableheader('Nom');
+			htp.tableheader('Prénom');
+			htp.tableheader('Login');
+			htp.tableheader('Ville');
+			htp.tableheader('Niveau');
+			htp.tableheader('Statut');
+			htp.tableheader('Informations');
+			htp.tableheader('Mise à jour');
+			htp.tableheader('Supprimer');
+			for currentpersonne in listpersonne loop
+				htp.tableRowOpen;
+				htp.tabledata(currentpersonne.NUM_PERSONNE);
+				htp.tabledata(currentpersonne.NOM_PERSONNE);
+				htp.tabledata(currentpersonne.PRENOM_PERSONNE);
+				htp.tabledata(currentpersonne.LOGIN_PERSONNE);
+				IF currentpersonne.VILLE_PERSONNE IS NOT NULL THEN
+					htp.tabledata(currentpersonne.VILLE_PERSONNE);
+				ELSE
+					htp.tabledata('');
+				END IF;
+				IF currentpersonne.CODE_NIVEAU IS NOT NULL THEN
+					htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_NIVEAU,currentpersonne.NATURE_NIVEAU));
+				ELSE
+					htp.tabledata('');
+				END IF;
+				IF currentpersonne.CODE_STATUT_EMPLOYE IS NOT NULL THEN
+				htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_STATUT_EMPLOYE,currentpersonne.NATURE_STATUT_EMPLOYE));
+				ELSE
+					htp.tabledata('');
+				END IF;			
+				htp.tabledata(htf.anchor('pq_ui_personne.dis_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Informations complémentaires'));
+				htp.tabledata(htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Mise à jour'));
+				htp.tabledata(htf.anchor('pq_ui_personne.exec_del_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				htp.tableRowClose;
+			end loop;	
+			htp.tableClose;	
+		end if;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des personnes');
@@ -147,6 +164,11 @@ IS
 			PER.PRENOM_PERSONNE=prenom
 		ORDER BY 
 			1;
+			
+		--Variables permettant de déterminer si le curseur est vide ou non
+		cursorListIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorList NUMBER(1):= 0; 		
+		
 	BEGIN	
 		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
@@ -162,51 +184,69 @@ IS
 		htp.print('  -  ');
 		htp.print(htf.anchor('pq_ui_personne.form_search_personnes','Rechercher une personne'));
 		htp.br;	
-		htp.br;					
-		htp.tableOpen('',cattributes => 'class="tableau"');
-		htp.tableheader('N° du personne');
-		htp.tableheader('Nom');
-		htp.tableheader('Prénom');
-		htp.tableheader('Login');
-		htp.tableheader('Ville');
-		htp.tableheader('Niveau');
-		htp.tableheader('Statut joueur');
-		htp.tableheader('Statut employé');
-		htp.tableheader('Informations');
-		htp.tableheader('Mise à jour');
-		htp.tableheader('Supprimer');
-		for currentpersonne in listpersonne loop
-			htp.tableRowOpen;
-			htp.tabledata(currentpersonne.NUM_PERSONNE);
-			htp.tabledata(currentpersonne.NOM_PERSONNE);
-			htp.tabledata(currentpersonne.PRENOM_PERSONNE);
-			htp.tabledata(currentpersonne.LOGIN_PERSONNE);
-			IF currentpersonne.VILLE_PERSONNE IS NOT NULL THEN
-				htp.tabledata(currentpersonne.VILLE_PERSONNE);
-			ELSE
-				htp.tabledata('');
-			END IF;
-			IF currentpersonne.CODE_NIVEAU IS NOT NULL THEN
-				htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_NIVEAU,currentpersonne.NATURE_NIVEAU));
-			ELSE
-				htp.tabledata('');
-			END IF;
-			IF currentpersonne.STATUT_JOUEUR IS NOT NULL THEN
-			htp.tabledata(currentpersonne.STATUT_JOUEUR);
-			ELSE
-				htp.tabledata('');
-			END IF;
-			IF currentpersonne.CODE_STATUT_EMPLOYE IS NOT NULL THEN
-			htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_STATUT_EMPLOYE,currentpersonne.NATURE_STATUT_EMPLOYE));
-			ELSE
-				htp.tabledata('');
-			END IF;			
-			htp.tabledata(htf.anchor('pq_ui_personne.dis_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Informations complémentaires'));
-			htp.tabledata(htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Mise à jour'));
-			htp.tabledata(htf.anchor('pq_ui_personne.exec_del_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-			htp.tableRowClose;
+		htp.br;	
+		
+		--On parcours le curseur pour déterminer s'il est vide
+		for emptyPersonne in listpersonne loop
+			nbValuesIntoCursorList:= nbValuesIntoCursorList + 1;	
+			--On sort de la boucle dès qu'il y a une valeur
+			if nbValuesIntoCursorList > 0 then
+				--On indique le fait que le curseur n'est pas vide
+				cursorListIsEmpty := false;
+				exit;
+			end if;
 		end loop;	
-		htp.tableClose;	
+		
+		--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+		if cursorListIsEmpty = true Then	
+			htp.print('Il n''y a aucune personne qui correspond à la recheche.');	
+		--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+		else		
+			htp.tableOpen('',cattributes => 'class="tableau"');
+			htp.tableheader('N° du personne');
+			htp.tableheader('Nom');
+			htp.tableheader('Prénom');
+			htp.tableheader('Login');
+			htp.tableheader('Ville');
+			htp.tableheader('Niveau');
+			htp.tableheader('Statut joueur');
+			htp.tableheader('Statut employé');
+			htp.tableheader('Informations');
+			htp.tableheader('Mise à jour');
+			htp.tableheader('Supprimer');
+			for currentpersonne in listpersonne loop
+				htp.tableRowOpen;
+				htp.tabledata(currentpersonne.NUM_PERSONNE);
+				htp.tabledata(currentpersonne.NOM_PERSONNE);
+				htp.tabledata(currentpersonne.PRENOM_PERSONNE);
+				htp.tabledata(currentpersonne.LOGIN_PERSONNE);
+				IF currentpersonne.VILLE_PERSONNE IS NOT NULL THEN
+					htp.tabledata(currentpersonne.VILLE_PERSONNE);
+				ELSE
+					htp.tabledata('');
+				END IF;
+				IF currentpersonne.CODE_NIVEAU IS NOT NULL THEN
+					htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_NIVEAU,currentpersonne.NATURE_NIVEAU));
+				ELSE
+					htp.tabledata('');
+				END IF;
+				IF currentpersonne.STATUT_JOUEUR IS NOT NULL THEN
+				htp.tabledata(currentpersonne.STATUT_JOUEUR);
+				ELSE
+					htp.tabledata('');
+				END IF;
+				IF currentpersonne.CODE_STATUT_EMPLOYE IS NOT NULL THEN
+				htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_STATUT_EMPLOYE,currentpersonne.NATURE_STATUT_EMPLOYE));
+				ELSE
+					htp.tabledata('');
+				END IF;			
+				htp.tabledata(htf.anchor('pq_ui_personne.dis_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Informations complémentaires'));
+				htp.tabledata(htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Mise à jour'));
+				htp.tabledata(htf.anchor('pq_ui_personne.exec_del_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				htp.tableRowClose;
+			end loop;	
+			htp.tableClose;	
+		end if;
 		pq_ui_commun.aff_footer;		
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -233,6 +273,11 @@ IS
 			ASS.NUM_PERSONNE=vnumpersonne 
 		ORDER BY 
 			1;
+			
+		--Variables permettant de déterminer si le curseur (des réservation) est vide ou non
+		cursorListResIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorListRes NUMBER(1):= 0;
+			
 		CURSOR listEntrainement IS
 		SELECT 
 			  INS.NUM_ENTRAINEMENT
@@ -245,6 +290,11 @@ IS
 			INS.NUM_PERSONNE=vnumpersonne
 		ORDER BY 
 			1;	
+			
+		--Variables permettant de déterminer si le curseur (des entrainements) est vide ou non
+		cursorListEntrIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorListEntr NUMBER(1):= 0;
+			
 	BEGIN
 		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
@@ -323,40 +373,81 @@ IS
 			htp.print('</div>');			
 			htp.br;
 			htp.br;	
-			htp.tableOpen('',cattributes => 'class="tableau"');
-				htp.tableheader('Date de la réservation');
-				htp.tableheader('Heure de réservation');
-				htp.tableheader('Terrain');
-				for currentreservation in listReservation loop
-					htp.tableRowOpen;
-					htp.tabledata(currentreservation.DATE_OCCUPATION);
-					htp.tabledata(currentreservation.HEURE_DEBUT_CRENEAU);
-					htp.tabledata(currentreservation.NUM_TERRAIN);
-				end loop;	
-			htp.tableClose;		
+						
+			--On parcours le curseur pour déterminer s'il est vide
+			for emptyReservation in listReservation loop
+				nbValuesIntoCursorListRes:= nbValuesIntoCursorListRes + 1;	
+				--On sort de la boucle dès qu'il y a une valeur
+				if nbValuesIntoCursorListRes > 0 then
+					--On indique le fait que le curseur n'est pas vide
+					cursorListResIsEmpty := false;
+					exit;
+				end if;
+			end loop;
+			
+			--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+			if cursorListResIsEmpty = true Then	
+				htp.print('Il n''y a aucune réservation de disponible.');
+				htp.br;
+				htp.br;					
+			--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+			else			
+				htp.tableOpen('',cattributes => 'class="tableau"');
+					htp.tableheader('Date de la réservation');
+					htp.tableheader('Heure de réservation');
+					htp.tableheader('Terrain');
+					for currentreservation in listReservation loop
+						htp.tableRowOpen;
+						htp.tabledata(currentreservation.DATE_OCCUPATION);
+						htp.tabledata(currentreservation.HEURE_DEBUT_CRENEAU);
+						htp.tabledata(currentreservation.NUM_TERRAIN);
+					end loop;	
+				htp.tableClose;		
+				htp.br;
+				htp.br;		
+				htp.br;
+				htp.br;
+				htp.br;
+			end if;
+			
+				IF currentPersonne.STATUT_JOUEUR='A' THEN
+					htp.print('<div class="titre_niveau_1">');
+						htp.print('Liste des entrainements suivis par cette personne :');
+					htp.print('</div>');				
+					htp.br;
+					htp.br;	
+										
+					--On parcours le curseur pour déterminer s'il est vide
+					for emptyReservation in listReservation loop
+						nbValuesIntoCursorListEntr:= nbValuesIntoCursorListEntr + 1;	
+						--On sort de la boucle dès qu'il y a une valeur
+						if nbValuesIntoCursorListEntr > 0 then
+							--On indique le fait que le curseur n'est pas vide
+							cursorListEntrIsEmpty := false;
+							exit;
+						end if;
+					end loop;
+					
+					--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+					if cursorListEntrIsEmpty = true Then	
+						htp.print('Il n''y a aucun entrainement de disponible.');	
+					--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+					else					
+						htp.tableOpen('',cattributes => 'class="tableau"');
+							htp.tableheader('Numéro de l''entrainement');
+							htp.tableheader('Date de début de l''entrainement');
+							htp.tableheader('Date de fin de l''entrainement');
+							for currententrainement in listEntrainement loop
+								htp.tableRowOpen;
+								htp.tabledata(currententrainement.NUM_ENTRAINEMENT);
+								htp.tabledata(currententrainement.DATE_DEBUT_ENTRAINEMENT);
+								htp.tabledata(currententrainement.DATE_FIN_ENTRAINEMENT);
+							end loop;	
+						htp.tableClose;		
+					end if;
+				END IF;		
 			htp.br;
-			htp.br;		
-			htp.br;
-			htp.br;
-			htp.br;
-			IF currentPersonne.STATUT_JOUEUR='A' THEN
-				htp.print('<div class="titre_niveau_1">');
-					htp.print('Liste des entrainements suivis par cette personne :');
-				htp.print('</div>');				
-			htp.br;
-			htp.br;	
-			htp.tableOpen('',cattributes => 'class="tableau"');
-				htp.tableheader('Numéro de l''entrainement');
-				htp.tableheader('Date de début de l''entrainement');
-				htp.tableheader('Date de fin de l''entrainement');
-				for currententrainement in listEntrainement loop
-					htp.tableRowOpen;
-					htp.tabledata(currententrainement.NUM_ENTRAINEMENT);
-					htp.tabledata(currententrainement.DATE_DEBUT_ENTRAINEMENT);
-					htp.tabledata(currententrainement.DATE_FIN_ENTRAINEMENT);
-				end loop;	
-			htp.tableClose;		
-			END IF;
+			htp.br;					
 			htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');	
 		pq_ui_commun.aff_footer;
 	END dis_personne;
@@ -492,7 +583,12 @@ IS
 				htp.tableRowClose;
 			htp.tableClose();
 		htp.formClose;
+		htp.br;
+		htp.br;					
+		htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');
 		htp.br;	
+		htp.br;
+		pq_ui_commun.aff_footer;
 	END form_add_personne;
 
 
