@@ -195,6 +195,9 @@ IS
 		htp.br;	
 		pq_db_personne.updPersonneAccount(vnumPersonne,lastname,firstname,password,mail,tel,adresse,cp,ville,vniveau);
 		htp.br;		
+		htp.print('<div class="success"> ');
+				htp.print('Votre compte a été modifié avec succès.');
+		htp.print('</div>');
 		pq_ui_account.dis_account;
 		pq_ui_commun.aff_footer;
 	EXCEPTION
