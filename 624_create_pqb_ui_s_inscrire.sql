@@ -18,7 +18,7 @@ IS
 	AS
 		NB_PLACE NUMBER(3);
 		NB_PLACE_OCCUPEE NUMBER(3);
-	CURSOR listInscriptions IS
+		CURSOR listInscriptions IS
 		SELECT
 			 PER.NUM_PERSONNE
 			,PER.NOM_PERSONNE
@@ -29,6 +29,11 @@ IS
 		WHERE
 			INS.NUM_ENTRAINEMENT=vnumEntrainement
 		ORDER BY 1;
+		
+		--Variables permettant de déterminer si le curseur est vide ou non
+		cursorListIsEmpty BOOLEAN:= true;
+		nbValuesIntoCursorList NUMBER(1):= 0;  
+		
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
@@ -61,6 +66,23 @@ IS
 			END IF;
 			htp.br;	
 			htp.br;	
+			
+			--On parcours le curseur pour déterminer s'il est vide
+			for emptyInscription in listInscriptions loop
+				nbValuesIntoCursorList:= nbValuesIntoCursorList + 1;	
+				--On sort de la boucle dès qu'il y a une valeur
+				if nbValuesIntoCursorList > 0 then
+					--On indique le fait que le curseur n'est pas vide
+					cursorListIsEmpty := false;
+					exit;
+				end if;
+			end loop;	
+			
+			--Si le curseur est vide alors on affiche un message indiquant qu'il n'y a pas de valeur
+			if cursorListIsEmpty = true Then
+				htp.print('Il n''y a aucun joueur inscrit.');	
+			--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
+			else			
 				htp.tableOpen('',cattributes => 'class="tableau"');
 				htp.tableheader('N° joueur');
 				htp.tableheader('Nom');
@@ -75,6 +97,7 @@ IS
 					htp.tableRowClose;
 				end loop;	
 				htp.tableClose;
+			end if;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
 			pq_ui_commun.dis_error_permission_denied;
