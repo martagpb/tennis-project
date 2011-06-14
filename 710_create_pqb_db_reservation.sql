@@ -12,13 +12,38 @@
 
 CREATE OR REPLACE PACKAGE BODY pq_db_reservation
 IS
+
 	--Permet d’ajouter une réservation
 	PROCEDURE add_reservation(
-	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
-	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
-	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
-	, vnumFacture IN OCCUPER.NUM_FACTURE%TYPE
-	, vnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE)
+	  pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, pdate IN OCCUPER.DATE_OCCUPATION%TYPE
+	, pheure IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE)
+	IS 
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_JOUEUR)
+		VALUES(pheure, pnumTerrain, pdate, pnumJoueur);
+		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
+		WHEN OTHERS THEN
+			ROLLBACK;
+	END add_reservation;
+	
+	--Permet d’ajouter une réservation
+	PROCEDURE add_reservation(
+	  pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, pdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, pheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, pnumFacture IN OCCUPER.NUM_FACTURE%TYPE
+	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE)
 	IS 
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -28,7 +53,7 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_FACTURE,NUM_JOUEUR)
-		VALUES(vheureDebutCreneau,vnumTerrain,vdateOccupation,vnumFacture,vnumJoueur);
+		VALUES(pheureDebutCreneau, pnumTerrain, pdateOccupation, pnumFacture, pnumJoueur);
 		COMMIT;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
@@ -36,6 +61,59 @@ IS
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END add_reservation;
+
+	--	Met à jour une réservation
+	PROCEDURE upd_reservation(
+	  pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, pdate IN OCCUPER.DATE_OCCUPATION%TYPE
+	, pheure IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE)
+	IS 
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		
+		UPDATE OCCUPER
+		SET NUM_TERRAIN = pnumTerrain, DATE_OCCUPATION = pdate, HEURE_DEBUT_CRENEAU = pheure, NUM_JOUEUR = pnumJoueur
+		WHERE NUM_TERRAIN = pnumTerrain AND DATE_OCCUPATION = pdate AND HEURE_DEBUT_CRENEAU = pheure;
+		COMMIT;
+		
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
+		WHEN OTHERS THEN
+			ROLLBACK;
+	END upd_reservation;
+	
+	--Permet de supprimer une reservation existante
+	PROCEDURE del_reservation(
+	  vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
+	, vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE)
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+	  	DELETE FROM OCCUPER
+		WHERE
+			HEURE_DEBUT_CRENEAU = vheureDebutCreneau
+			AND NUM_TERRAIN = vnumTerrain
+			AND DATE_OCCUPATION = vdateOccupation;
+		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
+		WHEN OTHERS THEN
+			ROLLBACK;
+	END del_reservation;	
 
 	--Ajouter une personne invitée à une réservation
 	PROCEDURE add_etre_associe(
@@ -60,32 +138,6 @@ IS
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END add_etre_associe;
-	
-	--Permet de supprimer une reservation existante
-	PROCEDURE del_reservation(
-	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
-	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
-	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE)
-	IS
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
-	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
-		IF perm=false THEN
-			RAISE PERMISSION_DENIED;
-		END IF;
-	  	DELETE FROM OCCUPER
-		WHERE
-			HEURE_DEBUT_CRENEAU = vheureDebutCreneau
-			AND NUM_TERRAIN = vnumTerrain
-			AND DATE_OCCUPATION = vdateOccupation;
-		COMMIT;
-	EXCEPTION
-		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error_permission_denied;
-		WHEN OTHERS THEN
-			ROLLBACK;
-	END del_reservation;	
 
 	--Permet de supprimer une personne invitée à une réservation
 	PROCEDURE del_etre_associe(

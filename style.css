@@ -175,3 +175,21 @@ ul li a {
 ul li a:hover, ul li a.sfhover {
     text-decoration: underline; /*On souligne le nom du menu ou du sous-menu lors du passage de la souris*/
 }
+
+/*------------------------------ planning ------------------------------ */
+table.planning td{
+	width : 150px;
+	height : 50px;
+}
+
+table.planning td.resaAutre{
+	background-color : green;
+}
+
+table.planning td.resaEntr{
+	background-color : red;
+}
+
+td.resaJoueur{
+	background-color : yellow;
+}
