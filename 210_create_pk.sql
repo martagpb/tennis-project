@@ -79,7 +79,7 @@ ADD CONSTRAINT PK_AVOIR_LIEU PRIMARY KEY (NUM_JOUR, HEURE_DEBUT_CRENEAU, NUM_TER
 -- -----------------------------------------------------------------------------
 
 ALTER TABLE  OCCUPER
-ADD CONSTRAINT PK_OCCUPER PRIMARY KEY (HEURE_DEBUT_CRENEAU, NUM_TERRAIN, DATE_OCCUPATION);    
+ADD CONSTRAINT PK_OCCUPER PRIMARY KEY (DATE_OCCUPATION, HEURE_DEBUT_CRENEAU, NUM_TERRAIN);    
 
 -- -----------------------------------------------------------------------------
 --       TABLE : CODIFICATION
