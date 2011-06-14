@@ -122,7 +122,7 @@ IS
 		htp.anchor('pq_ui_account.form_upd_account', 'Modifier votre compte');	
 		htp.br;
 		htp.br;
-		htp.anchor('pq_ui_account.exec_del_mon_compte', 'Supprimer mon compte');
+		htp.anchor('pq_ui_account.exec_del_mon_compte', 'Supprimer mon compte', cattributes => 'onClick="return confirmerChoix(this,document)"');
 		htp.br;
 		htp.br;
 		htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
