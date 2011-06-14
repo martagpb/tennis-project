@@ -35,17 +35,53 @@ IS
 	--Permet d'afficher toutes les codifications et les actions possibles de gestion (sans le menu)
 	PROCEDURE manage_codification
 	IS
-		CURSOR listCodification IS
+		--On stocke dans un curseur l'ensemble des informations relatives au codification pour la nature Classement
+		CURSOR listCodificationClassement IS
 		SELECT 
-            COD.CODE   
+            COD.CODE  
           , COD.NATURE 
           , COD.LIBELLE 
 		FROM 
-			CODIFICATION COD;
+			CODIFICATION COD
+		WHERE
+			INITCAP(COD.NATURE) = INITCAP('Classement')
+		ORDER BY
+			2 ASC
+		  , TO_NUMBER(COD.CODE) ASC
+		  , 3 ASC;
+		  
+		--On stocke dans un curseur l'ensemble des informations relatives au codification pour la nature Role
+		CURSOR listCodificationRole IS
+		SELECT 
+            COD.CODE  
+          , COD.NATURE 
+          , COD.LIBELLE 
+		FROM 
+			CODIFICATION COD
+		WHERE
+			INITCAP(COD.NATURE) = INITCAP('Role')
+		ORDER BY
+			2 ASC		 
+		  , 3 ASC;
+		  
+		--On stocke dans un curseur l'ensemble des informations relatives au codification pour la nature Surface
+		CURSOR listCodificationSurface IS
+		SELECT 
+            COD.CODE  
+          , COD.NATURE 
+          , COD.LIBELLE 
+		FROM 
+			CODIFICATION COD
+		WHERE
+			INITCAP(COD.NATURE) = INITCAP('Surface')
+		ORDER BY
+			2 ASC		 
+		  , 3 ASC;
 		
+		--Variables permettant de déterminer si les codifications sont utilisées pour les Terrains, les Personnes ou les Entrainements
 		codificationUsedByTerrain NUMBER(5):= 0; 
 		codificationUsedByPersonne NUMBER(5):= 0; 
-		codificationUsedByEntrainement NUMBER(5):= 0; 
+		codificationUsedByEntrainement NUMBER(5):= 0; 		
 		
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -63,17 +99,42 @@ IS
 		htp.print(htf.anchor('pq_ui_codification.form_add_codification','Ajouter une codification'));
 		htp.br;	
 		htp.br;	
+		
+		--Affichage du premier tableau pour les codifications avec la nature Classement
+		htp.print('Liste des classements');
+		htp.br;	
+		htp.tableOpen('',cattributes => 'class="tableau"');
+			htp.tableheader('Nature');
+			htp.tableheader('Libellé');
+			htp.tableheader('Informations');
+			for currentCodifClassement in listCodificationClassement loop					
+				htp.tableRowOpen;
+				htp.tabledata(currentCodifClassement.NATURE);
+				htp.tabledata(currentCodifClassement.LIBELLE);					
+				htp.tabledata(htf.anchor('pq_ui_codification.dis_codification?vcode='||currentCodifClassement.CODE||'&'||'vnature='||currentCodifClassement.NATURE||'&'||'vlibelle='||currentCodifClassement.LIBELLE,'Informations'));
+			
+				htp.tableRowClose;
+			end loop;	
+		htp.tableClose;
+		
+		htp.br;	
+		htp.br;	
+		
+		--Affichage du deuxième tableau pour les codifications avec la nature Role
+		htp.print('Liste des Rôles');
+		htp.br;	
 		htp.tableOpen('',cattributes => 'class="tableau"');
 			htp.tableheader('Nature');
 			htp.tableheader('Libellé');
 			htp.tableheader('Informations');
 			htp.tableheader('Mise à jour');
 			htp.tableheader('Suppression');
-			for currentCodification in listCodification loop
+			for currentCodifRole in listCodificationRole loop	
+				
 				htp.tableRowOpen;
-				htp.tabledata(currentCodification.NATURE);
-				htp.tabledata(currentCodification.LIBELLE);					
-				htp.tabledata(htf.anchor('pq_ui_codification.dis_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE||'&'||'vlibelle='||currentCodification.LIBELLE,'Informations'));
+				htp.tabledata(INITCAP(currentCodifRole.NATURE));
+				htp.tabledata(currentCodifRole.LIBELLE);					
+				htp.tabledata(htf.anchor('pq_ui_codification.dis_codification?vcode='||currentCodifRole.CODE||'&'||'vnature='||currentCodifRole.NATURE||'&'||'vlibelle='||currentCodifRole.LIBELLE,'Informations'));
 				
 				--Permet de déterminer si une codification est utilisé pour un terrain	
 				SELECT 
@@ -81,8 +142,8 @@ IS
 				FROM 
 					TERRAIN 
 				WHERE 
-					CODE_SURFACE = currentCodification.CODE 
-				AND NATURE_SURFACE = currentCodification.NATURE;
+					CODE_SURFACE = currentCodifRole.CODE 
+				AND NATURE_SURFACE = currentCodifRole.NATURE;
 				
 				--Permet de déterminer si une codification est utilisé pour une personne	
 				SELECT 
@@ -90,11 +151,11 @@ IS
 				FROM 
 					PERSONNE 
 				WHERE 
-					(CODE_STATUT_EMPLOYE = currentCodification.CODE 
-					AND NATURE_STATUT_EMPLOYE = currentCodification.NATURE)
+					(CODE_STATUT_EMPLOYE = currentCodifRole.CODE 
+					AND NATURE_STATUT_EMPLOYE = currentCodifRole.NATURE)
 				OR
-					(CODE_NIVEAU = currentCodification.CODE 
-					AND NATURE_NIVEAU = currentCodification.NATURE);
+					(CODE_NIVEAU = currentCodifRole.CODE 
+					AND NATURE_NIVEAU = currentCodifRole.NATURE);
 					
 				--Permet de déterminer si une codification est utilisé pour un terrain	
 				SELECT 
@@ -102,13 +163,13 @@ IS
 				FROM 
 					ENTRAINEMENT 
 				WHERE 
-					CODE_NIVEAU = currentCodification.CODE 
-				AND NATURE_NIVEAU = currentCodification.NATURE;
+					CODE_NIVEAU = currentCodifRole.CODE 
+				AND NATURE_NIVEAU = currentCodifRole.NATURE;
 					
 				--On autorise la mise à jour et la suppression d'une codification seulement dans le cas où elle n'est pas utilisée
 				if (codificationUsedByTerrain = 0 and codificationUsedByPersonne = 0 and codificationUsedByEntrainement = 0) then
-					htp.tabledata(htf.anchor('pq_ui_codification.form_upd_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE||'&'||'vlibelle='||currentCodification.LIBELLE,'Mise à jour'));
-					htp.tabledata(htf.anchor('pq_ui_codification.exec_del_codification?vcode='||currentCodification.CODE||'&'||'vnature='||currentCodification.NATURE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+					htp.tabledata(htf.anchor('pq_ui_codification.form_upd_codification?vcode='||currentCodifRole.CODE||'&'||'vnature='||currentCodifRole.NATURE||'&'||'vlibelle='||currentCodifRole.LIBELLE,'Mise à jour'));
+					htp.tabledata(htf.anchor('pq_ui_codification.exec_del_codification?vcode='||currentCodifRole.CODE||'&'||'vnature='||currentCodifRole.NATURE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
 				else
 					htp.tabledata(pq_ui_param_commun.dis_forbidden);
 					htp.tabledata(pq_ui_param_commun.dis_forbidden);
@@ -117,6 +178,69 @@ IS
 				htp.tableRowClose;
 			end loop;	
 		htp.tableClose;
+		
+		htp.br;	
+		htp.br;	
+		--Affichage du troisième tableau pour les codifications avec la nature Surface
+		htp.print('Liste des Surfaces');
+		htp.br;	
+		htp.tableOpen('',cattributes => 'class="tableau"');
+			htp.tableheader('Nature');
+			htp.tableheader('Libellé');
+			htp.tableheader('Informations');
+			htp.tableheader('Mise à jour');
+			htp.tableheader('Suppression');
+			for currentCodifSurface in listCodificationSurface loop	
+				
+				htp.tableRowOpen;
+				htp.tabledata(currentCodifSurface.NATURE);
+				htp.tabledata(currentCodifSurface.LIBELLE);					
+				htp.tabledata(htf.anchor('pq_ui_codification.dis_codification?vcode='||currentCodifSurface.CODE||'&'||'vnature='||currentCodifSurface.NATURE||'&'||'vlibelle='||currentCodifSurface.LIBELLE,'Informations'));
+				
+				--Permet de déterminer si une codification est utilisé pour un terrain	
+				SELECT 
+					COUNT(*) INTO codificationUsedByTerrain
+				FROM 
+					TERRAIN 
+				WHERE 
+					CODE_SURFACE = currentCodifSurface.CODE 
+				AND NATURE_SURFACE = currentCodifSurface.NATURE;
+				
+				--Permet de déterminer si une codification est utilisé pour une personne	
+				SELECT 
+					COUNT(*) INTO codificationUsedByPersonne
+				FROM 
+					PERSONNE 
+				WHERE 
+					(CODE_STATUT_EMPLOYE = currentCodifSurface.CODE 
+					AND NATURE_STATUT_EMPLOYE = currentCodifSurface.NATURE)
+				OR
+					(CODE_NIVEAU = currentCodifSurface.CODE 
+					AND NATURE_NIVEAU = currentCodifSurface.NATURE);
+					
+				--Permet de déterminer si une codification est utilisé pour un terrain	
+				SELECT 
+					COUNT(*) INTO codificationUsedByEntrainement
+				FROM 
+					ENTRAINEMENT 
+				WHERE 
+					CODE_NIVEAU = currentCodifSurface.CODE 
+				AND NATURE_NIVEAU = currentCodifSurface.NATURE;
+					
+				--On autorise la mise à jour et la suppression d'une codification seulement dans le cas où elle n'est pas utilisée
+				if (codificationUsedByTerrain = 0 and codificationUsedByPersonne = 0 and codificationUsedByEntrainement = 0) then
+					htp.tabledata(htf.anchor('pq_ui_codification.form_upd_codification?vcode='||currentCodifSurface.CODE||'&'||'vnature='||currentCodifSurface.NATURE||'&'||'vlibelle='||currentCodifSurface.LIBELLE,'Mise à jour'));
+					htp.tabledata(htf.anchor('pq_ui_codification.exec_del_codification?vcode='||currentCodifSurface.CODE||'&'||'vnature='||currentCodifSurface.NATURE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				else
+					htp.tabledata(pq_ui_param_commun.dis_forbidden);
+					htp.tabledata(pq_ui_param_commun.dis_forbidden);
+				end if;		
+				
+				htp.tableRowClose;
+			end loop;	
+		htp.tableClose;
+		htp.br;	
+		htp.br;	
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error_permission_denied;
@@ -285,8 +409,18 @@ IS
 	-- Affiche le formulaire permettant la saisie d’une nouvelle codification
 	PROCEDURE form_add_codification
 	IS
-	perm BOOLEAN;
-	PERMISSION_DENIED EXCEPTION;
+		CURSOR listNatureCodification IS
+		SELECT DISTINCT 
+			COD.NATURE 
+		FROM 
+			CODIFICATION COD 
+		WHERE
+			COD.NATURE <> INITCAP('Classement')
+		ORDER BY 
+			1 ASC;
+		
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 	BEGIN
 		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
@@ -317,7 +451,12 @@ IS
 					htp.tableRowOpen;
 						htp.tableData('Nature * :', cattributes => 'class="enteteFormulaire"');
 						htp.print('<td>');
-						    htp.formText('vnature',20,cattributes => 'maxlength="20" id="vnature" name="vnature"');
+						    --Liste déroulante des natures possibles pour les codifications 
+							htp.print('<select id="vnature" name="vnature">');								
+							FOR currentNature in listNatureCodification loop									
+								htp.print('<option value="'||currentNature.NATURE||'">'||INITCAP(currentNature.NATURE)||'</option>');															
+							END LOOP; 																				
+							htp.print('</select>');								
 						htp.print('</td>');	
 						htp.tableData('',cattributes => 'id="vNatureError" class="error"');						
 					htp.tableRowClose;
