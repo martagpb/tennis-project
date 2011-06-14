@@ -20,12 +20,25 @@ IS
 	, vnumFacture IN OCCUPER.NUM_FACTURE%TYPE
 	, vnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE);
 
+	--Ajouter une personne invitée à une réservation
+	PROCEDURE add_etre_associe(
+	  vheureDebutCreneau IN ETRE_ASSOCIE.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN ETRE_ASSOCIE.NUM_TERRAIN%TYPE
+	, vdateOccupation IN ETRE_ASSOCIE.DATE_OCCUPATION%TYPE
+	, vnumPersonne IN ETRE_ASSOCIE.NUM_PERSONNE%TYPE);
 
 	--Permet de supprimer une reservation existante
 	PROCEDURE del_reservation(
 	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
 	, vnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
 	, vdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE);		
-	  
+
+	--Permet de supprimer une personne invitée à une réservation
+	PROCEDURE del_etre_associe(
+	  vheureDebutCreneau IN ETRE_ASSOCIE.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN ETRE_ASSOCIE.NUM_TERRAIN%TYPE
+	, vdateOccupation IN ETRE_ASSOCIE.DATE_OCCUPATION%TYPE
+	, vnumPersonne IN ETRE_ASSOCIE.NUM_PERSONNE%TYPE);
+	
 END pq_db_reservation;
 /

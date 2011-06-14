@@ -37,7 +37,30 @@ IS
 			ROLLBACK;
 	END add_reservation;
 
-
+	--Ajouter une personne invitée à une réservation
+	PROCEDURE add_etre_associe(
+	  vheureDebutCreneau IN ETRE_ASSOCIE.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN ETRE_ASSOCIE.NUM_TERRAIN%TYPE
+	, vdateOccupation IN ETRE_ASSOCIE.DATE_OCCUPATION%TYPE
+	, vnumPersonne IN ETRE_ASSOCIE.NUM_PERSONNE%TYPE)
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+		INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE)
+		VALUES(vheureDebutCreneau,vnumTerrain,vdateOccupation,vnumPersonne);
+		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
+		WHEN OTHERS THEN
+			ROLLBACK;
+	END add_etre_associe;
+	
 	--Permet de supprimer une reservation existante
 	PROCEDURE del_reservation(
 	  vheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
@@ -62,7 +85,35 @@ IS
 			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
-	END del_reservation;		
+	END del_reservation;	
+
+	--Permet de supprimer une personne invitée à une réservation
+	PROCEDURE del_etre_associe(
+	  vheureDebutCreneau IN ETRE_ASSOCIE.HEURE_DEBUT_CRENEAU%TYPE
+	, vnumTerrain IN ETRE_ASSOCIE.NUM_TERRAIN%TYPE
+	, vdateOccupation IN ETRE_ASSOCIE.DATE_OCCUPATION%TYPE
+	, vnumPersonne IN ETRE_ASSOCIE.NUM_PERSONNE%TYPE)
+	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+	BEGIN
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+		IF perm=false THEN
+			RAISE PERMISSION_DENIED;
+		END IF;
+	  	DELETE FROM ETRE_ASSOCIE
+		WHERE
+			HEURE_DEBUT_CRENEAU = vheureDebutCreneau
+			AND NUM_TERRAIN = vnumTerrain
+			AND DATE_OCCUPATION = vdateOccupation
+			AND NUM_PERSONNE = vnumPersonne;
+		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
+		WHEN OTHERS THEN
+			ROLLBACK;
+	END del_etre_associe;		
 	  
 END pq_db_reservation;
 /
