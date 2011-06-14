@@ -97,6 +97,10 @@ start 608_create_pqi_ui_terrain.sql
 SHOW ERRORS
 start 608_create_pqb_ui_terrain.sql
 SHOW ERRORS
+start 624_create_pqi_ui_s_inscrire.sql
+SHOW ERRORS
+start 624_create_pqb_ui_s_inscrire.sql
+SHOW ERRORS
 start 612_create_pqi_ui_entrainement.sql
 SHOW ERRORS
 start 612_create_pqb_ui_entrainement.sql
@@ -114,8 +118,4 @@ SHOW ERRORS
 start 622_create_pqi_ui_avoir_lieu.sql
 SHOW ERRORS
 start 622_create_pqb_ui_avoir_lieu.sql
-SHOW ERRORS
-start 624_create_pqi_ui_s_inscrire.sql
-SHOW ERRORS
-start 624_create_pqb_ui_s_inscrire.sql
 SHOW ERRORS
