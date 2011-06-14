@@ -27,8 +27,6 @@ start 626_create_pqi_ui_personne.sql
 SHOW ERRORS
 start 626_create_pqb_ui_personne.sql
 SHOW ERRORS
-start 720_create_pqi_pa_create_account.sql
-SHOW ERRORS
 start 620_create_pqi_ui_create_account.sql
 SHOW ERRORS
 start 628_create_pqi_ui_mon_compte.sql
@@ -42,8 +40,6 @@ SHOW ERRORS
 start 510_create_pqb_ui_commun.sql
 SHOW ERRORS
 start 500_create_pqb_param_commun.sql
-SHOW ERRORS
-start 720_create_pqb_pa_create_account.sql
 SHOW ERRORS
 start 600_create_pqb_ui_login.sql
 SHOW ERRORS
