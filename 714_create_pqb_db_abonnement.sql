@@ -54,7 +54,6 @@ IS
 	PROCEDURE upd_abonnement(
 	  pnumAbonnement IN ABONNEMENT.NUM_ABONNEMENT%TYPE
 	, pnumJoueur IN ABONNEMENT.NUM_JOUEUR%TYPE
-	, pdateDebut IN ABONNEMENT.DATE_DEBUT_ABONNEMENT%TYPE
 	, pduree IN ABONNEMENT.DUREE_ABONNEMENT%TYPE)
 	IS
 		perm BOOLEAN;
@@ -67,9 +66,8 @@ IS
 		END IF;
 		UPDATE ABONNEMENT
 		SET
-		    NUM_JOUEUR   			= pnumJoueur
-		  , DATE_DEBUT_ABONNEMENT 	= pdateDebut
-		  , DUREE_ABONNEMENT        = pduree
+		    NUM_JOUEUR   				= pnumJoueur
+		  , DUREE_ABONNEMENT    = pduree
 		WHERE
 			NUM_ABONNEMENT = pnumAbonnement;
 		COMMIT;
@@ -82,10 +80,10 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
-		IF perm=false THEN
-			RAISE PERMISSION_DENIED;
-		END IF;
+		DELETE FROM MENSUALITE
+		WHERE 
+			NUM_ABONNEMENT = pnumAbonnement;
+			
 		DELETE FROM ABONNEMENT
 		WHERE 
 			NUM_ABONNEMENT = pnumAbonnement;

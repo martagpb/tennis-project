@@ -246,9 +246,7 @@ IS
 				htp.print('La facture a été ajoutée avec succès.');
 			htp.print('</div>');				
 			htp.br;
-			htp.br;			
-			liste_factures;
-			
+			htp.br;
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
 				pq_ui_commun.dis_error_permission_denied;
@@ -256,6 +254,7 @@ IS
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout de facture');
 		END;
 		
+		liste_factures;
 		pq_ui_commun.aff_footer;
 	END exec_add_facture;
 	
@@ -276,6 +275,7 @@ IS
 	IS
 	BEGIN
 		pq_ui_commun.aff_header;
+		liste_factures;
 		pq_ui_commun.aff_footer;
 	END exec_upd_facture;
 	
@@ -285,6 +285,7 @@ IS
 	IS
 	BEGIN
 		pq_ui_commun.aff_header;
+		liste_factures;
 		pq_ui_commun.aff_footer;
 	END exec_del_facture;
 	  
