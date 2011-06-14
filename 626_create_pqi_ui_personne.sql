@@ -40,6 +40,12 @@ IS
 	-- Affiche le formulaire de saisie permettant la modification d’une personne existante
 	PROCEDURE form_upd_personne(
 	  vnumPersonne IN NUMBER);
+	  
+	 -- Affiche le formulaire permettant de rechercher une personne
+	PROCEDURE form_search_personnes;
+	
+	-- Affiche une liste de personnes en fonction des critères de recherche
+	PROCEDURE dis_search_personnes(login IN VARCHAR2, nom IN VARCHAR2, prenom IN VARCHAR2);
 	
 END pq_ui_personne;
 /

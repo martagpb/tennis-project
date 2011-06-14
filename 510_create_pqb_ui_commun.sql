@@ -289,7 +289,7 @@ PROCEDURE aff_menu_niveau_entraineur
 					htp.anchor('#', 'Réservations');
 				htp.print('</li>');
 				htp.listItem;
-					htp.anchor('#', 'Personnes');
+					htp.anchor('pq_ui_personne.manage_personnes', 'Personnes');
 				htp.print('</li>');				
 				htp.listItem;
 					htp.anchor('pq_ui_entrainement.manage_entrainement', 'Entrainements');

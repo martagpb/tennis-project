@@ -1281,11 +1281,11 @@ CREATE OR REPLACE TRIGGER TI_S_INSCRIRE_BEFORE
 					-- Entrainement E : ENTRAINEMENT_CODE_NIVEAU = 4, ENTRAINEMENT_NATURE_NIVEAU = 30/4
 				-- Explication :
 					-- Comme PERSONNE_CODE_NIVEAU < ENTRAINEMENT_CODE_NIVEAU, car 3 < 4, alors la personne A n'est pas autorisée à s'inscrire à l'entrainement E.
-		IF TO_NUMBER(PERSONNE_CODE_NIVEAU) < TO_NUMBER(ENTRAINEMENT_CODE_NIVEAU) THEN
+/*IF TO_NUMBER(PERSONNE_CODE_NIVEAU) < TO_NUMBER(ENTRAINEMENT_CODE_NIVEAU) THEN
 			 raise_application_error(
 			   -20002,
 			   'Impossible d''inscrire la personne car elle n''a pas le niveau requis pour cet entrainement.');
-		END IF;
+		END IF;*/
 	END IF;
 END;
 /

@@ -36,6 +36,12 @@ CREATE TABLE PERSONNE(
 		PARTITION adherents VALUES('A')
 	,   PARTITION visiteurs VALUES('V')
 	);
+	
+	
+-- Autorise la mise à jour des clés de partitionnement, permettant de passer une personne de visiteur à adhérent ou inversement
+ALTER TABLE PERSONNE ENABLE ROW MOVEMENT;
+
+
 
 -- -----------------------------------------------------------------------------
 --       TABLE : FACTURE
