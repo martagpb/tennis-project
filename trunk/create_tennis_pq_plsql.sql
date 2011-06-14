@@ -75,6 +75,10 @@ start 724_create_pqi_db_s_inscrire.sql
 SHOW ERRORS
 start 724_create_pqb_db_s_inscrire.sql
 SHOW ERRORS
+start 710_create_pqi_db_reservation.sql
+SHOW ERRORS
+start 710_create_pqb_db_reservation.sql
+SHOW ERRORS
 start 602_create_pqi_ui_codification.sql
 SHOW ERRORS
 start 601_create_pqb_ui_accueil.sql

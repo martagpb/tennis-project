@@ -18,3 +18,4 @@ DROP PACKAGE pq_db_abonnement;
 DROP PACKAGE pq_db_avoir_lieu;
 DROP PACKAGE pq_db_s_inscrire;
 DROP PACKAGE pq_db_occuper;
+DROP PACKAGE pq_db_reservation;
