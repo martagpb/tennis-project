@@ -24,7 +24,14 @@ IS
 
 	--Procédure permettant simplement d'affiche le formulaire de connexion d'un compte existant ainsi que le formulaire de création d'un nouveau compte
 	PROCEDURE aff_login IS 
-	BEGIN		
+		target_cookie OWA_COOKIE.cookie;
+	BEGIN
+		target_cookie := OWA_COOKIE.get('numpersonne');
+		IF target_cookie.vals(1) <> NULL THEN
+			OWA_UTIL.mime_header ('text/html', FALSE);
+			OWA_UTIL.REDIRECT_URL('pq_ui_accueil.dis_accueil');
+			OWA_UTIL.http_header_close;  -- Now close the header
+		END IF;
 		htp.br;
 		htp.print('<div class="titre_niveau_1">');
 			htp.print('Connexion avec un compte existant');
