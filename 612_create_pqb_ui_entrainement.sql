@@ -12,8 +12,7 @@
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_entrainement
 IS
-
-	--affichage de la liste seule des entrainements
+		--affichage de la liste seule des entrainements
 	PROCEDURE aff_entrainement
 	IS
 		CURSOR listEntrainement IS
@@ -69,30 +68,31 @@ IS
 			htp.print('Il n''y a aucun entrainement de disponible.');	
 		--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
 		else
-			htp.tableOpen('',cattributes => 'class="tableau"');
-				htp.tableheader('Numéro');
-				htp.tableheader('Intitulé');
-				htp.tableheader('Entraineur');
-				htp.tableheader('Informations');
-				htp.tableheader('Mise à jour');
-				htp.tableheader('Suppression');
-				for currentEntrainement in listEntrainement loop
-					htp.tableRowOpen;
-					htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);	
-					htp.tabledata(currentEntrainement.LIB_ENTRAINEMENT);
-					htp.tabledata(currentEntrainement.PRENOM_PERSONNE||'  '||currentEntrainement.NOM_PERSONNE);
-					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
-					htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Mise à jour'));
-					htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-					htp.tableRowClose;	
-				end loop;
-			htp.tableClose;
+		htp.tableOpen('',cattributes => 'class="tableau"');
+			htp.tableheader('Numéro');
+			htp.tableheader('Intitulé');
+			htp.tableheader('Entraineur');
+			htp.tableheader('Informations');
+			htp.tableheader('Mise à jour');
+			htp.tableheader('Suppression');
+			htp.tableheader('Inscription');
+			for currentEntrainement in listEntrainement loop
+				htp.tableRowOpen;
+				htp.tabledata(currentEntrainement.NUM_ENTRAINEMENT);	
+				htp.tabledata(currentEntrainement.LIB_ENTRAINEMENT);
+				htp.tabledata(currentEntrainement.PRENOM_PERSONNE||'  '||currentEntrainement.NOM_PERSONNE);
+				htp.tabledata(htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Informations'));
+				htp.tabledata(htf.anchor('pq_ui_entrainement.form_upd_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Mise à jour'));
+				htp.tabledata(htf.anchor('pq_ui_entrainement.exec_del_entrainement?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				htp.tabledata(htf.anchor('pq_ui_s_inscrire.form_add_inscription?vnumEntrainement='||currentEntrainement.NUM_ENTRAINEMENT,'Inscrire un joueur'));
+				htp.tableRowClose;	
+			end loop;
+		htp.tableClose;
 		end if;
 	EXCEPTION
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des entrainements');
 	END aff_entrainement;
-	
 	
 	--Permet d'afficher tous les entrainement existants 
 	PROCEDURE manage_entrainement
@@ -483,6 +483,9 @@ IS
 		htp.br;
 		htp.br;
 		htp.anchor('pq_ui_avoir_lieu.form_add_avoir_lieu?vnumEntrainement='||vnumEntrainement||'&'||'vretourEntraineur=0', 'Ajouter une séance');	
+		htp.br;
+		htp.br;
+		pq_ui_s_inscrire.dis_inscriptions(vnumEntrainement);
 		htp.br;
 		htp.br;
 		if(TRUNC(vdateFin)>=TRUNC(SYSDATE))
