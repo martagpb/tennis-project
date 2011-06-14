@@ -466,6 +466,7 @@ BEGIN
 	LOOP
 		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_ENTRAINEMENT,NUM_SEANCE)
 		VALUES(vheureDebutCreneau,vnumTerrain,vincrementDate,vnumEntrainement,vnumSeance);
+		
 		vincrementDate:=vincrementDate+7;
 		vnumSeance:=vnumSeance+1;
 	END LOOP;
@@ -788,15 +789,6 @@ INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (8,15);
 INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (8,16); 
 INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (8,17); 
 
-
--- -----------------------------------------------------------------------------
---       TABLE : ETRE_ASSOCIE
--- -----------------------------------------------------------------------------
-/* En attente des insertion dans la table OCCUPER */
-
--- INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE) VALUES ();
-
-
 -- -----------------------------------------------------------------------------
 --       TABLE : FACTURE (et réservations correspondantes)
 -- -----------------------------------------------------------------------------
@@ -817,7 +809,22 @@ INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU, NUM_TERRAIN, DATE_OCCUPATION, NUM_FACTU
 INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU, NUM_TERRAIN, DATE_OCCUPATION, NUM_FACTURE, NUM_JOUEUR)
 	VALUES('20h00', 8, to_date('30/03/2011','DD/MM/YYYY'), 3, 21);
 
+-- -----------------------------------------------------------------------------
+--       TABLE : ETRE_ASSOCIE
+-- -----------------------------------------------------------------------------
+INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE) 
+	VALUES ('10h00', 5, to_date('20/03/2011','DD/MM/YYYY'),19);
+INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE) 
+	VALUES ('15h00', 5, to_date('30/03/2011','DD/MM/YYYY'),20);
+INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE) 
+	VALUES ('18h00', 8, to_date('30/03/2011','DD/MM/YYYY'),21);
+INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE) 
+	VALUES ('19h00', 8, to_date('30/03/2011','DD/MM/YYYY'),22);
+INSERT INTO ETRE_ASSOCIE(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_PERSONNE) 
+	VALUES ('20h00', 8, to_date('30/03/2011','DD/MM/YYYY'),1);
+	
 --Validation des insertions des données
+
 COMMIT;	 
 
 
