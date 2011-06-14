@@ -15,7 +15,6 @@ DROP PACKAGE pq_db_terrain;
 DROP PACKAGE pq_db_personne;
 DROP PACKAGE pq_db_entrainement;
 DROP PACKAGE pq_db_abonnement;
-DROP PACKAGE pq_pa_create_account;
 DROP PACKAGE pq_db_avoir_lieu;
 DROP PACKAGE pq_db_s_inscrire;
 DROP PACKAGE pq_db_occuper;
