@@ -19,9 +19,9 @@ start 702_create_pqi_db_codification.sql
 SHOW ERRORS
 start 702_create_pqb_db_codification.sql
 SHOW ERRORS
-start 710_create_pqi_db_personne.sql
+start 726_create_pqi_db_personne.sql
 SHOW ERRORS
-start 710_create_pqb_db_personne.sql
+start 726_create_pqb_db_personne.sql
 SHOW ERRORS
 start 626_create_pqi_ui_personne.sql
 SHOW ERRORS
