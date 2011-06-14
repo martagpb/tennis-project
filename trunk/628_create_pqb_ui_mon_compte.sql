@@ -145,8 +145,7 @@ IS
 		
 		target_cookie := OWA_COOKIE.get('numpersonne');
 		vnumPersonne:=TO_NUMBER(target_cookie.vals(1));
-		
-		pq_ui_commun.aff_header;		
+		pq_ui_commun.deconnect;	
 		pq_db_personne.delpersonne(vnumPersonne);
 		htp.br;
 		htp.br;	
@@ -154,11 +153,6 @@ IS
 			htp.print('Votre compte a été supprimé avec succès.');
 		htp.print('</div>');		
 		htp.br;
-		htp.br;	
-		pq_ui_commun.deconnect;		
-		htp.br;
-		htp.br;			
-		pq_ui_commun.aff_footer;
 	EXCEPTION
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error_permission_denied;
