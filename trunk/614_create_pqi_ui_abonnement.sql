@@ -28,22 +28,20 @@ IS
 	  pnumJoueur IN VARCHAR2
 	, pdateDebut IN VARCHAR2
 	, pduree IN VARCHAR2);
-	/*
+	
 	-- Affiche le formulaire de saisie permettant la modification d’un abonnement existant
 	PROCEDURE form_upd_abonnement(
-	  vnumAbonnement IN VARCHAR2
-	);
+	  pnumAbonnement IN VARCHAR2);
 	
 	-- Exécute la procédure de mise à jour d'un abonnement et gère les erreurs éventuelles
 	PROCEDURE exec_upd_abonnement(
-	  vnumAbonnement IN VARCHAR2
-	, vnumJoueur IN VARCHAR2
-	, vdateDebutAbo IN VARCHAR2
-	, vdureeAbo IN VARCHAR2);
+	  pnumAbonnement IN VARCHAR2
+	, pnumJoueur IN VARCHAR2
+	, pduree IN VARCHAR2);
 	
 	-- Exécute la procédure de suppression d'un abonnement et gère les erreurs éventuelles
 	PROCEDURE exec_del_abonnement(
-	  vnumAbonnement IN VARCHAR2);
-*/
+	  pnumAbonnement IN VARCHAR2);
+
 END pq_ui_abonnement;
 /

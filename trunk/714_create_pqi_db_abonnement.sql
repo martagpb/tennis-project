@@ -22,7 +22,6 @@ IS
 	PROCEDURE upd_abonnement(
 	  pnumAbonnement IN ABONNEMENT.NUM_ABONNEMENT%TYPE
 	, pnumJoueur IN ABONNEMENT.NUM_JOUEUR%TYPE
-	, pdateDebut IN ABONNEMENT.DATE_DEBUT_ABONNEMENT%TYPE
 	, pduree IN ABONNEMENT.DUREE_ABONNEMENT%TYPE);
 	
 	--Permet de supprimer un abonnement existant
