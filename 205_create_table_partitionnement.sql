@@ -66,6 +66,7 @@ CREATE TABLE FACTURE(
 	,	PARTITION factures_2018 VALUES LESS THAN(TO_DATE('01/01/2019','DD/MM/YYYY'))
 	,	PARTITION factures_2019 VALUES LESS THAN(TO_DATE('01/01/2020','DD/MM/YYYY'))
 	,	PARTITION factures_2020 VALUES LESS THAN(TO_DATE('01/01/2021','DD/MM/YYYY'))
+	,	PARTITION factures_2100 VALUES LESS THAN(TO_DATE('01/01/2100','DD/MM/YYYY'))
 	);
   
 -- -----------------------------------------------------------------------------
@@ -94,6 +95,7 @@ CREATE TABLE ENTRAINEMENT(
 	,  	PARTITION entrainements_2018 VALUES LESS THAN(TO_DATE('01/01/2019','DD/MM/YYYY'))
 	,  	PARTITION entrainements_2019 VALUES LESS THAN(TO_DATE('01/01/2020','DD/MM/YYYY'))
 	,  	PARTITION entrainements_2020 VALUES LESS THAN(TO_DATE('01/01/2021','DD/MM/YYYY'))
+	,	PARTITION entrainements_2100 VALUES LESS THAN(TO_DATE('01/01/2100','DD/MM/YYYY'))
 	);
    
 -- -----------------------------------------------------------------------------
@@ -118,6 +120,7 @@ CREATE TABLE ABONNEMENT(
 	,	PARTITION abonnements_2018 VALUES LESS THAN(TO_DATE('01/01/2019','DD/MM/YYYY'))
 	,	PARTITION abonnements_2019 VALUES LESS THAN(TO_DATE('01/01/2020','DD/MM/YYYY'))
 	,	PARTITION abonnements_2020 VALUES LESS THAN(TO_DATE('01/01/2021','DD/MM/YYYY'))
+	,	PARTITION abonnements_2100 VALUES LESS THAN(TO_DATE('01/01/2100','DD/MM/YYYY'))
 	);
       
 -- -----------------------------------------------------------------------------
@@ -145,4 +148,5 @@ CREATE TABLE OCCUPER(
 	,	PARTITION occupations_2018 VALUES LESS THAN(TO_DATE('01/01/2019','DD/MM/YYYY'))
 	,	PARTITION occupations_2019 VALUES LESS THAN(TO_DATE('01/01/2020','DD/MM/YYYY'))
 	,	PARTITION occupations_2020 VALUES LESS THAN(TO_DATE('01/01/2021','DD/MM/YYYY'))
+	,	PARTITION occupations_2100 VALUES LESS THAN(TO_DATE('01/01/2100','DD/MM/YYYY'))
 	);
