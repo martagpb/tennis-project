@@ -33,6 +33,8 @@ IS
 		VALUES (vnumEntraineur,vcodeNiveau,vnatureNiveau,vlibEntrainement,vnbPlaces,vdateDebut,vdateFin);
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END add_entrainement;
@@ -64,6 +66,8 @@ IS
 				NUM_ENTRAINEMENT = vnumEntrainement;
 		COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END upd_entrainement;
@@ -110,6 +114,8 @@ IS
 		 END IF;
 	COMMIT;
 	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
 	END del_entrainement;

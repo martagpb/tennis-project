@@ -19,6 +19,9 @@ IS
 		vnumEntrainement IN S_INSCRIRE.NUM_ENTRAINEMENT%TYPE
 	  , vnumPersonne IN S_INSCRIRE.NUM_PERSONNE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
+		
 		CURSOR listSeances IS
 		SELECT
 			 OCC.HEURE_DEBUT_CRENEAU
@@ -32,12 +35,19 @@ IS
 			OCC.DATE_OCCUPATION >= SYSDATE
 		ORDER BY 1;
 	BEGIN
+	pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+	IF perm=false THEN
+		RAISE PERMISSION_DENIED;
+	END IF;
 	INSERT INTO S_INSCRIRE(NUM_ENTRAINEMENT,NUM_PERSONNE) VALUES (vnumEntrainement,vnumPersonne);
 	for currentSeance in listSeances loop
 		INSERT INTO ETRE_ASSOCIE (NUM_PERSONNE,HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION) 
 		VALUES (vnumPersonne,currentSeance.HEURE_DEBUT_CRENEAU,currentSeance.NUM_TERRAIN,currentSeance.DATE_OCCUPATION);
 	END LOOP
 	COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END add_inscription;
 	
 
@@ -46,6 +56,8 @@ IS
 		vnumEntrainement IN S_INSCRIRE.NUM_ENTRAINEMENT%TYPE
 	  , vnumPersonne IN S_INSCRIRE.NUM_PERSONNE%TYPE)
 	IS
+		perm BOOLEAN;
+		PERMISSION_DENIED EXCEPTION;
 		CURSOR listSeances IS
 		SELECT
 			 OCC.HEURE_DEBUT_CRENEAU
@@ -59,6 +71,10 @@ IS
 			OCC.DATE_OCCUPATION >= SYSDATE
 		ORDER BY 1;
 	BEGIN
+	pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
+	IF perm=false THEN
+		RAISE PERMISSION_DENIED;
+	END IF;
 	DELETE FROM S_INSCRIRE 
 	WHERE NUM_ENTRAINEMENT=vnumEntrainement 
 	AND NUM_PERSONNE=vnumPersonne;
@@ -70,6 +86,9 @@ IS
 		AND DATE_OCCUPATION=currentSeance.DATE_OCCUPATION;
 	END LOOP
 	COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END del_inscription;
 	
 	

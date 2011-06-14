@@ -18,7 +18,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -30,6 +30,9 @@ IS
 				AND COD.NATURE=PER.NATURE_STATUT_EMPLOYE
 		WHERE
 			PER.NUM_PERSONNE=numPersonne;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END;
 	
 	PROCEDURE getStatutJoueur(
@@ -39,7 +42,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -49,6 +52,9 @@ IS
 			PERSONNE PER
 		WHERE
 			PER.NUM_PERSONNE=numPersonne;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END;
 
 	PROCEDURE getNum(
@@ -58,7 +64,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
@@ -68,6 +74,9 @@ IS
 			PERSONNE PER
 		WHERE
 			PER.LOGIN_PERSONNE=login;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END;
 		
 	PROCEDURE createPersonne( 
@@ -81,14 +90,8 @@ IS
 	 ,  postal IN PERSONNE.CP_PERSONNE%TYPE
 	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE)
 	IS
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION; 
 		crypted_password VARCHAR2(255);
-	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
-		IF perm=false THEN
-			RAISE PERMISSION_DENIED;
-		END IF; 
+	BEGIN 
 		dbms_obfuscation_toolkit.DESEncrypt(input_string => password, 
 										key_string => 'tennispro', 
 										encrypted_string => crypted_password );
@@ -139,6 +142,9 @@ IS
 		INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE, NATURE_STATUT_EMPLOYE, CODE_NIVEAU, NATURE_NIVEAU, NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT)
 		VALUES (codeStatutEmploye,natureStatut,codeNiveau,natureNiveau,lastname,firstname,login,crypted_password,phone,mail,street,postal,city,statutJoueur,1);
 		COMMIT; 
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END; 
 	
 	 PROCEDURE updPersonne( 
@@ -179,6 +185,9 @@ IS
 		WHERE
 				NUM_PERSONNE = vnumPersonne;
 		COMMIT; 
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END;
 	
 	 PROCEDURE updPersonneFull( 
@@ -242,6 +251,9 @@ IS
 		WHERE
 				NUM_PERSONNE = vnumPersonne;
 		COMMIT; 
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END;
 	
 	PROCEDURE updPersonneAccount( 
@@ -281,6 +293,9 @@ IS
 		WHERE
 				NUM_PERSONNE = vnumPersonne;
 		COMMIT; 
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END;
 	
 	PROCEDURE delPersonne( vnumPersonne IN PERSONNE.NUM_PERSONNE%TYPE)
@@ -306,6 +321,9 @@ IS
 		WHERE
 			NUM_PERSONNE=vnumPersonne;
 		COMMIT;
+	EXCEPTION
+		WHEN PERMISSION_DENIED then
+			pq_ui_commun.dis_error_permission_denied;
 	END;
 	
 	
