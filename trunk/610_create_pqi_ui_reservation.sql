@@ -53,7 +53,10 @@ IS
 	
 	-- Exécute la procédure de mise à jour d'une reservation et gère les erreurs éventuelles
 	PROCEDURE exec_upd_reservation(
-	  pnumTerrain IN VARCHAR2
+	  pnumTerrainOld IN VARCHAR2
+	, pdateOld IN VARCHAR2
+	, pheureOld IN VARCHAR2
+	, pnumTerrain IN VARCHAR2
 	, pdate IN VARCHAR2
 	, pheure IN VARCHAR2
 	, pnumJoueur IN VARCHAR2);
