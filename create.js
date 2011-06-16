@@ -445,3 +445,39 @@ function validerCodification(form,document){
 	//On retroune vrai si la codification est valide
 	return true;
 }
+
+
+/*Fonction permettant de valider la création d'un abonnement*/
+function validerAbonnement(form,document){
+	//On récupère les données du formulaire
+	dateDebutDay = form.dateDebutDay.value;     // nombre sous la forme : jj
+	dateDebutMonth = form.dateDebutMonth.value; // nombre sous la forme : mm
+	dateDebutYear = form.dateDebutYear.value;   // nombre sous la forme : aaaa
+	
+	//Construction de la date de début de l'entrainement
+	var dateDebut = new Date (dateDebutYear,(dateDebutMonth-1),dateDebutDay);		
+	var dateDebutValide = false;
+	
+	//Vérification de la validité de la date de début de l'entrainement
+	if( 
+	   (dateDebut.getDate() == dateDebutDay) 
+	&& (dateDebut.getMonth()+1  == dateDebutMonth) 
+	&& (dateDebut.getFullYear() == dateDebutYear)
+	){
+		dateDebutValide = true;
+		document.getElementById("dateDebutError").innerHTML ="";	
+	}else{
+		document.getElementById("dateDebutError").innerHTML ="Date non valide.";		
+	}
+						
+	//Si l'une ou les deux dates sont invalides alors on affiche les messages d'erreurs
+	if(dateDebutValide==false ){
+		return false;
+	}
+	
+	
+	var separateur = "/";		
+	document.getElementById("dateDebut").value = dateDebutDay+separateur+dateDebutMonth+separateur+dateDebutYear;
+	
+	return true;
+}

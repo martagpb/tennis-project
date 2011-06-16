@@ -64,13 +64,17 @@ IS
 
 	--	Met à jour une réservation
 	PROCEDURE upd_reservation(
-	  pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
+	  pnumTerrainOld IN OCCUPER.NUM_TERRAIN%TYPE
+	, pdateOld IN OCCUPER.DATE_OCCUPATION%TYPE
+	, pheureOld IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
+	, pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
 	, pdate IN OCCUPER.DATE_OCCUPATION%TYPE
 	, pheure IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
 	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE)
 	IS 
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
+		MY_EXCEPTION EXCEPTION;
 	BEGIN
 		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
@@ -79,7 +83,7 @@ IS
 		
 		UPDATE OCCUPER
 		SET NUM_TERRAIN = pnumTerrain, DATE_OCCUPATION = pdate, HEURE_DEBUT_CRENEAU = pheure, NUM_JOUEUR = pnumJoueur
-		WHERE NUM_TERRAIN = pnumTerrain AND DATE_OCCUPATION = pdate AND HEURE_DEBUT_CRENEAU = pheure;
+		WHERE NUM_TERRAIN = pnumTerrainOld AND DATE_OCCUPATION = pdateOld AND HEURE_DEBUT_CRENEAU = pheureOld;
 		COMMIT;
 		
 	EXCEPTION
@@ -87,6 +91,7 @@ IS
 			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
+			RAISE MY_EXCEPTION;
 	END upd_reservation;
 	
 	--Permet de supprimer une reservation existante

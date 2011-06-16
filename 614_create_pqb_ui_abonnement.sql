@@ -187,15 +187,18 @@ IS
 		PERMISSION_DENIED EXCEPTION;
 		-- On stocke dans un curseur la liste de tous les adhérents existants
 		CURSOR listeAdherents IS
-		SELECT 
-			  P.NUM_PERSONNE
-			, P.NOM_PERSONNE
-		FROM 
-			PERSONNE P
-		WHERE
-			P.STATUT_JOUEUR = 'A'
-		ORDER BY 
-			P.NOM_PERSONNE;
+		SELECT P.NUM_PERSONNE, P.NOM_PERSONNE
+		FROM PERSONNE P
+		WHERE P.STATUT_JOUEUR = 'A'
+		ORDER BY P.NOM_PERSONNE;
+			
+		currentYearStart NUMBER(4) := to_number(to_char(sysdate,'YYYY'));
+		currentYearEnd NUMBER(4) := to_number(to_char(sysdate,'YYYY'))+10;
+		currentDebutDay NUMBER(2) := 0;
+		currentDebutMonth NUMBER(2) := 0;
+		currentDebutYear NUMBER(4) := 0;
+		
+		nombreDuree NUMBER(2);
 	BEGIN
 		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
 		IF perm=false THEN
@@ -214,6 +217,7 @@ IS
 		htp.br;
 		htp.br;	
 		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_abonnement.exec_add_abonnement', 'POST', cattributes => 'onSubmit="return validerAbonnement(this,document)"');				
+			htp.print('<input type="hidden" name="pdateDebut" id="dateDebut" />');
 			htp.tableOpen;	
 				htp.tableRowOpen;
 					htp.tableData('Adhérent * :', cattributes => 'class="enteteFormulaire"');	
@@ -221,19 +225,45 @@ IS
 					htp.print('<td>');
 						htp.print('<select name="pnumJoueur">');						
 						FOR currentAdherent in listeAdherents loop
-							--On transmet le code, la nature et le libellé
 							htp.print('<option value="'||currentAdherent.NUM_PERSONNE||'">'||currentAdherent.NOM_PERSONNE||'</option>');
 						END LOOP; 																				
 						htp.print('</select>');										
-					htp.print('</td>');					
+					htp.print('</td>');
+					htp.print('<td id="numJoueurError" class="error"></td>');			
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Date début * :', cattributes => 'class="enteteFormulaire"');
-					htp.tableData(htf.formText('pdateDebut'));
+					htp.print('<td>');	
+					htp.print('<select id="dateDebutDay">');								
+					FOR currentDebutDay in 1..31 loop	
+						htp.print('<option>'||currentDebutDay||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="dateDebutMonth">');								
+					FOR currentDebutMonth in 1..12 loop	
+						htp.print('<option>'||currentDebutMonth||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="dateDebutYear">');
+					FOR currentDebutYear in currentYearStart..currentYearEnd loop	
+						htp.print('<option>'||currentDebutYear||'</option>');
+					END LOOP;
+					htp.print('</select>');	
+					htp.print('</td>');	
+					htp.print('<td id="dateDebutError" class="error"></td>');
+					--htp.tableData(htf.formText('pdateDebut'));
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Durée * :', cattributes => 'class="enteteFormulaire"');
-					htp.tableData(htf.formText('pDuree'));
+					--htp.tableData(htf.formText('pduree'));
+					htp.print('<td>');	
+					htp.print('<select name="pduree">');								
+					FOR nombreDuree in 1..24 loop	
+						htp.print('<option>'||nombreDuree||'</option>');								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('</td>');	
+					htp.print('<td id="dureeError" class="error"></td>');
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('');

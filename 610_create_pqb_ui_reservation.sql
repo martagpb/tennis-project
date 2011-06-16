@@ -12,6 +12,77 @@
 
 CREATE OR REPLACE PACKAGE BODY pq_ui_reservation
 IS
+
+	-- Affiche le formulaire de saisie d'une nouvelle reservation
+	PROCEDURE form_add_reservation
+	IS
+		CURSOR listeJoueurs IS
+		SELECT P.NUM_PERSONNE, P.NOM_PERSONNE 
+		FROM PERSONNE P 
+		ORDER BY P.NOM_PERSONNE;
+		CURSOR listeCreneaux IS
+		SELECT C.HEURE_DEBUT_CRENEAU, C.HEURE_FIN_CRENEAU
+		FROM CRENEAU C
+		ORDER BY C.HEURE_DEBUT_CRENEAU;
+		CURSOR listeTerrains IS
+		SELECT T.NUM_TERRAIN, C.LIBELLE as SURFACE
+		FROM TERRAIN T INNER JOIN CODIFICATION C ON T.NATURE_SURFACE = C.NATURE AND T.CODE_SURFACE = C.CODE
+		ORDER BY T.NUM_TERRAIN;
+	BEGIN
+		htp.print('Les champs marqués d''une étoile sont obligatoires.');
+		htp.br;
+		htp.br;	
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.exec_add_reservation', 'POST', cattributes => 'onSubmit="return validerReservation(this,document)"');				
+			htp.tableOpen;	
+				htp.tableRowOpen;
+					htp.print('<th>Joueur * : </th>');								
+					htp.print('<td>');
+						htp.print('<select name="pnumJoueur">');	
+							htp.print('<option value="-1">Choisissez un joueur</option>');					
+						FOR joueur in listeJoueurs loop
+							htp.print('<option value="'||joueur.NUM_PERSONNE||'">'||joueur.NOM_PERSONNE||'</option>');
+						END LOOP;
+						htp.print('</select>');									
+					htp.print('</td>');					
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.print('<th>Date * : </th>');
+					htp.tableData(htf.formText('pdate'));
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.print('<th>Créneau * : </th>');
+					htp.print('<td>');
+						htp.print('<select name="pheureDebut">');	
+							htp.print('<option value="-1">Choisissez un créneau</option>');
+						FOR creneau in listeCreneaux loop
+							htp.print('<option value="' || creneau.HEURE_DEBUT_CRENEAU||'">' || creneau.HEURE_DEBUT_CRENEAU || ' - ' || creneau.HEURE_FIN_CRENEAU||'</option>');
+						END LOOP;
+						htp.print('</select>');
+					htp.print('</td>');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.print('<th>Terrain * : </th>');
+					htp.print('<td>');
+						htp.print('<select name="pnumTerrain">');	
+							htp.print('<option value="-1">Choisissez un terrain</option>');					
+						FOR terrain in listeTerrains loop
+							htp.print('<option value="' || terrain.NUM_TERRAIN || '">' || terrain.NUM_TERRAIN || ' - ' || terrain.SURFACE ||'</option>');
+						END LOOP;
+						htp.print('</select>');
+					htp.print('</td>');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableData('');
+					htp.tableData(htf.formSubmit(NULL,'Valider'));
+				htp.tableRowClose;
+				htp.tableClose;
+			htp.formClose;
+			
+	EXCEPTION
+		WHEN OTHERS THEN
+			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout de réservation');
+	END form_add_reservation;
+	
 	PROCEDURE liste_terrains
 	IS
 		perm BOOLEAN;
@@ -23,27 +94,58 @@ IS
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
 			htp.print('<div class="titre_niveau_1">');
-			htp.print('Terrains');
+			htp.print('Planning des réservations');
 			htp.print('</div>');
 			
+			htp.br;
+			htp.br;
+			htp.br;
+			htp.print('<p>Choisissez un terrain pour visualiser son planning</p>');
+			htp.br;
+			
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.planning_global', 'POST', cattributes => 'onSubmit="return validerReservation(this,document)"');				
+			--htp.print('<input type="hidden" name="pdateDebut" value="' || to_char(sysdate, 'DD/MM/YYYY') || '" />');
 			htp.tableOpen('',cattributes => 'class="tableau"');
-			
-			htp.tableRowOpen;
-			htp.tableheader('N° terrain');
-			htp.tableheader('');
-			htp.tableRowClose;
-			
-			FOR terrain IN terrains LOOP
 				htp.tableRowOpen;
-				htp.tableData(terrain.NUM_TERRAIN);
-				htp.tabledata(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(sysdate, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || terrain.NUM_TERRAIN ,'Planning'));
+					htp.print('<th>N° terrain</th>');
+					htp.print('<td>');
+						htp.print('<select name="pnumTerrain">');
+						FOR terrain IN terrains LOOP
+							htp.print('<option>' || terrain.NUM_TERRAIN || '</option>' );
+						END LOOP;
+						htp.print('</select>');
+					htp.print('</td>');
 				htp.tableRowClose;
-			END LOOP;
+				
+				htp.tableRowOpen;
+					htp.print('<th>Date</th>');
+					htp.print('<td>');
+					htp.print('<input type="text" name="pdateDebut" value="' || to_char(sysdate, 'DD/MM/YYYY') || '" />');
+					htp.print('</td>');
+				htp.tableRowClose;
+				
+				htp.tableRowOpen;
+					htp.print('<th></th>');
+					htp.print('<td>');
+					htp.print(htf.formSubmit(NULL,'Voir planning'));
+					htp.print('</td>');
+				htp.tableRowClose;
+			htp.tableClose;
+			htp.formClose;
+			
+			htp.hr;
+			htp.br;
+			htp.br;
+			htp.print('<p>Vous pouvez ajouter une réservation</p>');
+			htp.br;
+			htp.br;
+			
+			form_add_reservation;
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
@@ -92,8 +194,8 @@ IS
 			AND O.NUM_TERRAIN = numTerrain
 		ORDER BY O.HEURE_DEBUT_CRENEAU, O.DATE_OCCUPATION;
 		
-		vdateCouranteTemp DATE;
-		vdateFinTemp DATE;
+		vdateCourante DATE;
+		vdateFin DATE;
 		
 		occDate OCCUPER.DATE_OCCUPATION%TYPE;
 		occHeure OCCUPER.HEURE_DEBUT_CRENEAU%TYPE;
@@ -114,7 +216,7 @@ IS
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
@@ -123,8 +225,8 @@ IS
 			vnumTerrain := to_number(pnumTerrain);
 			
 			-- ...
-			vdateCouranteTemp := vdateDebut;
-			vdateFinTemp := vdateDebut + 6;
+			vdateCourante := vdateDebut;
+			vdateFin := vdateDebut + 6;
 			
 			
 			htp.br;
@@ -134,7 +236,7 @@ IS
 			htp.print('Planning du terrain n° ' || vnumTerrain);
 			htp.print('</div>');
 			
-			pdateFin := to_char(vdateFinTemp, 'DD/MM/YYYY');
+			pdateFin := to_char(vdateFin, 'DD/MM/YYYY');
 			
 			--	Liens vers semaine suivante et precédente
 			vdatePrecedent := vdateDebut - 7;
@@ -151,11 +253,11 @@ IS
 			--	Ecriture des dates en première ligne de tableau
 			htp.tableRowOpen;
 			htp.tableheader('');
-			vdateCouranteTemp := vdateDebut;
-			vdateFinTemp := vdateDebut + 6;
-			WHILE vdateCouranteTemp <= vdateFinTemp LOOP
-				htp.tableheader(vdateCouranteTemp);
-				vdateCouranteTemp := vdateCouranteTemp + 1;
+			vdateCourante := vdateDebut;
+			vdateFin := vdateDebut + 6;
+			WHILE vdateCourante <= vdateFin LOOP
+				htp.tableheader(vdateCourante);
+				vdateCourante := vdateCourante + 1;
 			END LOOP;
 			htp.tableRowClose;
 			
@@ -165,7 +267,7 @@ IS
 			--	Ecriture des lignes correspondant aux créneaux
 			--	Ouverture du curseur
 			OPEN occupations(pdateDebut, pdateFin, vnumTerrain);
-			vdateCouranteTemp := vdateDebut;
+			vdateCourante := vdateDebut;
 			
 			--	booléen indiquant si on doit récupérer une nouvelle ligne
 			vboolDateFetch := 1;
@@ -190,10 +292,10 @@ IS
 						END IF;
 					END IF;
 					
-					EXIT WHEN occHeure <> creneau.HEURE_DEBUT_CRENEAU OR occupations%NOTFOUND OR vdateCouranteTemp > vdateFinTemp;
-					WHILE vdateCouranteTemp < occDate LOOP
-						htp.tableData(htf.anchor('pq_ui_reservation.form_add_reservation?pnumTerrain=' || pnumTerrain || '&' || 'pdate=' || to_char(vdateCouranteTemp, 'DD/MM/YYYY') || '&' || 'pheure=' || creneau.HEURE_DEBUT_CRENEAU ,'Ajouter réservation')) ;
-						vdateCouranteTemp := vdateCouranteTemp + 1;
+					EXIT WHEN occHeure <> creneau.HEURE_DEBUT_CRENEAU OR occupations%NOTFOUND OR vdateCourante > vdateFin;
+					WHILE vdateCourante < occDate LOOP
+						htp.tableData(htf.anchor('pq_ui_reservation.form_add_reservation?pnumTerrain=' || pnumTerrain || '&' || 'pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pheure=' || creneau.HEURE_DEBUT_CRENEAU ,'Ajouter réservation')) ;
+						vdateCourante := vdateCourante + 1;
 					END LOOP;
 					htp.print('<td class="');
 					IF vtypeResa = 0 THEN
@@ -212,25 +314,25 @@ IS
 					IF vtypeResa = 1 THEN
 						htp.print('Joueur : ' || occNomJoueur);
 						htp.br;
-						htp.print(htf.anchor('pq_ui_reservation.dis_reservation?pdate=' || to_char(vdateCouranteTemp, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain || '&' || 'pheureDebut=' || occHeure ,'Infos'));
-						htp.print(htf.anchor('pq_ui_reservation.form_upd_reservation?pdate=' || to_char(vdateCouranteTemp, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain || '&' || 'pheure=' || occHeure ,'Modif'));	
-						htp.print(htf.anchor('pq_ui_reservation.exec_del_reservation?pdate=' || to_char(vdateCouranteTemp, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain || '&' || 'pheure=' || occHeure ,'Suppr', cattributes => 'onClick="return confirmerChoix(this,document)"'));	
+						htp.print(htf.anchor('pq_ui_reservation.dis_reservation?pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain || '&' || 'pheureDebut=' || occHeure ,'Infos'));
+						htp.print(htf.anchor('pq_ui_reservation.form_upd_reservation?pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain || '&' || 'pheure=' || occHeure ,'Modif'));	
+						htp.print(htf.anchor('pq_ui_reservation.exec_del_reservation?pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain || '&' || 'pheure=' || occHeure ,'Suppr', cattributes => 'onClick="return confirmerChoix(this,document)"'));	
 					END IF;
 					IF vtypeResa = 2 THEN
 						htp.print('Entrainement : ' || htf.anchor('pq_ui_entrainement.exec_dis_entrainement?vnumEntrainement=' || occNumEntr,occLibEntr) );
 					END IF;
 					htp.print('</td>');
-					vdateCouranteTemp := vdateCouranteTemp + 1;
+					vdateCourante := vdateCourante + 1;
 					vboolDateFetch := 1;
 					vtypeResa := -1;
 				END LOOP;
 				
 				--	On complète la ligne avec des cases libres
-				WHILE vdateCouranteTemp <= vdateFinTemp LOOP
-					htp.tableData(htf.anchor('pq_ui_reservation.form_add_reservation?pnumTerrain=' || pnumTerrain || '&' || 'pdate=' || to_char(vdateCouranteTemp, 'DD/MM/YYYY') || '&' || 'pheure=' || creneau.HEURE_DEBUT_CRENEAU ,'Ajouter réservation')) ;
-					vdateCouranteTemp := vdateCouranteTemp + 1;
+				WHILE vdateCourante <= vdateFin LOOP
+					htp.tableData(htf.anchor('pq_ui_reservation.form_add_reservation?pnumTerrain=' || pnumTerrain || '&' || 'pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pheure=' || creneau.HEURE_DEBUT_CRENEAU ,'Ajouter réservation')) ;
+					vdateCourante := vdateCourante + 1;
 				END LOOP;
-				vdateCouranteTemp := vdateDebut;
+				vdateCourante := vdateDebut;
 				
 				htp.tableRowClose;
 			END LOOP;
@@ -316,7 +418,7 @@ IS
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>2,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
@@ -352,7 +454,7 @@ IS
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>2,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
@@ -396,97 +498,6 @@ IS
 		pq_ui_commun.aff_footer;
 	END dis_reservation;
 	
-	-- Affiche le formulaire de saisie d'une nouvelle reservation
-	PROCEDURE form_add_reservation
-	IS
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
-		
-		CURSOR listeJoueurs IS
-		SELECT P.NUM_PERSONNE, P.NOM_PERSONNE 
-		FROM PERSONNE P 
-		ORDER BY P.NOM_PERSONNE;
-		CURSOR listeCreneaux IS
-		SELECT C.HEURE_DEBUT_CRENEAU, C.HEURE_FIN_CRENEAU
-		FROM CRENEAU C
-		ORDER BY C.HEURE_DEBUT_CRENEAU;
-		CURSOR listeTerrains IS
-		SELECT T.NUM_TERRAIN, C.LIBELLE as SURFACE
-		FROM TERRAIN T INNER JOIN CODIFICATION C ON T.NATURE_SURFACE = C.NATURE AND T.CODE_SURFACE = C.CODE
-		ORDER BY T.NUM_TERRAIN;
-	BEGIN
-		pq_ui_commun.aff_header;
-		
-		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
-			IF perm=false THEN
-				RAISE PERMISSION_DENIED;
-			END IF;
-			
-			htp.print('<div class="titre_niveau_1">');
-				htp.print('Création de réservation');
-			htp.print('</div>');				
-			htp.br;
-			htp.br;
-			htp.print('Les champs marqués d''une étoile sont obligatoires.');
-			htp.br;
-			htp.br;	
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.exec_add_reservation', 'POST', cattributes => 'onSubmit="return validerReservation(this,document)"');				
-				htp.tableOpen;	
-					htp.tableRowOpen;
-						htp.print('<th>Joueur * : </th>');								
-						htp.print('<td>');
-							htp.print('<select name="pnumJoueur">');	
-								htp.print('<option value="-1">Choisissez un joueur</option>');					
-							FOR joueur in listeJoueurs loop
-								htp.print('<option value="'||joueur.NUM_PERSONNE||'">'||joueur.NOM_PERSONNE||'</option>');
-							END LOOP;
-							htp.print('</select>');									
-						htp.print('</td>');					
-					htp.tableRowClose;
-					htp.tableRowOpen;
-						htp.print('<th>Date * : </th>');
-						htp.tableData(htf.formText('pdate'));
-					htp.tableRowClose;
-					htp.tableRowOpen;
-						htp.print('<th>Créneau * : </th>');
-						htp.print('<td>');
-							htp.print('<select name="pheureDebut">');	
-								htp.print('<option value="-1">Choisissez un créneau</option>');
-							FOR creneau in listeCreneaux loop
-								htp.print('<option value="' || creneau.HEURE_DEBUT_CRENEAU||'">' || creneau.HEURE_DEBUT_CRENEAU || ' - ' || creneau.HEURE_FIN_CRENEAU||'</option>');
-							END LOOP;
-							htp.print('</select>');
-						htp.print('</td>');
-					htp.tableRowClose;
-					htp.tableRowOpen;
-						htp.print('<th>Terrain * : </th>');
-						htp.print('<td>');
-							htp.print('<select name="pnumTerrain">');	
-								htp.print('<option value="-1">Choisissez un terrain</option>');					
-							FOR terrain in listeTerrains loop
-								htp.print('<option value="' || terrain.NUM_TERRAIN || '">' || terrain.NUM_TERRAIN || ' - ' || terrain.SURFACE ||'</option>');
-							END LOOP;
-							htp.print('</select>');
-						htp.print('</td>');
-					htp.tableRowClose;
-					htp.tableRowOpen;
-						htp.tableData('');
-						htp.tableData(htf.formSubmit(NULL,'Valider'));
-					htp.tableRowClose;
-					htp.tableClose;
-				htp.formClose;
-			
-		EXCEPTION
-			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
-			WHEN OTHERS THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout de réservation');
-		END;
-		
-		pq_ui_commun.aff_footer;
-	END form_add_reservation;
-	
 	PROCEDURE form_add_reservation(
 	  pnumTerrain IN VARCHAR2
 	, pdate IN VARCHAR2
@@ -503,11 +514,12 @@ IS
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
 			
+			htp.br;
 			htp.print('<div class="titre_niveau_1">');
 				htp.print('Création de réservation');
 			htp.print('</div>');				
@@ -583,7 +595,7 @@ IS
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
@@ -595,11 +607,12 @@ IS
 			
 			pq_db_reservation.add_reservation(vnumTerrain, vdate, vheure, vnumJoueur);
 			
+			htp.br;
 			htp.print('<div class="success"> ');
 				htp.print('La réservation a été créée avec succès');
 			htp.print('</div>');	
-			
 			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Voir planning'));
+			htp.br;
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
@@ -642,7 +655,7 @@ IS
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
@@ -665,7 +678,10 @@ IS
 			htp.print('Les champs marqués d''une étoile sont obligatoires.');
 			htp.br;
 			htp.br;	
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.exec_upd_reservation', 'POST', cattributes => 'onSubmit="return validerReservation(this,document)"');				
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.exec_upd_reservation', 'POST', cattributes => 'onSubmit="return validerReservation(this,document)"');
+				htp.print('<input type="hidden" name="pnumTerrainOld" value="' || pnumTerrain || '" />');
+				htp.print('<input type="hidden" name="pdateOld" value="' || pdate || '" />');
+				htp.print('<input type="hidden" name="pheureOld" value="' || pheure || '" />');
 				htp.tableOpen;	
 					htp.tableRowOpen;
 						htp.print('<th>Joueur * : </th>');				
@@ -733,7 +749,10 @@ IS
 	
 	-- Exécute la procédure de mise à jour d'une reservation et gère les erreurs éventuelles
 	PROCEDURE exec_upd_reservation(
-	  pnumTerrain IN VARCHAR2
+	  pnumTerrainOld IN VARCHAR2
+	, pdateOld IN VARCHAR2
+	, pheureOld IN VARCHAR2
+	, pnumTerrain IN VARCHAR2
 	, pdate IN VARCHAR2
 	, pheure IN VARCHAR2
 	, pnumJoueur IN VARCHAR2)
@@ -743,15 +762,18 @@ IS
 		
 		dateAnterieure EXCEPTION;
 		
-		vdate OCCUPER.DATE_OCCUPATION%TYPE;
+		vnumTerrainOld OCCUPER.NUM_TERRAIN%TYPE;
+		vdateOld OCCUPER.DATE_OCCUPATION%TYPE;
+		vheureOld OCCUPER.HEURE_DEBUT_CRENEAU%TYPE;
 		vnumTerrain OCCUPER.NUM_TERRAIN%TYPE;
+		vdate OCCUPER.DATE_OCCUPATION%TYPE;
 		vheure OCCUPER.HEURE_DEBUT_CRENEAU%TYPE;
 		vnumJoueur OCCUPER.NUM_JOUEUR%TYPE;
 	BEGIN
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>2,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
@@ -766,7 +788,11 @@ IS
 			vheure := pheure;
 			vnumJoueur := to_number(pnumJoueur);
 			
-			pq_db_reservation.upd_reservation(vnumTerrain, vdate, vheure, vnumJoueur);
+			vdateOld := to_date(pdateOld, 'DD/MM/YYYY');
+			vnumTerrainOld := to_number(pnumTerrainOld);
+			vheureOld := pheureOld;
+			
+			pq_db_reservation.upd_reservation(vnumTerrainOld, vdateOld, vheureOld, vnumTerrain, vdate, vheure, vnumJoueur);
 			
 			htp.print('<p>La réservation a bien été modifiée</p>');
 			
@@ -778,7 +804,8 @@ IS
 			WHEN dateAnterieure THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Impossible de modifier une réservation déjà passée.');
 			WHEN OTHERS THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification de réservation');
+				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'La réservation ne peut pas être modifiée.');
+				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Voir planning'));
 		END;
 		
 		pq_ui_commun.aff_footer;
@@ -802,7 +829,7 @@ IS
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;

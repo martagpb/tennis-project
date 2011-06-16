@@ -18,9 +18,9 @@ IS
 	, vactionencours in varchar2)
 	IS
 	begin
-			pq_ui_commun.aff_header;
-			htp.print('Détails sur l''erreur d''oracle');
-			htp.br;
+		--pq_ui_commun.aff_header;
+			--htp.print('Détails sur l''erreur d''oracle');
+			--htp.br;
 			htp.br;
 			htp.tableopen;
 				htp.tablerowopen;
@@ -37,9 +37,9 @@ IS
 				htp.tablerowclose;
 			htp.tableclose;
 			htp.br;
-			htp.br;
-			htp.anchor('pq_ui_login.login', 'Retourner à la page d''authentification');
-		pq_ui_commun.aff_footer;
+			--htp.br;
+			--htp.anchor('pq_ui_login.login', 'Retourner à la page d''authentification');
+		--pq_ui_commun.aff_footer;
 	END;
 
 
@@ -236,15 +236,7 @@ PROCEDURE aff_menu_niveau_entraineur
 					htp.anchor('pq_ui_accueil.dis_accueil', 'Accueil');
 				htp.print('</li>');
 				htp.listItem;
-					htp.anchor('#', 'Réservation');
-					htp.ulistOpen(cattributes => 'class="niveau2"');
-						htp.listItem;
-							htp.anchor('#', 'Nouvelle réservation');
-						htp.print('</li>');
-						htp.listItem;
-							htp.anchor('#', 'Gestion des réservations');
-						htp.print('</li>');
-					htp.ulistClose;
+					htp.anchor('pq_ui_reservation.liste_terrains', 'Réservations');
 				htp.print('</li>');
 				htp.listItem;
 					htp.anchor('#', 'Entrainement');
