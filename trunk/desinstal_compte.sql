@@ -11,4 +11,4 @@
 
 connect SYSTEM/MANAGER
 set define off
-start 020_reset_db.sql
+start 109_drop_schema_cascade.sql

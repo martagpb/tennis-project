@@ -119,3 +119,7 @@ start 622_create_pqi_ui_avoir_lieu.sql
 SHOW ERRORS
 start 622_create_pqb_ui_avoir_lieu.sql
 SHOW ERRORS
+start 610_create_pqi_ui_reservation.sql
+SHOW ERRORS
+start 610_create_pqb_ui_reservation.sql
+SHOW ERRORS
