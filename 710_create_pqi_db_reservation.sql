@@ -19,14 +19,6 @@ IS
 	, pdate IN OCCUPER.DATE_OCCUPATION%TYPE
 	, pheure IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
 	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE);
-	
-	--Permet d’ajouter une réservation
-	PROCEDURE add_reservation(
-	  pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
-	, pdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
-	, pheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
-	, pnumFacture IN OCCUPER.NUM_FACTURE%TYPE
-	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE);
 
 	--	Met à jour une réservation
 	PROCEDURE upd_reservation(

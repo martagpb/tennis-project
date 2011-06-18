@@ -125,7 +125,7 @@ IS
 		htp.anchor('pq_ui_account.exec_del_mon_compte', 'Supprimer mon compte', cattributes => 'onClick="return confirmerChoix(this,document)"');
 		htp.br;
 		htp.br;
-		htp.anchor('pq_ui_login.login', 'Retourner à l''accueil');
+		htp.anchor('pq_ui_accueil.dis_accueil', 'Retourner à l''accueil');
 		htp.br;
 		htp.br;
 	END  dis_account;
