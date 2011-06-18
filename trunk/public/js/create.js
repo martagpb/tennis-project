@@ -510,7 +510,40 @@ function validerReservation(form,document){
 	if(dateValide==false ){
 		return false;
 	}
-	alert('toto');
+	
+	var separateur = "/";		
+	document.getElementById("date").value = dateDay+separateur+dateMonth+separateur+dateYear;
+	
+	return true;
+}
+
+/*Fonction permettant de valider la date demandée pour un planning*/
+function validerDatePlanning(form,document){
+	//On récupère les données du formulaire
+	dateDay = form.dateDay.value;     // nombre sous la forme : jj
+	dateMonth = form.dateMonth.value; // nombre sous la forme : mm
+	dateYear = form.dateYear.value;   // nombre sous la forme : aaaa
+	
+	//Construction de la date de début de l'entrainement
+	var date = new Date (dateYear,(dateMonth-1),dateDay);		
+	var dateValide = false;
+	
+	//Vérification de la validité de la date de début de l'entrainement
+	if( 
+	   (date.getDate() == dateDay) 
+	&& (date.getMonth()+1  == dateMonth) 
+	&& (date.getFullYear() == dateYear)
+	){
+		dateValide = true;
+		document.getElementById("dateError").innerHTML ="";	
+	}else{
+		document.getElementById("dateError").innerHTML ="Date non valide.";		
+	}
+						
+	//Si l'une ou les deux dates sont invalides alors on affiche les messages d'erreurs
+	if(dateValide==false ){
+		return false;
+	}
 	
 	var separateur = "/";		
 	document.getElementById("date").value = dateDay+separateur+dateMonth+separateur+dateYear;
