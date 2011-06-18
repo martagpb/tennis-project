@@ -20,3 +20,4 @@ DROP PACKAGE pq_ui_create_account;
 DROP PACKAGE pq_ui_avoir_lieu;
 DROP PACKAGE pq_ui_s_inscrire;
 DROP PACKAGE pq_ui_personne;
+DROP PACKAGE pq_ui_reservation;

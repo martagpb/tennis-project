@@ -11,4 +11,5 @@
 
 connect SYSTEM/MANAGER
 set define off
-start 010_init_db.sql
+start 100_create_schema.sql
+start 101_grant_schema.sql

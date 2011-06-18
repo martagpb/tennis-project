@@ -9,13 +9,12 @@
 --      Date de dernière modification : 04/06/2011
 -- -----------------------------------------------------------------------------
 
-connect tennis/tennis
+start 102_connect_schema.sql
 set define off
 start delete_tennis_pq_plsql.sql
 start delete_data.sql
 start drop_index.sql
 start drop_structure.sql
---start desinstal_compte.sql (Commentaire à supprimer dès que la suppression des "TABLESPSACES" fonctionnent correctement).
 
-
-
+connect system/manager
+start desinstal_compte.sql

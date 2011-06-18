@@ -9,9 +9,11 @@
 --      Date de dernière modification : 04/06/2011
 -- -----------------------------------------------------------------------------
 
-connect tennis/tennis
+connect system/manager
+start instal_compte.sql
+
+start 102_connect_schema.sql
 set define off
---start instal_compte.sql (Commentaire à supprimer dès que la suppression des "TABLESPSACES" fonctionnent correctement).
 start drop_structure.sql
 start create_structure.sql
 start create_index.sql

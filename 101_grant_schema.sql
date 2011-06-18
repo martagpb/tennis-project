@@ -10,5 +10,4 @@
 -- -----------------------------------------------------------------------------
 
 
- 
-GRANT ALL ON SCHEMA TENNIS TO PUBLIC;
+ GRANT ALL PRIVILEGES TO tennis;
