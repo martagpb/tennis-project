@@ -34,14 +34,17 @@ IS
 		currentDebutDay NUMBER(2) := 0;
 		currentDebutMonth NUMBER(2) := 0;
 		currentDebutYear NUMBER(4) := 0;
+		vday NUMBER(2) := to_number(to_char(sysdate,'DD'));
+		vmonth NUMBER(2) := to_number(to_char(sysdate,'MM'));
+		vyear NUMBER(4) := to_number(to_char(sysdate,'YYYY'));
 		
 	BEGIN
 		htp.print('Les champs marqués d''une étoile sont obligatoires.');
 		htp.br;
 		htp.br;	
-		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.exec_add_reservation', 'GET', cattributes => 'onSubmit="return validerReservation(this,document)"');				
+		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.exec_add_reservation', 'POST', cattributes => 'onSubmit="return validerReservation(this,document)"');				
 			htp.print('<input type="hidden" name="pdate" id="date" />');
-			htp.tableOpen;	
+			htp.tableOpen('',cattributes => 'class="tableau"');
 				htp.tableRowOpen;
 					htp.print('<th>Joueur * : </th>');								
 					htp.print('<td>');
@@ -57,17 +60,29 @@ IS
 					htp.print('<td>');	
 					htp.print('<select id="dateDay">');					
 					FOR currentDay in 1..31 loop	
-						htp.print('<option>'||currentDay||'</option>');								
+						IF currentDay = vday THEN
+								htp.print('<option selected>'||currentDay||'</option>');
+							ELSE
+								htp.print('<option>'||currentDay||'</option>');
+						END IF;						
 					END LOOP; 																				
 					htp.print('</select>');	
 					htp.print('<select id="dateMonth">');								
 					FOR currentMonth in 1..12 loop	
-						htp.print('<option>'||currentMonth||'</option>');								
+						IF currentMonth = vmonth THEN
+								htp.print('<option selected>'||currentMonth||'</option>');
+							ELSE
+								htp.print('<option>'||currentMonth||'</option>');
+						END IF;							
 					END LOOP; 																				
 					htp.print('</select>');	
 					htp.print('<select id="dateYear">');
 					FOR currentYear in currentYearStart..currentYearEnd loop	
-						htp.print('<option>'||currentYear||'</option>');
+						IF currentYear = vyear THEN
+								htp.print('<option selected>'||currentYear||'</option>');
+							ELSE
+								htp.print('<option>'||currentYear||'</option>');
+						END IF;	
 					END LOOP;
 					htp.print('</select>');	
 					htp.print('</td>');	
@@ -112,6 +127,16 @@ IS
 		
 		CURSOR terrains IS
 		SELECT T.NUM_TERRAIN FROM TERRAIN T ORDER BY T.NUM_TERRAIN;
+		
+		currentYearStart NUMBER(4) := to_number(to_char(sysdate,'YYYY'));
+		currentYearEnd NUMBER(4) := to_number(to_char(sysdate,'YYYY'))+10;
+		currentDebutDay NUMBER(2) := 0;
+		currentDebutMonth NUMBER(2) := 0;
+		currentDebutYear NUMBER(4) := 0;
+		vday NUMBER(2) := to_number(to_char(sysdate,'DD'));
+		vmonth NUMBER(2) := to_number(to_char(sysdate,'MM'));
+		vyear NUMBER(4) := to_number(to_char(sysdate,'YYYY'));
+		
 	BEGIN
 		pq_ui_commun.aff_header;
 		
@@ -130,8 +155,8 @@ IS
 			htp.print('<p>Choisissez un terrain pour visualiser son planning</p>');
 			htp.br;
 			
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.planning_global', 'GET', cattributes => 'onSubmit="return validerReservation(this,document)"');				
-			--htp.print('<input type="hidden" name="pdateDebut" value="' || to_char(sysdate, 'DD/MM/YYYY') || '" />');
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.planning_global', 'GET', cattributes => 'onSubmit="return validerDatePlanning(this,document)"');				
+			htp.print('<input type="hidden" name="pdateDebut" id="date" />');
 			htp.tableOpen('',cattributes => 'class="tableau"');
 				htp.tableRowOpen;
 					htp.print('<th>N° terrain</th>');
@@ -145,10 +170,37 @@ IS
 				htp.tableRowClose;
 				
 				htp.tableRowOpen;
-					htp.print('<th>Date</th>');
-					htp.print('<td>');
-					htp.print('<input type="text" name="pdateDebut" value="' || to_char(sysdate, 'DD/MM/YYYY') || '" />');
-					htp.print('</td>');
+					htp.print('<th>Date * : </th>');			
+					htp.print('<td>');	
+					htp.print('<select id="dateDay">');					
+					FOR currentDay in 1..31 loop	
+						IF currentDay = vday THEN
+								htp.print('<option selected>'||currentDay||'</option>');
+							ELSE
+								htp.print('<option>'||currentDay||'</option>');
+						END IF;								
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="dateMonth">');								
+					FOR currentMonth in 1..12 loop	
+						IF currentMonth = vmonth THEN
+								htp.print('<option selected>'||currentMonth||'</option>');
+							ELSE
+								htp.print('<option>'||currentMonth||'</option>');
+						END IF;							
+					END LOOP; 																				
+					htp.print('</select>');	
+					htp.print('<select id="dateYear">');
+					FOR currentYear in currentYearStart..currentYearEnd loop	
+						IF currentYear = vyear THEN
+								htp.print('<option selected>'||currentYear||'</option>');
+							ELSE
+								htp.print('<option>'||currentYear||'</option>');
+							END IF;
+					END LOOP;
+					htp.print('</select>');	
+					htp.print('</td>');	
+					htp.print('<td id="dateError" class="error"></td>');
 				htp.tableRowClose;
 				
 				htp.tableRowOpen;
@@ -173,7 +225,7 @@ IS
 			WHEN PERMISSION_DENIED THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 			WHEN OTHERS THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Nom de la page');
+				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des réservations');
 		END;
 		
 		pq_ui_commun.aff_footer;
@@ -519,16 +571,39 @@ IS
 				AND O.NUM_TERRAIN = vnumTerrain
 				AND O.HEURE_DEBUT_CRENEAU = vheureDebut;
 			
-			htp.print('<p>Date ' || vdate || '<br />');
-			htp.print('Terrain : ' || vnumTerrain || '<br />');
-			htp.print('Joueur :' || vnomJoueur || '<br />');
-			htp.print('Créneau : ' || vheureDebut || ' - ' || vheureFin || '<br />');
-			IF vnumFacture >= 0 THEN
-				htp.print(htf.anchor('pq_ui_facture.dis_facture?pnumFacture=' || vnumFacture ,'Voir facture'));
-			END IF;
-			htp.print('</p>');
+			htp.br;
+			htp.print('<div class="titre_niveau_1">');
+				htp.print('Informations de réservation');
+			htp.print('</div>');				
+			htp.br;
 			
-			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Voir planning'));
+			htp.tableOpen('',cattributes => 'class="tableau"');
+				htp.tableRowOpen;
+					htp.tableHeader('Terrain : ');
+					htp.tableData(vnumTerrain);
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableHeader('Date : ');
+					htp.tableData(vdate);
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableHeader('Créneau : ');
+					htp.tableData(vheureDebut || ' - ' || vheureFin);
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableHeader('Joueur : ');
+					htp.tableData(vnomJoueur);		
+				htp.tableRowClose;
+				IF vnumFacture >= 0 THEN
+				htp.tableRowOpen;
+					htp.tableHeader('Facture : ');
+					htp.tableData(htf.anchor('pq_ui_facture.dis_facture?pnumFacture=' || vnumFacture ,'Voir la facture associée'));		
+				htp.tableRowClose;
+				END IF;
+			htp.tableClose;
+			htp.br;
+			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
+			htp.br;
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
@@ -570,11 +645,11 @@ IS
 			htp.print('Les champs marqués d''une étoile sont obligatoires.');
 			htp.br;
 			htp.br;	
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.exec_add_reservation', 'GET');				
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.exec_add_reservation', 'POST');				
 				htp.print('<input type="hidden" name="pnumTerrain" value="' || pnumTerrain || '" />');
 				htp.print('<input type="hidden" name="pdate" value="' || pdate || '" />');
 				htp.print('<input type="hidden" name="pheure" value="' || pheure || '" />');
-				htp.tableOpen;	
+				htp.tableOpen('',cattributes => 'class="tableau"');
 					htp.tableRowOpen;
 						htp.print('<th>Terrain : </th>');
 						htp.print('<td>');
@@ -652,7 +727,7 @@ IS
 			htp.print('<div class="success"> ');
 				htp.print('La réservation a été créée avec succès');
 			htp.print('</div>');	
-			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Voir planning'));
+			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
 			htp.br;
 			
 		EXCEPTION
@@ -660,6 +735,8 @@ IS
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout de réservation imposible (vérifiez les abonnements du joueur)');
+				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
+				htp.br;
 		END;
 		
 		pq_ui_commun.aff_footer;
@@ -687,6 +764,15 @@ IS
 		FROM TERRAIN T INNER JOIN CODIFICATION C ON T.NATURE_SURFACE = C.NATURE AND T.CODE_SURFACE = C.CODE
 		ORDER BY T.NUM_TERRAIN;
 		
+		currentYearStart NUMBER(4) := to_number(to_char(sysdate,'YYYY'));
+		currentYearEnd NUMBER(4) := to_number(to_char(sysdate,'YYYY'))+10;
+		currentDebutDay NUMBER(2) := 0;
+		currentDebutMonth NUMBER(2) := 0;
+		currentDebutYear NUMBER(4) := 0;
+		vday NUMBER(2);
+		vmonth NUMBER(2);
+		vyear NUMBER(4);
+		
 		vnumTerrain OCCUPER.NUM_TERRAIN%TYPE;
 		vdate OCCUPER.DATE_OCCUPATION%TYPE;
 		vheure OCCUPER.HEURE_DEBUT_CRENEAU%TYPE;
@@ -704,6 +790,9 @@ IS
 			vnumTerrain := to_number(pnumTerrain);
 			vdate := to_date(pdate, 'DD/MM/YYYY');
 			vheure := pheure;
+			vday := to_number(to_char(vdate, 'DD'));
+			vmonth := to_number(to_char(vdate, 'MM'));
+			vyear := to_number(to_char(vdate, 'YYYY'));
 			
 			SELECT O.NUM_JOUEUR INTO vnumJoueur FROM OCCUPER O
 			WHERE 
@@ -723,7 +812,8 @@ IS
 				htp.print('<input type="hidden" name="pnumTerrainOld" value="' || pnumTerrain || '" />');
 				htp.print('<input type="hidden" name="pdateOld" value="' || pdate || '" />');
 				htp.print('<input type="hidden" name="pheureOld" value="' || pheure || '" />');
-				htp.tableOpen;	
+				htp.print('<input type="hidden" name="pdate" id="date" />');
+				htp.tableOpen('',cattributes => 'class="tableau"');
 					htp.tableRowOpen;
 						htp.print('<th>Joueur * : </th>');				
 						htp.print('<td>');
@@ -739,8 +829,37 @@ IS
 						htp.print('</td>');					
 					htp.tableRowClose;
 					htp.tableRowOpen;
-						htp.print('<th>Date * : </th>');
-						htp.tableData(htf.formText('pdate', cvalue => to_char(vdate, 'DD/MM/YYYY')));
+						htp.print('<th>Date * : </th>');			
+						htp.print('<td>');	
+						htp.print('<select id="dateDay">');					
+						FOR currentDay in 1..31 loop
+							IF currentDay = vday THEN
+								htp.print('<option selected>'||currentDay||'</option>');
+							ELSE
+								htp.print('<option>'||currentDay||'</option>');								
+							END IF;
+						END LOOP; 																				
+						htp.print('</select>');	
+						htp.print('<select id="dateMonth">');								
+						FOR currentMonth in 1..12 loop	
+							IF currentMonth = vmonth THEN
+								htp.print('<option selected>'||currentMonth||'</option>');
+							ELSE
+								htp.print('<option>'||currentMonth||'</option>');
+							END IF;
+						END LOOP; 																				
+						htp.print('</select>');	
+						htp.print('<select id="dateYear">');
+						FOR currentYear in currentYearStart..currentYearEnd loop	
+							IF currentYear = vyear THEN
+								htp.print('<option selected>'||currentYear||'</option>');
+							ELSE
+								htp.print('<option>'||currentYear||'</option>');
+							END IF;
+						END LOOP;
+						htp.print('</select>');	
+						htp.print('</td>');	
+						htp.print('<td id="dateError" class="error"></td>');
 					htp.tableRowClose;
 					htp.tableRowOpen;
 						htp.print('<th>Créneau * : </th>');
@@ -801,6 +920,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 		
+		dateOldAnterieure EXCEPTION;
 		dateAnterieure EXCEPTION;
 		
 		vnumTerrainOld OCCUPER.NUM_TERRAIN%TYPE;
@@ -819,34 +939,41 @@ IS
 				RAISE PERMISSION_DENIED;
 			END IF;
 			
-			vdate := to_date(pdate, 'DD/MM/YYYY');
-			
-			IF vdate < SYSDATE THEN
-				RAISE dateAnterieure;
-			END IF;
-			
 			vnumTerrain := to_number(pnumTerrain);
+			vdate := to_date(pdate, 'DD/MM/YYYY');
 			vheure := pheure;
 			vnumJoueur := to_number(pnumJoueur);
 			
-			vdateOld := to_date(pdateOld, 'DD/MM/YYYY');
 			vnumTerrainOld := to_number(pnumTerrainOld);
+			vdateOld := to_date(pdateOld, 'DD/MM/YYYY');
 			vheureOld := pheureOld;
 			
+			IF vdateOld < SYSDATE - 1 THEN
+				RAISE dateOldAnterieure;
+			END IF;
+			
+			IF vdate < SYSDATE - 1 THEN
+				RAISE dateAnterieure;
+			END IF;
+			
 			pq_db_reservation.upd_reservation(vnumTerrainOld, vdateOld, vheureOld, vnumTerrain, vdate, vheure, vnumJoueur);
-			
-			htp.print('<p>La réservation a bien été modifiée</p>');
-			
-			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Voir planning'));
+			htp.print('<div class="success"> ');
+				htp.print('La réservation a été mise à jour avec succès.');
+			htp.print('</div>');	
+			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
-			WHEN dateAnterieure THEN
+			WHEN dateOldAnterieure THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Impossible de modifier une réservation déjà passée.');
+				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Retour au planning'));
+			WHEN dateAnterieure THEN
+				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Impossible d''affecter une date passée à une réservation.');
+				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Retour au planning'));
 			WHEN OTHERS THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'La réservation ne peut pas être modifiée.');
-				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Voir planning'));
+				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'La réservation ne peut pas être modifiée. Vérifiez les réservations pour la date et le terrain choisis.');
+				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Retour au planning'));
 		END;
 		
 		pq_ui_commun.aff_footer;
@@ -876,25 +1003,27 @@ IS
 			END IF;
 			
 			vdate := to_date(pdate, 'DD/MM/YYYY');
-			
-			IF vdate < SYSDATE THEN
-				RAISE dateAnterieure;
-			END IF;
-			
 			vnumTerrain := to_number(pnumTerrain);
 			vheure := pheure;
 			
+			IF vdate < SYSDATE - 1 THEN
+				RAISE dateAnterieure;
+			END IF;
+			
 			pq_db_reservation.del_reservation(vnumTerrain, vdate, vheure);
 			
-			htp.print('<p>La réservation a bien été supprimée</p>');
+			htp.print('<div class="success"> ');
+				htp.print('La réservation a été supprimée avec succès.');
+			htp.print('</div>');	
 			
-			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Voir planning'));
+			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
 			WHEN dateAnterieure THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Impossible de supprimer une réservation déjà passée.');
+				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression réservation');
 		END;

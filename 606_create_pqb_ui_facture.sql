@@ -32,9 +32,6 @@ IS
 			htp.print('Gestion des factures' );
 		htp.print('</div>');		
 		htp.br;	
-		htp.br;	
-		htp.print(htf.anchor('pq_ui_facture.form_add_facture','Ajouter une facture'));
-		htp.br;	
 		htp.br;
 		htp.tableOpen('',cattributes => 'class="tableau"');
 			htp.tableheader('N°');
@@ -110,12 +107,40 @@ IS
 			FROM FACTURE F inner join PERSONNE P on F.NUM_PERSONNE = P.NUM_PERSONNE
 			WHERE F.NUM_FACTURE = vnumFacture;
 			
-			htp.print('<p>Facture n° ' || vnumFacture || '<br />');
-			htp.print('Pour : ' || vnomPersonne || '<br />');
-			htp.print('Date :' || vdate || '<br />');
-			htp.print('Montant : ' || vmontant || '<br />');
-			htp.print('Date paiement :' || vdatePaiement || '<br />');
-			htp.print('</p>');
+			htp.br;
+			htp.print('<div class="titre_niveau_1">');
+				htp.print('Informations de facture');
+			htp.print('</div>');				
+			htp.br;
+			
+			htp.tableOpen('',cattributes => 'class="tableau"');
+				htp.tableRowOpen;
+					htp.tableHeader('Facture n° : ');
+					htp.tableData(vnumFacture);
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableHeader('Personne : ');
+					htp.tableData(vnomPersonne);
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableHeader('Date création : ');
+					htp.tableData(vdate);
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableHeader('Montant : ');
+					htp.tableData(vmontant || '€');
+				htp.tableRowClose;
+				htp.tableRowOpen;
+					htp.tableHeader('Date paiement : ');
+					IF vdatePaiement IS NULL THEN
+						htp.tableData('Pas encore payé');
+					ELSE
+						htp.tableData(vdatePaiement);
+					END IF;
+				htp.tableRowClose;
+			htp.tableClose;
+			
+			htp.br;
 			
 			htp.tableOpen('',cattributes => 'class="tableau"');
 			htp.tableheader('Début créneau');
@@ -132,7 +157,10 @@ IS
 			END LOOP;
 			htp.tableClose;
 			
+			htp.br;
 			htp.print(htf.anchor('pq_ui_facture.manage_factures','Retour à la gestion des factures'));
+			htp.br;
+			htp.br;
 		
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
