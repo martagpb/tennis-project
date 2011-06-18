@@ -22,44 +22,55 @@ IS
 	IS 
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
+		
+		EXEC_EXCEPTION EXCEPTION;
+		
+		vstatutJoueur PERSONNE.STATUT_JOUEUR%TYPE;
+		vnumFacture FACTURE.NUM_FACTURE%TYPE;
+		
+		vnumAbonnement MENSUALITE.NUM_ABONNEMENT%TYPE;
+		vnbHeures MENSUALITE.NB_HEURES_MENSUALITE%TYPE;
 	BEGIN
 		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
-		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_JOUEUR)
-		VALUES(pheure, pnumTerrain, pdate, pnumJoueur);
+		
+		SELECT P.STATUT_JOUEUR
+		INTO vstatutJoueur
+		FROM PERSONNE P
+		WHERE P.NUM_PERSONNE = pnumJoueur;
+		
+		IF vstatutJoueur = 'A' THEN
+			SELECT M.NB_HEURES_MENSUALITE, M.NUM_ABONNEMENT
+			INTO vnbHeures, vnumAbonnement
+			FROM MENSUALITE M INNER JOIN ABONNEMENT A ON M.NUM_ABONNEMENT = A.NUM_ABONNEMENT
+			WHERE 
+				to_char(M.ANNEE_MOIS_MENSUALITE,'MM/YYYY') = to_char(pdate,'MM/YYYY')
+				AND A.NUM_JOUEUR = pnumJoueur;
+			
+			IF vnbHeures > 0 THEN
+				UPDATE MENSUALITE SET NB_HEURES_MENSUALITE = vnbHeures - 1
+				WHERE NUM_ABONNEMENT = vnumAbonnement AND to_char(ANNEE_MOIS_MENSUALITE,'MM/YYYY') = to_char(pdate,'MM/YYYY');
+				
+				INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_JOUEUR)
+				VALUES(pheure, pnumTerrain, pdate, pnumJoueur);
+			END IF;
+		ELSE
+			INSERT INTO FACTURE(NUM_PERSONNE, DATE_FACTURE) VALUES(pnumJoueur, sysdate);
+			SELECT SEQ_FACTURE.currval INTO vnumFacture FROM DUAL;
+			INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_JOUEUR, NUM_FACTURE)
+				VALUES(pheure, pnumTerrain, pdate, pnumJoueur, vnumFacture);
+		END IF;
+		
 		COMMIT;
 	EXCEPTION
 		WHEN PERMISSION_DENIED then
 			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
-	END add_reservation;
-	
-	--Permet d’ajouter une réservation
-	PROCEDURE add_reservation(
-	  pnumTerrain IN OCCUPER.NUM_TERRAIN%TYPE
-	, pdateOccupation IN OCCUPER.DATE_OCCUPATION%TYPE
-	, pheureDebutCreneau IN OCCUPER.HEURE_DEBUT_CRENEAU%TYPE
-	, pnumFacture IN OCCUPER.NUM_FACTURE%TYPE
-	, pnumJoueur IN OCCUPER.NUM_JOUEUR%TYPE)
-	IS 
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
-	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
-		IF perm=false THEN
-			RAISE PERMISSION_DENIED;
-		END IF;
-		INSERT INTO OCCUPER(HEURE_DEBUT_CRENEAU,NUM_TERRAIN,DATE_OCCUPATION,NUM_FACTURE,NUM_JOUEUR)
-		VALUES(pheureDebutCreneau, pnumTerrain, pdateOccupation, pnumFacture, pnumJoueur);
-		COMMIT;
-	EXCEPTION
-		WHEN PERMISSION_DENIED then
-			pq_ui_commun.dis_error_permission_denied;
-		WHEN OTHERS THEN
-			ROLLBACK;
+			--pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Erreur ajout abonnement');
+			RAISE EXEC_EXCEPTION;
 	END add_reservation;
 
 	--	Met à jour une réservation
@@ -74,7 +85,7 @@ IS
 	IS 
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
-		MY_EXCEPTION EXCEPTION;
+		EXEC_EXCEPTION EXCEPTION;
 	BEGIN
 		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
@@ -91,7 +102,7 @@ IS
 			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
 			ROLLBACK;
-			RAISE MY_EXCEPTION;
+			RAISE EXEC_EXCEPTION;
 	END upd_reservation;
 	
 	--Permet de supprimer une reservation existante

@@ -53,7 +53,7 @@ IS
 		FROM 
 			PERSONNE PER
 		ORDER BY 
-			1;
+			PER.NOM_PERSONNE;
 						
 		--Variables permettant de déterminer si le curseur est vide ou non
 		cursorListIsEmpty BOOLEAN:= true;
@@ -92,7 +92,7 @@ IS
 		--Sinon, si le curseur contient au moins une valeur alors on affiche le tableau
 		else	
 			htp.tableOpen('',cattributes => 'class="tableau"');
-			htp.tableheader('N° du personne');
+			htp.tableheader('N° de personne');
 			htp.tableheader('Nom');
 			htp.tableheader('Prénom');
 			htp.tableheader('Login');

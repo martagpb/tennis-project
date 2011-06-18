@@ -29,16 +29,6 @@ IS
 	, pdateDebut IN VARCHAR2
 	, pduree IN VARCHAR2);
 	
-	-- Affiche le formulaire de saisie permettant la modification d’un abonnement existant
-	PROCEDURE form_upd_abonnement(
-	  pnumAbonnement IN VARCHAR2);
-	
-	-- Exécute la procédure de mise à jour d'un abonnement et gère les erreurs éventuelles
-	PROCEDURE exec_upd_abonnement(
-	  pnumAbonnement IN VARCHAR2
-	, pnumJoueur IN VARCHAR2
-	, pduree IN VARCHAR2);
-	
 	-- Exécute la procédure de suppression d'un abonnement et gère les erreurs éventuelles
 	PROCEDURE exec_del_abonnement(
 	  pnumAbonnement IN VARCHAR2);

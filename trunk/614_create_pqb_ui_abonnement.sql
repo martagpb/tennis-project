@@ -62,7 +62,6 @@ IS
 				htp.tableheader('Date début');
 				htp.tableheader('Durée (en mois)');
 				htp.tableheader('Informations');
-				htp.tableheader('Mise à jour');
 				htp.tableheader('Suppression');
 				for currentAbonnement in listAbonnements loop
 					htp.tableRowOpen;
@@ -71,7 +70,6 @@ IS
 					htp.tabledata(currentAbonnement.DATE_DEBUT_ABONNEMENT);	
 					htp.tabledata(currentAbonnement.DUREE_ABONNEMENT);
 					htp.tabledata(htf.anchor('pq_ui_abonnement.dis_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Informations'));
-					htp.tabledata(htf.anchor('pq_ui_abonnement.form_upd_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Mise à jour'));
 					htp.tabledata(htf.anchor('pq_ui_abonnement.exec_del_abonnement?pnumAbonnement='||currentAbonnement.NUM_ABONNEMENT,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
 					htp.tableRowClose;
 				end loop;	
@@ -234,7 +232,7 @@ IS
 				htp.tableRowOpen;
 					htp.tableData('Date début * :', cattributes => 'class="enteteFormulaire"');
 					htp.print('<td>');	
-					htp.print('<select id="dateDebutDay">');								
+					htp.print('<select id="dateDebutDay">');					
 					FOR currentDebutDay in 1..31 loop	
 						htp.print('<option>'||currentDebutDay||'</option>');								
 					END LOOP; 																				
@@ -327,133 +325,6 @@ IS
 		WHEN OTHERS THEN
 			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout d''un abonnement en cours...');
 	END exec_add_abonnement;
-	
-	-- Affiche le formulaire de saisie permettant la modification d’un abonnement existant
-	PROCEDURE form_upd_abonnement(
-	  pnumAbonnement IN VARCHAR2)
-	IS
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
-		
-		vnumAbonnement ABONNEMENT.NUM_ABONNEMENT%TYPE;
-		vnumJoueur ABONNEMENT.NUM_JOUEUR%TYPE;
-		vduree ABONNEMENT.DUREE_ABONNEMENT%TYPE;
-		
-		CURSOR listeJoueurs IS SELECT NUM_PERSONNE, NOM_PERSONNE FROM PERSONNE;
-	BEGIN
-		pq_ui_commun.aff_header;
-		
-		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
-			IF perm=false THEN
-				RAISE PERMISSION_DENIED;
-			END IF;
-			
-			vnumAbonnement := TO_NUMBER(pnumAbonnement);
-			
-			SELECT NUM_JOUEUR, DUREE_ABONNEMENT INTO vnumJoueur, vduree FROM ABONNEMENT WHERE NUM_ABONNEMENT = vnumAbonnement;
-			
-			htp.print('<div class="titre_niveau_1">');
-				htp.print('Modification d''abonnement');
-			htp.print('</div>');				
-			htp.br;
-			htp.br;
-			htp.print('Les champs marqués d''une étoile sont obligatoires.');
-			htp.br;
-			htp.br;
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_abonnement.exec_upd_abonnement', 'POST', cattributes => 'onSubmit="return validerAbonnement(this,document)"');
-			htp.print('<input type="hidden" name="pnumAbonnement" value="' || vnumAbonnement || '"/>');
-			htp.tableOpen;
-				htp.tableheader('');
-				htp.tableheader('');
-				htp.tableheader('');					
-				htp.tableRowOpen;
-					htp.print('<th>N° abonnement : </th>');
-					htp.print('<td>' || vnumAbonnement || '</td>');					
-				htp.tableRowClose;	
-				htp.tableRowOpen;
-					htp.print('<th>Joueur * : </th>');
-					htp.print('<td>');
-						htp.print('<select name="pnumJoueur" selected="' || vnumJoueur || '">');
-						FOR joueur IN listeJoueurs LOOP
-							htp.print('<option value="' || joueur.NUM_PERSONNE || '"');
-							IF joueur.NUM_PERSONNE = vnumJoueur THEN
-								htp.print('selected');
-							END IF;
-							htp.print('>' || joueur.NOM_PERSONNE || '</option>');
-						END LOOP;
-						htp.print('</select>');
-					htp.print('</td>');		
-				htp.tableRowClose;
-				
-				htp.tableRowOpen;
-					htp.print('<th>Durée * :</th>');
-					htp.print('<td>');
-						htp.print('<input type="text" name="pduree" value="' || vduree || '"/>');
-					htp.print('</td>');				
-				htp.tableRowClose;
-				
-				htp.tableRowOpen;
-					htp.tableData('');
-					htp.tableData(htf.formSubmit(NULL,'Validation'));
-				htp.tableRowClose;
-			htp.tableClose;
-			htp.formClose;
-			htp.br;
-			htp.anchor('pq_ui_abonnement.manage_abonnements', 'Retourner à la gestion des abonnmeents');
-			
-		EXCEPTION
-			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
-			WHEN OTHERS THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Modification abonnement');
-		END;
-		
-		pq_ui_commun.aff_footer;
-	END form_upd_abonnement;
-	
-	-- Exécute la procédure de mise à jour d'un abonnement et gère les erreurs éventuelles
-	PROCEDURE exec_upd_abonnement(
-	  pnumAbonnement IN VARCHAR2
-	, pnumJoueur IN VARCHAR2
-	, pduree IN VARCHAR2)
-	IS
-		vnumAbonnement ABONNEMENT.NUM_ABONNEMENT%TYPE;
-		vnumJoueur ABONNEMENT.NUM_JOUEUR%TYPE;
-		vduree ABONNEMENT.DUREE_ABONNEMENT%TYPE;
-	
-		perm BOOLEAN;
-		PERMISSION_DENIED EXCEPTION;
-	BEGIN
-		pq_ui_commun.aff_header;
-		
-		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
-			IF perm=false THEN
-				RAISE PERMISSION_DENIED;
-			END IF;
-			
-			vnumAbonnement := TO_NUMBER(pnumAbonnement);
-			vnumJoueur := TO_NUMBER(pnumJoueur);
-			vduree := TO_NUMBER(pduree);
-			
-			pq_db_abonnement.upd_abonnement(vnumAbonnement, vnumJoueur, vduree);
-			
-			htp.print('<div class="success"> ');
-				htp.print('L''abonnement a été modifié avec succès.');
-			htp.print('</div>');	
-			
-		EXCEPTION
-			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
-			WHEN OTHERS THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour abonnement');
-		END;
-		
-		liste_abonnements;
-		
-		pq_ui_commun.aff_footer;
-	END exec_upd_abonnement;
 	
 	-- Exécute la procédure de suppression d'un abonnement et gère les erreurs éventuelles
 	PROCEDURE exec_del_abonnement(
