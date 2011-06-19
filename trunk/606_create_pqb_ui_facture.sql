@@ -38,16 +38,12 @@ IS
 			htp.tableheader('Date');
 			htp.tableheader('Montant');
 			htp.tableheader('Informations');
-			htp.tableheader('Mise à jour');
-			htp.tableheader('Suppression');
 			for currentFacture in listeFactures loop
 				htp.tableRowOpen;
 				htp.tabledata(currentFacture.NUM_FACTURE);
 				htp.tabledata(currentFacture.DATE_FACTURE);		
-				htp.tabledata(currentFacture.MONTANT_FACTURE);					
-				htp.tabledata(htf.anchor('pq_ui_facture.dis_facture?pnumFacture='||currentFacture.NUM_FACTURE,'Informations'));
-				htp.tabledata(htf.anchor('pq_ui_facture.form_upd_facture?pnumFacture='||currentFacture.NUM_FACTURE,'Mise à jour'));
-				htp.tabledata(htf.anchor('pq_ui_facture.exec_del_facture?pnumFacture='||currentFacture.NUM_FACTURE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+				htp.tabledata(currentFacture.MONTANT_FACTURE || ' €');					
+				htp.tabledata(htf.anchor('pq_ui_facture.dis_facture?pnumFacture='||currentFacture.NUM_FACTURE,'Informations'));				
 				htp.tableRowClose;
 			end loop;	
 		htp.tableClose;
@@ -133,7 +129,7 @@ IS
 				htp.tableRowOpen;
 					htp.tableHeader('Date paiement : ');
 					IF vdatePaiement IS NULL THEN
-						htp.tableData('Pas encore payé');
+						htp.tableData('Pas encore payée');
 					ELSE
 						htp.tableData(vdatePaiement);
 					END IF;
