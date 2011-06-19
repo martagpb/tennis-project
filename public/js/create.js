@@ -507,12 +507,12 @@ function validerReservation(form,document){
 	}
 						
 	//Si l'une ou les deux dates sont invalides alors on affiche les messages d'erreurs
-	if(dateValide==false ){
+	if(dateValide==false ){	
 		return false;
 	}
 	
-	var separateur = "/";		
-	document.getElementById("date").value = dateDay+separateur+dateMonth+separateur+dateYear;
+	var separateur = "/";			
+	document.getElementById("myDate").value = dateDay+separateur+dateMonth+separateur+dateYear;
 	
 	return true;
 }
