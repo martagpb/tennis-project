@@ -43,10 +43,10 @@ IS
 		htp.br;
 		htp.br;	
 		htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.exec_add_reservation', 'POST', cattributes => 'onSubmit="return validerReservation(this,document)"');				
-			htp.print('<input type="hidden" name="pdate" id="date" />');
-			htp.tableOpen('',cattributes => 'class="tableau"');
+			htp.print('<input type="hidden" name="pdate" id="myDate" value="vide"/>');
+			htp.tableOpen;
 				htp.tableRowOpen;
-					htp.print('<th>Joueur * : </th>');								
+					htp.print('<td class="enteteFormulaire">Joueur * : </td>');								
 					htp.print('<td>');
 						htp.print('<select name="pnumJoueur">');				
 						FOR joueur in listeJoueurs loop
@@ -56,7 +56,7 @@ IS
 					htp.print('</td>');					
 				htp.tableRowClose;
 				htp.tableRowOpen;
-					htp.print('<th>Date * : </th>');			
+					htp.print('<td class="enteteFormulaire">Date * : </td>');			
 					htp.print('<td>');	
 					htp.print('<select id="dateDay">');					
 					FOR currentDay in 1..31 loop	
@@ -89,7 +89,7 @@ IS
 					htp.print('<td id="dateError" class="error"></td>');
 				htp.tableRowClose;
 				htp.tableRowOpen;
-					htp.print('<th>Créneau * : </th>');
+					htp.print('<td class="enteteFormulaire">Créneau * : </td>');
 					htp.print('<td>');
 						htp.print('<select name="pheure">');
 						FOR creneau in listeCreneaux loop
@@ -99,7 +99,7 @@ IS
 					htp.print('</td>');
 				htp.tableRowClose;
 				htp.tableRowOpen;
-					htp.print('<th>Terrain * : </th>');
+					htp.print('<td class="enteteFormulaire">Terrain * : </td>');
 					htp.print('<td>');
 						htp.print('<select name="pnumTerrain">');				
 						FOR terrain in listeTerrains loop
@@ -145,21 +145,19 @@ IS
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
+			htp.br;
 			htp.print('<div class="titre_niveau_1">');
-			htp.print('Planning des réservations');
+				htp.print('Planning des réservations');
 			htp.print('</div>');
-			
-			htp.br;
-			htp.br;
 			htp.br;
 			htp.print('<p>Choisissez un terrain pour visualiser son planning</p>');
 			htp.br;
 			
-			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.planning_global', 'GET', cattributes => 'onSubmit="return validerDatePlanning(this,document)"');				
+			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_reservation.planning_global', 'POST', cattributes => 'onSubmit="return validerDatePlanning(this,document)"');				
 			htp.print('<input type="hidden" name="pdateDebut" id="date" />');
-			htp.tableOpen('',cattributes => 'class="tableau"');
+			htp.tableOpen;
 				htp.tableRowOpen;
-					htp.print('<th>N° terrain</th>');
+					htp.print('<td class="enteteFormulaire">N° terrain : </td>');
 					htp.print('<td>');
 						htp.print('<select name="pnumTerrain">');
 						FOR terrain IN terrains LOOP
@@ -170,7 +168,7 @@ IS
 				htp.tableRowClose;
 				
 				htp.tableRowOpen;
-					htp.print('<th>Date * : </th>');			
+					htp.print('<td class="enteteFormulaire">Date * : </td>');			
 					htp.print('<td>');	
 					htp.print('<select id="dateDay">');					
 					FOR currentDay in 1..31 loop	
@@ -214,16 +212,16 @@ IS
 			
 			htp.hr;
 			htp.br;
-			htp.br;
-			htp.print('<p>Vous pouvez ajouter une réservation</p>');
-			htp.br;
+			htp.print('<div class="titre_niveau_1">');
+				htp.print('Ajouter une réservation');
+			htp.print('</div>');
 			htp.br;
 			
 			form_add_reservation;
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Gestion des réservations');
 		END;
@@ -434,7 +432,7 @@ IS
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Planning global');
 		END;
@@ -519,7 +517,7 @@ IS
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Liste des réservations');
 		END;
@@ -607,7 +605,7 @@ IS
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Affichage réservation');
 		END;
@@ -627,6 +625,10 @@ IS
 		SELECT P.NUM_PERSONNE, P.NOM_PERSONNE 
 		FROM PERSONNE P 
 		ORDER BY P.NOM_PERSONNE;
+		
+		vnumTerrain OCCUPER.NUM_TERRAIN%TYPE;
+		vdate OCCUPER.DATE_OCCUPATION%TYPE;
+		
 	BEGIN
 		pq_ui_commun.aff_header;
 		
@@ -635,6 +637,9 @@ IS
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
+			
+			vnumTerrain := to_number(pnumTerrain);
+			vdate := to_date(pdate, 'DD/MM/YYYY');
 			
 			htp.br;
 			htp.print('<div class="titre_niveau_1">');
@@ -682,10 +687,13 @@ IS
 					htp.tableRowClose;
 				htp.tableClose;
 			htp.formClose;
+			htp.br;
+			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
+			htp.br;
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout de réservation');
 		END;
@@ -721,22 +729,20 @@ IS
 			vheure := pheure;
 			vnumJoueur := to_number(pnumJoueur);
 			
-			pq_db_reservation.add_reservation(vnumTerrain, vdate, vheure, vnumJoueur);
-			
+			pq_db_reservation.add_reservation(vnumTerrain, vdate, vheure, vnumJoueur);			
 			htp.br;
 			htp.print('<div class="success"> ');
 				htp.print('La réservation a été créée avec succès');
 			htp.print('</div>');	
+			htp.br;
 			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
 			htp.br;
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout de réservation imposible (vérifiez les abonnements du joueur)');
-				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
-				htp.br;
+				pq_ui_commun.dis_error_custom('Ajout impossible','Il est impossible d''ajouter cette réservation.','Vérifiez les abonnements du joueur ou la disponibilité du créneau sélectionné','pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning');
 		END;
 		
 		pq_ui_commun.aff_footer;
@@ -812,7 +818,7 @@ IS
 				htp.print('<input type="hidden" name="pnumTerrainOld" value="' || pnumTerrain || '" />');
 				htp.print('<input type="hidden" name="pdateOld" value="' || pdate || '" />');
 				htp.print('<input type="hidden" name="pheureOld" value="' || pheure || '" />');
-				htp.print('<input type="hidden" name="pdate" id="date" />');
+				htp.print('<input type="hidden" name="pdate" id="myDate" value="vide"/>');
 				htp.tableOpen('',cattributes => 'class="tableau"');
 					htp.tableRowOpen;
 						htp.print('<th>Joueur * : </th>');				
@@ -895,11 +901,13 @@ IS
 					htp.tableRowClose;
 					htp.tableClose;
 				htp.formClose;
-			
+			htp.br;
+			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
+			htp.br;
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Formulaire modification de réservation');
 		END;
@@ -957,23 +965,22 @@ IS
 			END IF;
 			
 			pq_db_reservation.upd_reservation(vnumTerrainOld, vdateOld, vheureOld, vnumTerrain, vdate, vheure, vnumJoueur);
+			htp.br;
 			htp.print('<div class="success"> ');
 				htp.print('La réservation a été mise à jour avec succès.');
 			htp.print('</div>');	
+			htp.br;
 			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;
 			WHEN dateOldAnterieure THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Impossible de modifier une réservation déjà passée.');
-				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Retour au planning'));
+				pq_ui_commun.dis_error_custom('Modification impossible','Il est impossible de modifier une réservation qui est déjà passée.','Choisissez une autre réservation','pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Retour au planning');
 			WHEN dateAnterieure THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Impossible d''affecter une date passée à une réservation.');
-				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Retour au planning'));
-			WHEN OTHERS THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'La réservation ne peut pas être modifiée. Vérifiez les réservations pour la date et le terrain choisis.');
-				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Retour au planning'));
+				pq_ui_commun.dis_error_custom('Modification impossible','Il est impossible d''affecter une date passée à une réservation.','Choisissez une autre date','pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Retour au planning');
+			WHEN OTHERS THEN				
+				pq_ui_commun.dis_error_custom('Modification impossible','La réservation ne peut pas être modifiée.','Vérifiez les réservations pour la date sélectionnée et le terrain sélectionné','pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdateOld - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrainOld ,'Retour au planning');
 		END;
 		
 		pq_ui_commun.aff_footer;
@@ -1011,21 +1018,20 @@ IS
 			END IF;
 			
 			pq_db_reservation.del_reservation(vnumTerrain, vdate, vheure);
-			
+			htp.br;
 			htp.print('<div class="success"> ');
 				htp.print('La réservation a été supprimée avec succès.');
 			htp.print('</div>');	
-			
+			htp.br;
 			htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
 			
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Accès à la page refusée.');
+				pq_ui_commun.dis_error_permission_denied;				
 			WHEN dateAnterieure THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Impossible de supprimer une réservation déjà passée.');
-				htp.print(htf.anchor('pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning'));
+				pq_ui_commun.dis_error_custom('Suppression impossible','Il est impossible de supprimer une réservation qui est déjà passée.','Choisissez une autre réservation','pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning');
 			WHEN OTHERS THEN
-				pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Suppression réservation');
+				pq_ui_commun.dis_error_custom('Suppression impossible','Il est impossible de supprimer cette réservation.','Choisissez une autre réservation','pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning');
 		END;
 		
 		pq_ui_commun.aff_footer;
