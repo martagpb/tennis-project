@@ -64,7 +64,7 @@ IS
 			htp.br;
 			htp.br;
 			htp.anchor(vlienretour, vlibellelien);
-		pq_ui_commun.aff_footer;
+		--pq_ui_commun.aff_footer;
 	END;
 	
 	--Permet d'afficher une erreur personnalisée lors que l'utilisateur n'a pas les droits d'accès pour une page.
