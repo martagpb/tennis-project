@@ -242,7 +242,7 @@ PROCEDURE aff_menu_niveau_entraineur
 					htp.anchor('#', 'Entrainement');
 					htp.ulistOpen(cattributes => 'class="niveau2"');
 						htp.listItem;
-							htp.anchor('pq_ui_entrainement_entraineur.form_add_entrainement_entr', 'Nouvel entrainement');
+							htp.anchor('pq_ui_entrainement.form_add_entrainement', 'Nouvel entrainement');
 						htp.print('</li>');
 						htp.listItem;
 							htp.anchor('pq_ui_entrainement.manage_entrainement', 'Gestion des entrainements');
@@ -253,10 +253,10 @@ PROCEDURE aff_menu_niveau_entraineur
 					htp.anchor('#', 'Joueur');
 					htp.ulistOpen(cattributes => 'class="niveau2"');
 						htp.listItem;
-							htp.anchor('#', 'Ajouter un joueur');
+							htp.anchor('pq_ui_personne.form_add_personne', 'Ajouter un joueur');
 						htp.print('</li>');
 						htp.listItem;
-							htp.anchor('#', 'Gestion des joueurs');
+							htp.anchor('pq_ui_personne.manage_personnes', 'Gestion des joueurs');
 						htp.print('</li>');
 					htp.ulistClose;
 				htp.print('</li>');
