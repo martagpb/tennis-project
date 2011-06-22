@@ -281,10 +281,10 @@ IS
 					htp.tableData('',cattributes => 'id="passwordText" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
-				htp.tableData('Niveau * :');
+				htp.tableData('Niveau * :', cattributes => 'class="enteteFormulaire"');
 					--Forme une liste déroulante avec tous les niveaux de la table codification								
 					htp.print('<td>');
-					htp.print('<select id="vniveau" name="vniveau">', cattributes => 'class="enteteFormulaire"');						
+					htp.print('<select id="vniveau" name="vniveau">');						
 					for currentNiveau in niveaulist loop		
 						if(currentNiveau.CODE=vniveau)
 						then
