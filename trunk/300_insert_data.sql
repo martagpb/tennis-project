@@ -326,19 +326,19 @@ BEGIN
 	--Personne n°23
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT,ACTIF)
-	VALUES('ADMIN','ROLE','1','Classement','Gonzalves','Julien','jgonzalv',crypted_password,'0670917957','julien.gonzalves@gmail.fr','1 rue des fleurs','71700','Tournus','A',3,1);
+	VALUES('ADMIN','ROLE','1','Classement','Gonzalves','Julien','jgonzalv',crypted_password,'0670917957','julien.gonzalves@gmail.fr','1 rue des fleurs','71700','Tournus','V',3,1);
 	--Personne n°24
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT,ACTIF)
-	VALUES('ADMIN','ROLE','1','Classement','Leviste','Matthieu','mleviste',crypted_password,'0670917958','matthieu.leviste@gmail.fr','2 rue des fleurs','25000','Besançon','A',3,1);
+	VALUES('ADMIN','ROLE','1','Classement','Leviste','Matthieu','mleviste',crypted_password,'0670917958','matthieu.leviste@gmail.fr','2 rue des fleurs','25000','Besançon','V',3,1);
 	--Personne n°25
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT,ACTIF)
-	VALUES('ADMIN','ROLE','1','Classement','Joly','Renaud','rjoly',crypted_password,'0670917959','renaud.joly@gmail.fr','3 rue des fleurs','21000','Dijon','A',3,1);
+	VALUES('ADMIN','ROLE','1','Classement','Joly','Renaud','rjoly',crypted_password,'0670917959','renaud.joly@gmail.fr','3 rue des fleurs','21000','Dijon','V',3,1);
 	--Personne n°26
 	INSERT INTO PERSONNE(CODE_STATUT_EMPLOYE,NATURE_STATUT_EMPLOYE,CODE_NIVEAU,NATURE_NIVEAU,NOM_PERSONNE,PRENOM_PERSONNE,LOGIN_PERSONNE,
 	MDP_PERSONNE,TEL_PERSONNE,EMAIL_PERSONNE,NUM_RUE_PERSONNE,CP_PERSONNE,VILLE_PERSONNE,STATUT_JOUEUR,NIVEAU_DROIT,ACTIF)
-	VALUES('ADMIN','ROLE','1','Classement','Invernizzi','David','dinverni',crypted_password,'0670917960','david.invernizzi@gmail.fr','4 rue des fleurs','90000','90000','A',3,1);
+	VALUES('ADMIN','ROLE','1','Classement','Invernizzi','David','dinverni',crypted_password,'0670917960','david.invernizzi@gmail.fr','4 rue des fleurs','90000','90000','V',3,1);
 	
 END;
 /
