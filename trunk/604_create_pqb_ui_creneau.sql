@@ -175,15 +175,15 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
 		pq_ui_commun.aff_header;
-				htp.br;
-				pq_db_creneau.add_creneau(vheureDebutCreneau,vheureFinCreneau);
-				htp.print('<div class="success"> ');
-					htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été ajouté avec succès.');
-				htp.print('</div>');				
-				htp.br;
-				htp.br;			
-				pq_ui_creneau.manage_creneaux;
-			pq_ui_commun.aff_footer;
+			htp.br;
+			pq_db_creneau.add_creneau(vheureDebutCreneau,vheureFinCreneau);
+			htp.print('<div class="success"> ');
+				htp.print('Le créneau qui commence à '|| vheureDebutCreneau || ' et qui se termine à '|| vheureFinCreneau || ' a été ajouté avec succès.');
+			htp.print('</div>');				
+			htp.br;
+			htp.br;			
+			pq_ui_creneau.manage_creneaux;
+		pq_ui_commun.aff_footer;
 	EXCEPTION
 		--Traitement personnalisée de l'erreur :
 			-- Nom Exception: DUP_VAL_ON_INDEX, Erreur oracle : ORA-00001, Code erreur : -1
@@ -192,7 +192,8 @@ IS
 		WHEN DUP_VAL_ON_INDEX THEN
 			pq_ui_commun.dis_error_custom('Le créneau n''a pas été ajouté','Un créneau existe déjà avec une heure de début qui vaut '|| vheureDebutCreneau ||'.','Merci de choisir une autre valeur de début de créneau.','pq_ui_creneau.form_add_creneau','Retour vers la création d''un créneau');
 		WHEN OTHERS THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout d''un créneau en cours...');
+			pq_ui_commun.dis_error_custom('Le créneau n''a pas été ajouté','Le créneau voulu entre en conflit avec d''autres.','Merci de choisir d''autres valeurs de début et de fin de créneau.','pq_ui_creneau.form_add_creneau','Retour vers la création d''un créneau');
+			--pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Ajout d''un créneau en cours...');
 	END exec_add_creneau;
 	
 	-- Exécute la procédure de mise à jour d'un créneau et gère les erreurs éventuelles
@@ -221,7 +222,8 @@ IS
 		WHEN PERMISSION_DENIED THEN
 			pq_ui_commun.dis_error_permission_denied;
 		WHEN OTHERS THEN
-			pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un créneau en cours...');
+			pq_ui_commun.dis_error_custom('Le créneau n''a pas été modifié','Le créneau voulu entre en conflit avec d''autres.','Merci de choisir une autre valeur de fin de créneau.','pq_ui_creneau.form_upd_creneau?vheureDebutCreneau=' || vheureDebutCreneau || '&' || 'vheureFinCreneau=' || vheureFinCreneau,'Retour vers la modification du créneau');
+			--pq_ui_commun.dis_error(TO_CHAR(SQLCODE),SQLERRM,'Mise à jour d''un créneau en cours...');
 	END exec_upd_creneau;
 	
 	-- Exécute la procédure de suppression d'un créneau et gère les erreurs éventuelles
