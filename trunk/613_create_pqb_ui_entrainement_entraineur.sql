@@ -392,6 +392,11 @@ IS
 		currentFinDay NUMBER(2) := 0;
 		currentFinMonth NUMBER(2) := 0;
 		currentFinYear NUMBER(4) := 0;
+		
+		vday NUMBER(2) := to_number(to_char(sysdate,'DD'));
+		vmonth NUMBER(2) := to_number(to_char(sysdate,'MM'));
+		vyear NUMBER(4) := to_number(to_char(sysdate,'YYYY'));
+		
 	BEGIN
         pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
@@ -449,20 +454,32 @@ IS
 				htp.tableRowOpen;
 					htp.tableData('Date de début * :');	
 					htp.print('<td>');	
-					htp.print('<select id="vdateDebutDay">');								
-					FOR currentDebutDay in 1..31 loop	
-						htp.print('<option value="'||currentDebutDay||'">'||currentDebutDay||'</option>');								
-					END LOOP; 																				
+					htp.print('<select id="vdateDebutDay">');
+					FOR currentDebutDay in 1..31 loop		
+						IF currentDebutDay = vday THEN
+								htp.print('<option selected>'||currentDebutDay||'</option>');
+							ELSE
+								htp.print('<option>'||currentDebutDay||'</option>');
+						END IF;						
+					END LOOP; 					 																				
 					htp.print('</select>');	
 					htp.print('<select id="vdateDebutMonth">');								
 					FOR currentDebutMonth in 1..12 loop	
-						htp.print('<option value="'||currentDebutMonth||'">'||currentDebutMonth||'</option>');								
+						IF currentDebutMonth = vmonth THEN
+								htp.print('<option selected>'||currentDebutMonth||'</option>');
+							ELSE
+								htp.print('<option>'||currentDebutMonth||'</option>');
+						END IF;							
 					END LOOP; 																				
 					htp.print('</select>');	
 					htp.print('<select id="vdateDebutYear">');								
 					FOR currentDebutYear in currentYearStart..currentYearEnd loop	
-						htp.print('<option value="'||currentDebutYear||'">'||currentDebutYear||'</option>');								
-					END LOOP; 																				
+						IF currentDebutYear = vyear THEN
+								htp.print('<option selected>'||currentDebutYear||'</option>');
+							ELSE
+								htp.print('<option>'||currentDebutYear||'</option>');
+						END IF;	
+					END LOOP;																				
 					htp.print('</select>');	
 					htp.print('</td>');		
 					htp.tableData('',cattributes => 'id="vDateDebutEntrainementError" class="error"');							
@@ -471,19 +488,31 @@ IS
 					htp.tableData('Date de fin * :');	
 					htp.print('<td>');	
 					htp.print('<select id="vdateFinDay">');								
-					FOR currentFinDay in 1..31 loop	
-						htp.print('<option value="'||currentFinDay||'">'||currentFinDay||'</option>');								
-					END LOOP; 																				
+					FOR currentFinDay in 1..31 loop		
+						IF currentFinDay = vday THEN
+								htp.print('<option selected>'||currentFinDay||'</option>');
+							ELSE
+								htp.print('<option>'||currentFinDay||'</option>');
+						END IF;						
+					END LOOP; 																			
 					htp.print('</select>');	
 					htp.print('<select id="vdateFinMonth">');								
 					FOR currentFinMonth in 1..12 loop	
-						htp.print('<option value="'||currentFinMonth||'">'||currentFinMonth||'</option>');								
-					END LOOP; 																				
+						IF currentFinMonth = vmonth THEN
+								htp.print('<option selected>'||currentFinMonth||'</option>');
+							ELSE
+								htp.print('<option>'||currentFinMonth||'</option>');
+						END IF;							
+					END LOOP;																				
 					htp.print('</select>');	
 					htp.print('<select id="vdateFinYear">');								
 					FOR currentFinYear in currentYearStart..currentYearEnd loop	
-						htp.print('<option value="'||currentFinYear||'">'||currentFinYear||'</option>');								
-					END LOOP; 																				
+						IF currentFinYear = vyear+1 THEN
+								htp.print('<option selected>'||currentFinYear||'</option>');
+							ELSE
+								htp.print('<option>'||currentFinYear||'</option>');
+						END IF;	
+					END LOOP;																					
 					htp.print('</select>');	
 					htp.print('</td>');		
 					htp.tableData('',cattributes => 'id="vDateFinEntrainementError" class="error"');						
