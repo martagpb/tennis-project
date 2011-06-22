@@ -955,7 +955,7 @@ IS
 		pq_ui_commun.aff_header;
 		
 		BEGIN
-			pq_ui_commun.ISAUTHORIZED(niveauP=>2,permission=>perm);
+			pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 			IF perm=false THEN
 				RAISE PERMISSION_DENIED;
 			END IF;
