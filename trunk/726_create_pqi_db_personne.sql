@@ -77,7 +77,6 @@ AS
 	 , 	codeStatutEmploye IN PERSONNE.CODE_STATUT_EMPLOYE%TYPE
 	 ,	codeNiveau IN PERSONNE.CODE_NIVEAU%TYPE
 	 ,	statutJoueur IN PERSONNE.STATUT_JOUEUR%TYPE
-	 ,	niveauDroit IN PERSONNE.NIVEAU_DROIT%TYPE
 	 	 );
 
 	 PROCEDURE updPersonneAccount( 

@@ -26,7 +26,7 @@ IS
 	PROCEDURE exec_add_personne ( lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2);
 	
 	-- Exécute la procédure de mise à jour d'une personne et gère les erreurs éventuelles
-	PROCEDURE exec_upd_personne(num IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2, droit IN NUMBER);
+	PROCEDURE exec_upd_personne(num IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2);
 	
 	
 	-- Exécute la procédure de suppression d'une personne et gère les erreurs éventuelles

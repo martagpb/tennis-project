@@ -584,10 +584,9 @@ IS
 			htp.tableClose();
 		htp.formClose;
 		htp.br;
-		htp.br;					
-		htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');
-		htp.br;	
-		htp.br;
+			htp.br;					
+			htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');	
+			htp.br;
 		pq_ui_commun.aff_footer;
 	END form_add_personne;
 
@@ -701,7 +700,7 @@ IS
 		htp.br;
 		htp.br;
 		htp.print('<div class="titre_niveau_1">');
-		htp.print('Création d''un nouveau compte');
+		htp.print('Mise à jour d''un compte');
 		htp.print('</div>');			
 		htp.br;
 		htp.print('Les champs marqués d''une étoile sont obligatoires');
@@ -811,16 +810,16 @@ IS
 					htp.tableData('',cattributes => 'id="statutEmpText" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
-					htp.tableData('Droit :', cattributes => 'class="enteteFormulaire"');
-					htp.tableData(htf.formText('droit',20,NULL,currentPersonne.NIVEAU_DROIT));
-					htp.tableData('',cattributes => 'id="droitText" class="error"');
-				htp.tableRowClose;
-				htp.tableRowOpen;
 					htp.tableData('');
 					htp.tableData(htf.formSubmit(NULL,'Validation'));
 				htp.tableRowClose;
 			htp.tableClose();
 		htp.formClose;
+		htp.br;
+			htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');
+			htp.br; 
+			htp.br;
+		pq_ui_commun.aff_footer;
 		htp.br;	
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -829,7 +828,7 @@ IS
 	
 	
 	-- Exécute la procédure de mise à jour d'un personne et gère les erreurs éventuelles
-	PROCEDURE exec_upd_personne(num IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2, droit IN NUMBER)
+	PROCEDURE exec_upd_personne(num IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -839,7 +838,7 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
 		pq_ui_commun.aff_header;	
-			pq_db_personne.updPersonneFull(num, lastname ,  firstname ,login ,password ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur, droit );
+			pq_db_personne.updPersonneFull(num, lastname ,  firstname ,login ,password ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur);
 			htp.br;
 			htp.br;
 			htp.br;
@@ -896,6 +895,10 @@ IS
 				htp.tableRowClose;
 			htp.tableClose;
 		htp.formClose;
+		htp.br;
+			htp.br;					
+			htp.anchor('pq_ui_personne.manage_personnes', 'Retourner à la gestion des personnes');	
+			htp.br;
 		pq_ui_commun.aff_footer;
 	END form_search_personnes;
 		

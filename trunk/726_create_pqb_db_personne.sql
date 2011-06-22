@@ -203,8 +203,7 @@ IS
 	 ,  city IN PERSONNE.VILLE_PERSONNE%TYPE
 	 , 	codeStatutEmploye IN PERSONNE.CODE_STATUT_EMPLOYE%TYPE
 	 ,	codeNiveau IN PERSONNE.CODE_NIVEAU%TYPE
-	 ,	statutJoueur IN PERSONNE.STATUT_JOUEUR%TYPE
-	 ,	niveauDroit IN PERSONNE.NIVEAU_DROIT%TYPE)
+	 ,	statutJoueur IN PERSONNE.STATUT_JOUEUR%TYPE)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION; 
@@ -247,7 +246,6 @@ IS
 			   ,CODE_NIVEAU = codeNiveau
 			   ,NATURE_NIVEAU = natureNiveau
 			   ,STATUT_JOUEUR = statutJoueur
-			   ,NIVEAU_DROIT = niveauDroit
 		WHERE
 				NUM_PERSONNE = vnumPersonne;
 		COMMIT; 
