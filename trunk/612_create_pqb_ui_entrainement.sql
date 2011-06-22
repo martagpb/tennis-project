@@ -726,6 +726,8 @@ IS
 		vnbplaces ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE;
 		vlibEntrainement ENTRAINEMENT.LIB_ENTRAINEMENT%TYPE;
 		
+		vnbplacesOccupe ENTRAINEMENT.NB_PLACE_ENTRAINEMENT%TYPE;
+		
 		CURSOR entraineurlist IS SELECT NUM_PERSONNE,NOM_PERSONNE,PRENOM_PERSONNE FROM PERSONNE WHERE CODE_STATUT_EMPLOYE='ENT';
 		
 		--On stocke les informations de nature et de code des niveaux dans le curseur niveauList		
@@ -765,7 +767,9 @@ IS
 			ENTRAINEMENT 
 		WHERE 
 			NUM_ENTRAINEMENT = vnumEntrainement;
-			
+		 
+		SELECT COUNT(S.num_personne) INTO vnbplacesOccupe FROM s_inscrire S WHERE num_entrainement = vnumEntrainement;  
+		
 		pq_ui_commun.aff_header;
 			htp.formOpen(owa_util.get_owa_service_path ||  'pq_ui_entrainement.exec_upd_entrainement', 'POST', cattributes => 'onSubmit="return validerUpdEntrainement(this,document)"');				
 				htp.formhidden ('vnumEntrainement',vnumEntrainement);
@@ -826,7 +830,7 @@ IS
 					htp.tableData('Nombre de places * :');	
 					htp.print('<td>');
 					htp.print('<select name="vnbPlaces" id="vnbPlaces">');								
-					FOR currentPlace in 1..99 loop	
+					FOR currentPlace in (vnbplacesOccupe)..99 loop	
 						if(currentPlace=vnbPlaces)
 						then
 							htp.print('<option selected value="'||currentPlace||'">'||currentPlace||'</option>');	
