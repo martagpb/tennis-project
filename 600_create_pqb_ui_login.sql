@@ -100,6 +100,9 @@ IS
 			OWA_UTIL.REDIRECT_URL('pq_ui_accueil.dis_accueil');
 			OWA_UTIL.http_header_close;  
 		ELSE 	
+		OWA_UTIL.mime_header ('text/html', FALSE);
+			OWA_COOKIE.remove('numpersonne',NULL);	
+			OWA_UTIL.http_header_close;  
 			pq_ui_commun.header;
 				htp.br; 
 				htp.div(cattributes => 'id="corps"');
@@ -107,8 +110,7 @@ IS
 					htp.print('Le mot de passe indiqué est incorrect.');
 				htp.print('</div>');
 				pq_ui_login.aff_login;	
-			pq_ui_commun.aff_footer;	
-			OWA_COOKIE.remove('numpersonne',NULL);				
+			pq_ui_commun.aff_footer;					
 		END IF;
 	EXCEPTION 			
 			when others then 

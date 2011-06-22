@@ -250,13 +250,13 @@ PROCEDURE aff_menu_niveau_entraineur
 					htp.ulistClose;
 				htp.print('</li>');
 				htp.listItem;
-					htp.anchor('#', 'Joueur');
+					htp.anchor('#', 'Personne');
 					htp.ulistOpen(cattributes => 'class="niveau2"');
 						htp.listItem;
-							htp.anchor('pq_ui_personne.form_add_personne', 'Ajouter un joueur');
+							htp.anchor('pq_ui_personne.form_add_personne', 'Ajouter une personne');
 						htp.print('</li>');
 						htp.listItem;
-							htp.anchor('pq_ui_personne.manage_personnes', 'Gestion des joueurs');
+							htp.anchor('pq_ui_personne.manage_personnes', 'Gestion des personnes');
 						htp.print('</li>');
 					htp.ulistClose;
 				htp.print('</li>');

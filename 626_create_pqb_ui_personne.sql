@@ -37,6 +37,7 @@ IS
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
+		droit PERSONNE.NIVEAU_DROIT%TYPE;
 		-- On stocke dans un curseur la liste de toutes les personnes existantes
 		CURSOR listpersonne IS
 		SELECT 
@@ -50,6 +51,7 @@ IS
 			,PER.CODE_NIVEAU
 			,PER.NATURE_NIVEAU
 			,PER.STATUT_JOUEUR
+			,PER.NIVEAU_DROIT
 		FROM 
 			PERSONNE PER
 		ORDER BY 
@@ -57,9 +59,9 @@ IS
 						
 		--Variables permettant de déterminer si le curseur est vide ou non
 		cursorListIsEmpty BOOLEAN:= true;
-		nbValuesIntoCursorList NUMBER(1):= 0; 	
-		
+		nbValuesIntoCursorList NUMBER(1):= 0; 		
 	BEGIN	
+		pq_ui_commun.getNiveau(droit);
 		pq_ui_commun.ISAUTHORIZED(niveauP=>1,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
@@ -103,30 +105,32 @@ IS
 			htp.tableheader('Mise à jour');
 			htp.tableheader('Supprimer');
 			for currentpersonne in listpersonne loop
-				htp.tableRowOpen;
-				htp.tabledata(currentpersonne.NUM_PERSONNE);
-				htp.tabledata(currentpersonne.NOM_PERSONNE);
-				htp.tabledata(currentpersonne.PRENOM_PERSONNE);
-				htp.tabledata(currentpersonne.LOGIN_PERSONNE);
-				IF currentpersonne.VILLE_PERSONNE IS NOT NULL THEN
-					htp.tabledata(currentpersonne.VILLE_PERSONNE);
-				ELSE
-					htp.tabledata('');
+				IF(NOT(droit=2 AND currentpersonne.NIVEAU_DROIT=3)) THEN
+					htp.tableRowOpen;
+					htp.tabledata(currentpersonne.NUM_PERSONNE);
+					htp.tabledata(currentpersonne.NOM_PERSONNE);
+					htp.tabledata(currentpersonne.PRENOM_PERSONNE);
+					htp.tabledata(currentpersonne.LOGIN_PERSONNE);
+					IF currentpersonne.VILLE_PERSONNE IS NOT NULL THEN
+						htp.tabledata(currentpersonne.VILLE_PERSONNE);
+					ELSE
+						htp.tabledata('');
+					END IF;
+					IF currentpersonne.CODE_NIVEAU IS NOT NULL THEN
+						htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_NIVEAU,currentpersonne.NATURE_NIVEAU));
+					ELSE
+						htp.tabledata('');
+					END IF;
+					IF currentpersonne.CODE_STATUT_EMPLOYE IS NOT NULL THEN
+					htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_STATUT_EMPLOYE,currentpersonne.NATURE_STATUT_EMPLOYE));
+					ELSE
+						htp.tabledata('');
+					END IF;			
+					htp.tabledata(htf.anchor('pq_ui_personne.dis_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Informations complémentaires'));
+					htp.tabledata(htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Mise à jour'));
+					htp.tabledata(htf.anchor('pq_ui_personne.exec_del_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
+					htp.tableRowClose;
 				END IF;
-				IF currentpersonne.CODE_NIVEAU IS NOT NULL THEN
-					htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_NIVEAU,currentpersonne.NATURE_NIVEAU));
-				ELSE
-					htp.tabledata('');
-				END IF;
-				IF currentpersonne.CODE_STATUT_EMPLOYE IS NOT NULL THEN
-				htp.tabledata(pq_db_codification.get_libelle(currentpersonne.CODE_STATUT_EMPLOYE,currentpersonne.NATURE_STATUT_EMPLOYE));
-				ELSE
-					htp.tabledata('');
-				END IF;			
-				htp.tabledata(htf.anchor('pq_ui_personne.dis_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Informations complémentaires'));
-				htp.tabledata(htf.anchor('pq_ui_personne.form_upd_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Mise à jour'));
-				htp.tabledata(htf.anchor('pq_ui_personne.exec_del_personne?vnumpersonne='||currentpersonne.NUM_PERSONNE,'Supprimer', cattributes => 'onClick="return confirmerChoix(this,document)"'));
-				htp.tableRowClose;
 			end loop;	
 			htp.tableClose;	
 		end if;

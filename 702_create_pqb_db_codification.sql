@@ -90,7 +90,7 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 	BEGIN
-		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
+		pq_ui_commun.ISAUTHORIZED(niveauP=>0,permission=>perm);
 		IF perm=false THEN
 			RAISE PERMISSION_DENIED;
 		END IF;
