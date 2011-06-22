@@ -196,6 +196,8 @@ IS
 		currentDebutMonth NUMBER(2) := 0;
 		currentDebutYear NUMBER(4) := 0;
 		
+		vmonth NUMBER(2) := to_number(to_char(sysdate,'MM'));
+
 		nombreDuree NUMBER(2);
 	BEGIN
 		pq_ui_commun.ISAUTHORIZED(niveauP=>3,permission=>perm);
@@ -237,10 +239,14 @@ IS
 						htp.print('<option>'||currentDebutDay||'</option>');								
 					END LOOP; 																				
 					htp.print('</select>');	
-					htp.print('<select id="dateDebutMonth">');								
+					htp.print('<select id="dateDebutMonth">');		
 					FOR currentDebutMonth in 1..12 loop	
-						htp.print('<option>'||currentDebutMonth||'</option>');								
-					END LOOP; 																				
+						IF currentDebutMonth = vmonth THEN
+								htp.print('<option selected>'||currentDebutMonth||'</option>');
+							ELSE
+								htp.print('<option>'||currentDebutMonth||'</option>');
+						END IF;							
+					END LOOP;					 																				
 					htp.print('</select>');	
 					htp.print('<select id="dateDebutYear">');
 					FOR currentDebutYear in currentYearStart..currentYearEnd loop	
