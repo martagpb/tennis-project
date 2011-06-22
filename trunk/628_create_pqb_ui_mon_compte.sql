@@ -284,7 +284,7 @@ IS
 				htp.tableData('Niveau * :');
 					--Forme une liste déroulante avec tous les niveaux de la table codification								
 					htp.print('<td>');
-					htp.print('<select id="vniveau" name="vniveau">');						
+					htp.print('<select id="vniveau" name="vniveau">', cattributes => 'class="enteteFormulaire"');						
 					for currentNiveau in niveaulist loop		
 						if(currentNiveau.CODE=vniveau)
 						then
