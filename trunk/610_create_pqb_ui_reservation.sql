@@ -365,10 +365,12 @@ IS
 					EXIT WHEN occHeure <> creneau.HEURE_DEBUT_CRENEAU OR occupations%NOTFOUND OR vdateCourante > vdateFin;
 					WHILE vdateCourante < occDate LOOP
 						htp.print('<td>');
+						IF vdateCourante >= SYSDATE - 1 THEN
 						htp.print('<a href="pq_ui_reservation.form_add_reservation?pnumTerrain=' || pnumTerrain || '&' || 'pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pheure=' || creneau.HEURE_DEBUT_CRENEAU || '">');
 						htp.print('<img title="Ajouter une réservation" alt="Ajouter réservation" src="' || rep_img || 'add.png" class="icone" />');
 						htp.print('</a>');
 						--htp.tableData(htf.anchor('pq_ui_reservation.form_add_reservation?pnumTerrain=' || pnumTerrain || '&' || 'pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pheure=' || creneau.HEURE_DEBUT_CRENEAU ,'Ajouter réservation')) ;
+						END IF;
 						htp.print('</td>');
 						vdateCourante := vdateCourante + 1;
 					END LOOP;
@@ -415,12 +417,15 @@ IS
 				WHILE vdateCourante <= vdateFin LOOP
 					--htp.tableData(htf.anchor('pq_ui_reservation.form_add_reservation?pnumTerrain=' || pnumTerrain || '&' || 'pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pheure=' || creneau.HEURE_DEBUT_CRENEAU ,'Ajouter réservation')) ;					
 					htp.print('<td>');
+					IF vdateCourante >= SYSDATE - 1 THEN
 					htp.print('<a href="pq_ui_reservation.form_add_reservation?pnumTerrain=' || pnumTerrain || '&' || 'pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pheure=' || creneau.HEURE_DEBUT_CRENEAU || '">');
 					htp.print('<img title="Ajouter une réservation" alt="Ajouter réservation" src="' || rep_img || 'add.png" class="icone" />');
 					htp.print('</a>');
 					--htp.tableData(htf.anchor('pq_ui_reservation.form_add_reservation?pnumTerrain=' || pnumTerrain || '&' || 'pdate=' || to_char(vdateCourante, 'DD/MM/YYYY') || '&' || 'pheure=' || creneau.HEURE_DEBUT_CRENEAU ,'Ajouter réservation')) ;
+					END IF;
 					htp.print('</td>');
 					vdateCourante := vdateCourante + 1;
+					
 				END LOOP;
 				vdateCourante := vdateDebut;
 				
@@ -711,6 +716,8 @@ IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
 		
+		dateAnterieure EXCEPTION;
+		
 		vnumTerrain OCCUPER.NUM_TERRAIN%TYPE;
 		vdate OCCUPER.DATE_OCCUPATION%TYPE;
 		vheure OCCUPER.HEURE_DEBUT_CRENEAU%TYPE;
@@ -729,6 +736,10 @@ IS
 			vheure := pheure;
 			vnumJoueur := to_number(pnumJoueur);
 			
+			IF vdate < SYSDATE - 1 THEN
+				RAISE dateAnterieure;
+			END IF;
+			
 			pq_db_reservation.add_reservation(vnumTerrain, vdate, vheure, vnumJoueur);			
 			htp.br;
 			htp.print('<div class="success"> ');
@@ -741,6 +752,8 @@ IS
 		EXCEPTION
 			WHEN PERMISSION_DENIED THEN
 				pq_ui_commun.dis_error_permission_denied;
+			WHEN dateAnterieure THEN
+				pq_ui_commun.dis_error_custom('Ajout impossible','Il est impossible d''affecter une date passée à une réservation.','Choisissez une autre date','pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning');
 			WHEN OTHERS THEN
 				pq_ui_commun.dis_error_custom('Ajout impossible','Il est impossible d''ajouter cette réservation.','Vérifiez les abonnements du joueur ou la disponibilité du créneau sélectionné','pq_ui_reservation.planning_global?pdateDebut=' || to_char(vdate - 3, 'DD/MM/YYYY') || '&' || 'pnumTerrain=' || vnumTerrain ,'Retour au planning');
 		END;
