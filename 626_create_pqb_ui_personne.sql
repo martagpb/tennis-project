@@ -729,12 +729,12 @@ IS
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Identifiant * :');
-					htp.tableData(htf.formText('log',20,NULL, currentPersonne.LOGIN_PERSONNE));
+					htp.tableData(htf.formText('login',20,NULL, currentPersonne.LOGIN_PERSONNE));
 					htp.tableData('',cattributes => 'id="identifiantText" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
 					htp.tableData('Mot de passe * :');
-					htp.tableData(htf.formPassword('pass',20,NULL,password));
+					htp.tableData(htf.formPassword('password',20,NULL,password));
 					htp.tableData('',cattributes => 'id="passwordText" class="error"');
 				htp.tableRowClose;
 				htp.tableRowOpen;
@@ -829,7 +829,7 @@ IS
 	
 	
 	-- Exécute la procédure de mise à jour d'un personne et gère les erreurs éventuelles
-	PROCEDURE exec_upd_personne(num IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,log IN VARCHAR2,pass IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2, droit IN NUMBER)
+	PROCEDURE exec_upd_personne(num IN NUMBER, lastname IN VARCHAR2,  firstname IN VARCHAR2,login IN VARCHAR2,password IN VARCHAR2,mail IN VARCHAR2,street IN VARCHAR2,postal IN VARCHAR2,city IN VARCHAR2,phone IN VARCHAR2,level IN VARCHAR2, statutJoueur IN VARCHAR2, statutEmploye IN VARCHAR2, droit IN NUMBER)
 	IS
 		perm BOOLEAN;
 		PERMISSION_DENIED EXCEPTION;
@@ -839,7 +839,7 @@ IS
 			RAISE PERMISSION_DENIED;
 		END IF;
 		pq_ui_commun.aff_header;	
-			pq_db_personne.updPersonneFull(num, lastname ,  firstname ,log ,pass ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur, droit );
+			pq_db_personne.updPersonneFull(num, lastname ,  firstname ,login ,password ,mail ,phone ,street ,postal ,city ,statutEmploye, level , statutJoueur, droit );
 			htp.br;
 			htp.br;
 			htp.br;
