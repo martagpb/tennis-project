@@ -586,7 +586,7 @@ IS
 				htp.br;
 				htp.print('Les champs marqués d''une étoile sont obligatoires.');
 				htp.br;
-				htp.tableOpen;
+				htp.tableOpen(cattributes => 'CELLSPACING=8');
 				htp.br;				
 				htp.tableRowOpen;
 				htp.tableData('Entraineur * :');
