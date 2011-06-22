@@ -81,6 +81,8 @@ IS
 		vmontant FACTURE.MONTANT_FACTURE%TYPE;
 		vnomPersonne PERSONNE.NOM_PERSONNE%TYPE;
 		vdatePaiement FACTURE.DATE_PAIEMENT%TYPE;
+	
+		vniveau PERSONNE.NIVEAU_DROIT%TYPE;
 		
 		CURSOR listeResas(numFacture FACTURE.NUM_FACTURE%TYPE) IS
 		SELECT O.HEURE_DEBUT_CRENEAU, O.NUM_TERRAIN, O.DATE_OCCUPATION, P.NOM_PERSONNE
@@ -154,7 +156,10 @@ IS
 			htp.tableClose;
 			
 			htp.br;
-			htp.print(htf.anchor('pq_ui_facture.manage_factures','Retour à la gestion des factures'));
+			pq_ui_commun.getNiveau(vniveau);
+			if(vniveau=3) then
+				htp.print(htf.anchor('pq_ui_facture.manage_factures','Retour à la gestion des factures'));
+			end if;
 			htp.br;
 			htp.br;
 		
